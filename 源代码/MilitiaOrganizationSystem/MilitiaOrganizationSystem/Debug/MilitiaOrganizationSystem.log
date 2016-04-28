@@ -1,6 +1,13 @@
-﻿生成启动时间为 2016/4/28 15:20:02。
+﻿生成启动时间为 2016/4/28 16:05:24。
      1>项目“F:\GitHubProject\SourceTree\MilitiaOrganizationSystem\源代码\MilitiaOrganizationSystem\MilitiaOrganizationSystem\MilitiaOrganizationSystem.vcxproj”在节点 2 上(Build 个目标)。
-     1>ResourceCompile:
+     1>ClCompile:
+         D:\Program Files\VS2012\VC\bin\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yu"stdafx.h" /Fp"Debug\MilitiaOrganizationSystem.pch" /Fo"Debug\\" /Fd"Debug\vc110.pdb" /Gd /TP /analyze- /errorReport:prompt MilitiaOrganizationSystem.cpp MilitiaOrganizationSystemDlg.cpp
+         MilitiaOrganizationSystem.cpp
+         正在生成代码...
+         正在编译...
+         MilitiaOrganizationSystemDlg.cpp
+         正在生成代码...
+       ResourceCompile:
          C:\Program Files (x86)\Windows Kits\8.0\bin\x86\rc.exe /D _DEBUG /D _UNICODE /D UNICODE /D _AFXDLL /l"0x0804" /IDebug\ /nologo /fo"Debug\MilitiaOrganizationSystem.res" MilitiaOrganizationSystem.rc 
        Link:
          D:\Program Files\VS2012\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"F:\GitHubProject\SourceTree\MilitiaOrganizationSystem\源代码\MilitiaOrganizationSystem\Debug\MilitiaOrganizationSystem.exe" /INCREMENTAL /NOLOGO /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /manifestinput:"D:\Program Files\VS2012\VC\Include\Manifest\dpiaware.manifest" /DEBUG /PDB:"F:\GitHubProject\SourceTree\MilitiaOrganizationSystem\源代码\MilitiaOrganizationSystem\Debug\MilitiaOrganizationSystem.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /ENTRY:"wWinMainCRTStartup" /DYNAMICBASE /NXCOMPAT /IMPLIB:"F:\GitHubProject\SourceTree\MilitiaOrganizationSystem\源代码\MilitiaOrganizationSystem\Debug\MilitiaOrganizationSystem.lib" /MACHINE:X86 Debug\MilitiaOrganizationSystem.res
@@ -16,4 +23,4 @@
 
 生成成功。
 
-已用时间 00:00:00.45
+已用时间 00:00:13.10

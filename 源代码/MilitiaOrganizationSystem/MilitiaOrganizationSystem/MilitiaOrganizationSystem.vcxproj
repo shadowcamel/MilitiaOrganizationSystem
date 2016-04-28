@@ -134,13 +134,10 @@
     <ResourceCompile Include="MilitiaOrganizationSystem.rc" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\jpg2.bin" />
     <None Include="res\MilitiaOrganizationSystem.rc2" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="C:\Users\Hzq\Desktop\我的图片\ps\我的第二个.jpg" />
     <Image Include="res\icon1.ico" />
-    <Image Include="res\icon2.ico" />
     <Image Include="res\MilitiaOrganizationSystem.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

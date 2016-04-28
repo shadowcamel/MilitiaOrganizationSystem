@@ -105,7 +105,7 @@ BOOL CMilitiaOrganizationSystemDlg::OnInitDialog()
 	m_imageList.Add(AfxGetApp()->LoadIconW(IDI_ICON1));
 	m_imageList.Add(AfxGetApp()->LoadIconW(IDI_ICON1));
 
-	m_Groups.SetImageList(&m_imageList, TVSIL_NORMAL);
+	m_Groups.SetImageList(&m_imageList, TVSIL_NORMAL);//树形控件绑定imageList
 	HTREEITEM m_TreeRoot = m_Groups.InsertItem(L"本基层编组任务");//插入根节点
 	loadXMLFile(L"C:\\Users\\Hzq\\Desktop\\软工民兵组\\硬性说明\\militia.xml", m_TreeRoot);
 

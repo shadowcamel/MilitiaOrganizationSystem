@@ -72,21 +72,12 @@
     <None Include="res\MilitiaOrganizationSystem.rc2">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="res\jpg2.bin">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\MilitiaOrganizationSystem.ico">
       <Filter>资源文件</Filter>
     </Image>
     <Image Include="res\icon1.ico">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="C:\Users\Hzq\Desktop\我的图片\ps\我的第二个.jpg">
-      <Filter>资源文件</Filter>
-    </Image>
-    <Image Include="res\icon2.ico">
       <Filter>资源文件</Filter>
     </Image>
   </ItemGroup>
