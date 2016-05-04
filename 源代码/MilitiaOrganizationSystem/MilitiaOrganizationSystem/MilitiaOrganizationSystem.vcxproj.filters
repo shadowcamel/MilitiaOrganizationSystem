@@ -18,9 +18,6 @@
     <ClInclude Include="MilitiaOrganizationSystem.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MilitiaOrganizationSystemDlg.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="stdafx.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -39,12 +36,15 @@
     <ClInclude Include="tinyxml\CodeTranslater.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="XMLFileTree.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MainDlg.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MilitiaOrganizationSystem.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="MilitiaOrganizationSystemDlg.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
@@ -62,6 +62,12 @@
     <ClCompile Include="tinyxml\tinystr.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="XMLFileTree.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MainDlg.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="MilitiaOrganizationSystem.rc">
@@ -70,6 +76,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\MilitiaOrganizationSystem.rc2">
+      <Filter>资源文件</Filter>
+    </None>
+    <None Include="res\ribbon1.mfcribbon-ms">
       <Filter>资源文件</Filter>
     </None>
   </ItemGroup>

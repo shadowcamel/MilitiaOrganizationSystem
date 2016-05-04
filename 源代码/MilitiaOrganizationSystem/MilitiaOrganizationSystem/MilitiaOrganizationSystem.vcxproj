@@ -101,8 +101,9 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MainDlg.h" />
     <ClInclude Include="MilitiaOrganizationSystem.h" />
-    <ClInclude Include="MilitiaOrganizationSystemDlg.h" />
+    <ClInclude Include="XMLFileTree.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -111,8 +112,9 @@
     <ClInclude Include="tinyxml\tinyxml.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MainDlg.cpp" />
     <ClCompile Include="MilitiaOrganizationSystem.cpp" />
-    <ClCompile Include="MilitiaOrganizationSystemDlg.cpp" />
+    <ClCompile Include="XMLFileTree.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -135,6 +137,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\MilitiaOrganizationSystem.rc2" />
+    <None Include="res\ribbon1.mfcribbon-ms" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="res\icon1.ico" />
