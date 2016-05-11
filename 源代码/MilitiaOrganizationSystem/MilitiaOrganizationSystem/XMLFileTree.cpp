@@ -70,6 +70,14 @@ BEGIN_MESSAGE_MAP(XMLFileTree, CDialogEx)
 	ON_WM_SIZE()
 //	ON_WM_DESTROY()
 ON_WM_CLOSE()
+//ON_WM_RBUTTONDOWN()
+//ON_WM_RBUTTONUP()
+ON_NOTIFY(NM_RCLICK, IDC_GROUPTREE, &XMLFileTree::OnNMRClickGrouptree)
+ON_COMMAND(ID_MENU_VIEW, &XMLFileTree::OnMenuView)
+ON_COMMAND(ID_MENU_DELETE, &XMLFileTree::OnMenuDelete)
+ON_COMMAND(ID_MENU_ADD, &XMLFileTree::OnMenuAdd)
+ON_COMMAND(ID_MENU_MODIFY, &XMLFileTree::OnMenuModify)
+ON_NOTIFY(TVN_ENDLABELEDIT, IDC_GROUPTREE, &XMLFileTree::OnTvnEndlabeleditGrouptree)
 END_MESSAGE_MAP()
 
 
@@ -78,12 +86,6 @@ END_MESSAGE_MAP()
 BOOL XMLFileTree::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
-
-	// 将“关于...”菜单项添加到系统菜单中。
-
-	// IDM_ABOUTBOX 必须在系统命令范围内。
-	ASSERT((IDM_ABOUTBOX & 0xFFF0) == IDM_ABOUTBOX);
-	ASSERT(IDM_ABOUTBOX < 0xF000);
 
 	CMenu* pSysMenu = GetSystemMenu(FALSE);
 	if (pSysMenu != NULL)
@@ -95,7 +97,6 @@ BOOL XMLFileTree::OnInitDialog()
 		if (!strAboutMenu.IsEmpty())
 		{
 			pSysMenu->AppendMenu(MF_SEPARATOR);
-			pSysMenu->AppendMenu(MF_STRING, IDM_ABOUTBOX, strAboutMenu);
 		}
 	}
 
@@ -120,15 +121,7 @@ BOOL XMLFileTree::OnInitDialog()
 
 void XMLFileTree::OnSysCommand(UINT nID, LPARAM lParam)
 {
-	if ((nID & 0xFFF0) == IDM_ABOUTBOX)
-	{
-		CAboutDlg dlgAbout;
-		dlgAbout.DoModal();
-	}
-	else
-	{
 		CDialogEx::OnSysCommand(nID, lParam);
-	}
 }
 
 // 如果向对话框添加最小化按钮，则需要下面的代码
@@ -231,4 +224,85 @@ void XMLFileTree::OnClose()
 	// TODO: 在此添加消息处理程序代码和/或调用默认值
 
 	ShowWindow(SW_HIDE);
+}
+
+HTREEITEM XMLFileTree::getSelectItem() {
+	CPoint pt;
+    GetCursorPos(&pt);//得到当前鼠标的位置
+	m_Groups.ScreenToClient(&pt);//将屏幕坐标转换为客户区坐标
+    HTREEITEM tree_Item = m_Groups.HitTest(pt);//调用HitTest找到对应点击的树节点
+    return tree_Item;
+}
+
+
+
+void XMLFileTree::OnNMRClickGrouptree(NMHDR *pNMHDR, LRESULT *pResult)
+{
+	// TODO: 在此添加控件通知处理程序代码
+	//临时鼠标的屏幕坐标，用来弹出menu
+    CPoint ScreenPt;
+    GetCursorPos(&ScreenPt);
+
+    //获取到当前鼠标选择的树节点
+	HTREEITEM selectItem = getSelectItem();
+    if (selectItem != NULL)
+    {
+		m_Groups.SelectItem(selectItem); //使右键单击的树节点被选中
+			
+        CMenu menu;
+        menu.LoadMenuW(IDR_MENU3);
+        CMenu* pPopup = menu.GetSubMenu(0);//装载第一个子菜单，即我们菜单的第一列
+        pPopup->TrackPopupMenu(TPM_LEFTALIGN, ScreenPt.x, ScreenPt.y, this);//弹出菜单
+        }
+	*pResult = 0;
+}
+
+
+void XMLFileTree::OnMenuView()
+{
+	// TODO: 在此添加命令处理程序代码
+}
+
+
+void XMLFileTree::OnMenuDelete()
+{
+	// TODO: 在此添加命令处理程序代码
+	HTREEITEM selectItem = m_Groups.GetSelectedItem();
+	if(m_Groups.GetChildItem(selectItem) == NULL) {//如果本结点是叶结点，直接删除（还应确认里面是否有民兵，之后添加）
+		m_Groups.DeleteItem(selectItem);
+	} else {//让用户确认是否删除
+		MessageBox(_T("hello world!"),_T("提示!"));
+	}
+}
+
+
+void XMLFileTree::OnMenuAdd()
+{
+	// TODO: 在此添加命令处理程序代码
+	HTREEITEM selectItem = m_Groups.GetSelectedItem();
+	HTREEITEM addItem = m_Groups.InsertItem(_T("新建组"), 1, 1, selectItem);
+	m_Groups.EditLabel(addItem);//编辑
+}
+
+
+void XMLFileTree::OnMenuModify()
+{
+	// TODO: 在此添加命令处理程序代码
+	HTREEITEM selectItem = m_Groups.GetSelectedItem();
+	m_Groups.EditLabel(selectItem);//编辑
+	
+}
+
+
+void XMLFileTree::OnTvnEndlabeleditGrouptree(NMHDR *pNMHDR, LRESULT *pResult)
+{//当标签编辑完成时
+	LPNMTVDISPINFO pTVDispInfo = reinterpret_cast<LPNMTVDISPINFO>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	CString strText;
+
+	m_Groups.GetEditControl()->GetWindowTextW(strText);
+
+	m_Groups.SetItemText(pTVDispInfo->item.hItem, strText);
+
+	*pResult = 0;
 }

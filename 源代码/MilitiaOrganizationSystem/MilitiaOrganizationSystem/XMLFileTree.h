@@ -38,10 +38,19 @@ public:
 	CImageList m_imageList;
 	
 	void loadXMLFile(CString str_Dir, HTREEITEM tree_Root);
+	HTREEITEM getSelectItem();
 private:
 	void showXMLElementInFileTree(TiXmlElement* root_Element, HTREEITEM tree_Root);
 public:
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 //	afx_msg void OnDestroy();
 	afx_msg void OnClose();
+//	afx_msg void OnRButtonDown(UINT nFlags, CPoint point);
+//	afx_msg void OnRButtonUp(UINT nFlags, CPoint point);
+	afx_msg void OnNMRClickGrouptree(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void OnMenuView();
+	afx_msg void OnMenuDelete();
+	afx_msg void OnMenuAdd();
+	afx_msg void OnMenuModify();
+	afx_msg void OnTvnEndlabeleditGrouptree(NMHDR *pNMHDR, LRESULT *pResult);
 };

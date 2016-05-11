@@ -21,5 +21,5 @@ protected:
 public:
 	afx_msg void OnIdbtnImportgroupxml();
 
-	XMLFileTree* m_xmlFileTreeDlg;
+	XMLFileTree* m_xmlFileTreeDlg;//FileTreeDlg
 };
