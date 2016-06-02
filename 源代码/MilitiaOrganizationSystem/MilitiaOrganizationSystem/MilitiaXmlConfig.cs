@@ -97,7 +97,7 @@ namespace MilitiaOrganizationSystem
                     militiaNode.Attributes.Append(attr);
                 }
                 XmlAttribute attr2 = militiaDoc.CreateAttribute("group");
-                attr2.Value = militia.group;
+                attr2.Value = militia.Group;
                 militiaNode.Attributes.Append(attr2);
                 militiaRoot.AppendChild(militiaNode);
             }
@@ -130,7 +130,7 @@ namespace MilitiaOrganizationSystem
                 }
                 
                 string[] a = { "1", "2", "3" };//分组id
-                militia.group = a[rand.Next(a.Length)];
+                militia.Group = a[rand.Next(a.Length)];
 
                 mList.Add(militia);
             }

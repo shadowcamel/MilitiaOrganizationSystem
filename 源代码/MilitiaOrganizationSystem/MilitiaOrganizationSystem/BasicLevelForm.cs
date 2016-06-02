@@ -20,34 +20,101 @@ namespace MilitiaOrganizationSystem
         public static SqlBiz sqlBiz = new SqlBiz(dbName);//静态的数据库
 
         private XMLGroupTaskForm xmlGroupTaskForm;//分组界面
+        private Condition condition = new Condition();//筛选条件
 
         private MilitiaListViewBiz listViewBiz;//民兵信息列表的业务逻辑层，用于对listView的增删改，存入数据库
 
         public BasicLevelForm()
-        {
+        {//构造函数
             InitializeComponent();
             xmlGroupTaskForm = null;
             listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz);//需指定数据库
-            //从数据库中加载民兵信息到显示
-            listViewBiz.loadAllMilitiaInDB();
+            //从数据库中加载未分组民兵信息到显示
+            listViewBiz.loadNotGroupedMilitiasInDb();
 
             militia_ListView.MouseDoubleClick += Militia_ListView_MouseDoubleClick;
             militia_ListView.ItemDrag += Militia_ListView_ItemDrag;
+
+            militia_ListView.DragEnter += Militia_ListView_DragEnter;
+            militia_ListView.DragOver += Militia_ListView_DragOver;
+            militia_ListView.DragDrop += Militia_ListView_DragDrop;
             
 
         }
 
-        private void Militia_ListView_ItemDrag(object sender, ItemDragEventArgs e)
+        private void Militia_ListView_DragOver(object sender, DragEventArgs e)
         {
+            //MessageBox.Show((sender == militia_ListView) + "");
+            MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
+            if(mt.source == this)
+            {//如果是从自己移过来的
+                e.Effect = DragDropEffects.None;
+            } else
+            {
+                e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        private void Militia_ListView_DragDrop(object sender, DragEventArgs e)
+        {//自动的，好像当e.effect==None时不会调用这个函数
+            MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
+            List<Militia> mList = mt.moveMilitias;
+            foreach(Militia militia in mList)
+            {
+                ListViewItem lvi = militia_ListView.FindItemWithText(militia.InfoDic["CredentialNumber"]);
+                militia.Group = "未分组";
+                BasicLevelForm.sqlBiz.updateMilitia(militia);
+                if (lvi != null)
+                {
+                    lvi.Tag = militia;
+                    listViewBiz.updateItem(lvi);
+                } else
+                {
+                    listViewBiz.addOneMilitia(militia);
+                }
+
+                if(!condition.match(militia))
+                {//不满足筛选条件，则不能显示在这个界面
+                    lvi.Remove();
+                }
+            }
+        }
+
+        private void Militia_ListView_DragEnter(object sender, DragEventArgs e)
+        {
+            this.Focus();
+            e.Effect = DragDropEffects.Move;
+        }
+
+        private void Militia_ListView_ItemDrag(object sender, ItemDragEventArgs e)
+        {//移动选中的items
 
             if(e.Button == MouseButtons.Left)
             {
-                DoDragDrop(militia_ListView, DragDropEffects.Move);
+                List<Militia> mList = new List<Militia>();
+                foreach(ListViewItem lvi in militia_ListView.SelectedItems)
+                {
+                    Militia militia = (Militia)lvi.Tag;
+                    mList.Add(militia);
+                }
+                MoveTag mt = new MoveTag(this, mList);
+                if (DoDragDrop(mt, DragDropEffects.Move) == DragDropEffects.Move)
+                {//移动成功后
+                    foreach (ListViewItem lvi in militia_ListView.SelectedItems)
+                    {
+                        Militia militia = (Militia)lvi.Tag;
+                        //if militia 不符合筛选条件，则删掉这个item
+                        if(!condition.match(militia))
+                        {
+                            lvi.Remove();
+                        }
+                    }
+                }
             }
         }
 
         private void Militia_ListView_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
+        {//双击编辑
             ListViewItem lvi = militia_ListView.GetItemAt(e.X, e.Y);
             int subIndex = lvi.SubItems.IndexOf(lvi.GetSubItemAt(e.X, e.Y));
             if(lvi != null)
@@ -57,18 +124,19 @@ namespace MilitiaOrganizationSystem
         }
 
         private void BasicLevelForm_Load(object sender, EventArgs e)
-        {
+        {//加载时,同时打开分组界面
             /**if (File.Exists(xmlGroupFile))
             {//判断分组任务是否已经存在，如果存在，即加载分组任务
                 xmlGroupTaskForm = new XMLGroupTaskForm(xmlGroupFile);
                 xmlGroupTaskForm.Show();
             }*/
             xmlGroupTaskForm = new XMLGroupTaskForm(xmlGroupFile);
+            Program.formDic["GroupForm"] = xmlGroupTaskForm;//添加到运行的form字典中
             xmlGroupTaskForm.Show();
         }
 
         private void importXMLGroupTask_Click(object sender, EventArgs e)
-        {
+        {//导入分组任务（添加任务）
             /**if(xmlGroupTaskForm != null)
             {
                 DialogResult re = MessageBox.Show("分组任务已存在，是否删除之前的分组数据，重新导入编组任务？", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
@@ -146,6 +214,18 @@ namespace MilitiaOrganizationSystem
         private void importFromXml_Click(object sender, EventArgs e)
         {
             listViewBiz.loadAllMilitiaInDB();
+        }
+
+
+        public void updateMilitiaItem(Militia militia)
+        {//刷新一个民兵的显示，（可能在分组界面更改了分组），函数被分组界面调用
+            ListViewItem lvi = militia_ListView.FindItemWithText(militia.InfoDic["CredentialNumber"]);//根据身份证号寻找
+            if(lvi != null)
+            {
+                lvi.Tag = militia;
+                listViewBiz.updateItem(lvi);
+            }
+            
         }
     }
 }

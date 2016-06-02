@@ -91,7 +91,7 @@ namespace MilitiaOrganizationSystem
                 string strValue = "";
                 try
                 {
-                    strValue = (string)militia.InfoDic[xmlNode.Attributes["property"].Value];
+                    strValue = militia.InfoDic[xmlNode.Attributes["property"].Value];
 
                 }
                 catch (Exception e)

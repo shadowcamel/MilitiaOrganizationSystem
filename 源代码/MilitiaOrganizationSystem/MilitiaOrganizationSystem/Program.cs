@@ -8,6 +8,8 @@ namespace MilitiaOrganizationSystem
 {
     static class Program
     {
+        public static Dictionary<string, Form> formDic = new Dictionary<string, Form>();//运行的Form字典
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
@@ -15,11 +17,18 @@ namespace MilitiaOrganizationSystem
         static void Main()
         {
             initial();//初始化静态类
+
             
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new BasicLevelForm());
+
+
+            BasicLevelForm basicLevelForm = new BasicLevelForm();
+            formDic["MilitiaForm"] = basicLevelForm;
+
+
+            Application.Run(basicLevelForm);
         }
 
         static void initial()

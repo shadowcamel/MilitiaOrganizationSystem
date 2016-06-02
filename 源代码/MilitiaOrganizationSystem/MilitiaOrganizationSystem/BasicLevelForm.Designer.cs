@@ -170,6 +170,7 @@
             this.textBox1.ReadOnly = true;
             this.textBox1.Size = new System.Drawing.Size(767, 21);
             this.textBox1.TabIndex = 3;
+            this.textBox1.Text = "未分组";
             // 
             // label1
             // 

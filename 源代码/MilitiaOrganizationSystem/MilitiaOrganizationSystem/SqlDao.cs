@@ -11,7 +11,6 @@ namespace MilitiaOrganizationSystem
     class SqlDao
     {//数据库访问层
         private string dbName;
-        private IDocumentSession session;//数据库的session
         private EmbeddableDocumentStore store;
 
         private int time;//saveChanges的次数
@@ -32,11 +31,10 @@ namespace MilitiaOrganizationSystem
                 DataDirectory = dbName
             };
             store.Initialize();
-
-            session = store.OpenSession();//连接数据库
+            
         }
 
-        public void saveChanges()
+        /*public void saveChanges()
         {
             session.SaveChanges();
             time++;
@@ -44,29 +42,65 @@ namespace MilitiaOrganizationSystem
             {//重新开启store和session
                 session.Dispose();
                 store.Dispose();
-
-                newStoreSession();
             }
-        }
+        }*/
+        
 
         public void saveMilitia(Militia militia)
-        {//保存一个民兵信息
-
-            session.Store(militia);
-            saveChanges();
+        {
+            using(var session = store.OpenSession())
+            {
+                session.Store(militia);
+                session.SaveChanges();
+            }
+            
         }
 
         public List<Militia> queryAllMilitias()
         {//返回所有的民兵信息
+            using (var session = store.OpenSession())
+            {
+                var mlist = from x in session.Query<Militia>()
+                            where x.Id != ""
+                            select x;
+                return mlist.ToList();
+            }
             
-            return session.Query<Militia>().ToList();
+        }
+
+        private bool condition(Militia x)
+        {
+            return true;
+        }
+
+        public List<Militia> queryMilitiasByGroup(string groupPath)
+        {
+            using (var session = store.OpenSession())
+            {
+                var mlist = from x in session.Query<Militia>()
+                            where x.Group == groupPath
+                            select x;
+                return mlist.ToList();
+            }
+            /*var militias = from x in session.Query<Militia>()
+                           where x.@group.Equals(groupPath)
+                           select x;
+            List<Militia> mList = militias.ToList();
+            if(mList == null)
+            {
+                mList = new List<Militia>();
+            }
+            return mList;*/
         }
 
 
         public void deleteOneMilitia(Militia militia)
         {//从数据库中删除一个民兵
-            session.Delete(militia.Id);
-            saveChanges();
+            using (var session = store.OpenSession())
+            {
+                session.Delete(militia.Id);
+                session.SaveChanges();
+            }
         }
 
         

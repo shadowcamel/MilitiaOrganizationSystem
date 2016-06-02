@@ -9,13 +9,13 @@ namespace MilitiaOrganizationSystem
     public class Militia
     {//民兵类
         public Dictionary<string, string> InfoDic { get; }//信息字典
-        public string group { get; set; }//分组Id
+        public string Group { get; set; }//分组Id
         public string Id { get; set; }//数据库会自动给它赋值
 
         public Militia()
         {
             InfoDic = new Dictionary<string, string>();
-            group = "";
+            Group = "未分组";
         }
 
         public string info()
@@ -23,5 +23,9 @@ namespace MilitiaOrganizationSystem
             return "姓名：" + InfoDic["Name"] + ", 身份证：" + InfoDic["CredentialNumber"];
         }
 
+        public bool satisfy()
+        {
+            return true;
+        }
     }
 }

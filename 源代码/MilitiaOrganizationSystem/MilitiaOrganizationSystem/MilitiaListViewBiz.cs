@@ -196,9 +196,9 @@ namespace MilitiaOrganizationSystem
                 value = selectNode.Attributes["name"].Value;
             }
             lvi.Text = value;
-            if(lvi.SubItems.Count != parameters.Count - 1)
+            if(lvi.SubItems.Count != parameters.Count)
             {//此lvi是新建的,则将lvi的subItems添上
-                string[] items = new string[parameters.Count - 1];
+                string[] items = new string[parameters.Count];
                 for(int i = 0; i < items.Length; i++)
                 {
                     items[i] = "";
@@ -226,7 +226,7 @@ namespace MilitiaOrganizationSystem
                 lvi.SubItems[i].Text = value;
             }
 
-            lvi.SubItems.Add(militia.group);
+            lvi.SubItems[parameters.Count].Text = militia.Group;
 
             
         }
@@ -252,24 +252,34 @@ namespace MilitiaOrganizationSystem
         }
 
         public void loadAllMilitiaInDB()
-        {
-            //sqlBiz.addMilitia(MilitiaXmlConfig.generateMilitias(1)[0]);
+        {//加载数据库中所有民兵到ListView
             militia_ListView.Clear();
             loadMilitiaList(sqlBiz.getAllMilitias());
         }
 
-        public void addOne()
+        public void loadNotGroupedMilitiasInDb()
+        {//加载未分组民兵到ListView
+            militia_ListView.Clear();
+            loadMilitiaList(sqlBiz.getMilitiasByGroup("未分组"));
+        }
+
+        public void addOneMilitia(Militia militia)
         {
+            ListViewItem lvi = new ListViewItem();
+            lvi.Tag = militia;
+            updateItem(lvi);
+            militia_ListView.Items.Add(lvi);
+            militia_ListView.SelectedItems.Clear();
+            lvi.Selected = true;
+        }
+
+        public void addOne()
+        {//添加一个民兵
             Militia militia = new Militia();
             
             if(militiaEditDlg.showEditDlg(militia) == DialogResult.OK)
             {
-                ListViewItem lvi = new ListViewItem();
-                lvi.Tag = militia;
-                updateItem(lvi);
-                militia_ListView.Items.Add(lvi);
-                militia_ListView.SelectedItems.Clear();
-                lvi.Selected = true;
+                addOneMilitia(militia);
 
                 sqlBiz.addMilitia(militia);
             }
@@ -277,7 +287,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public void editOne(ListViewItem lvi, int focusIndex = 0)
-        {
+        {//编辑一个民兵,focusIndex是弹出编辑对话框需要focus到哪个编辑框
             Militia militia = (Militia)lvi.Tag;
 
             if(militiaEditDlg.showEditDlg(militia, focusIndex) == DialogResult.OK)
@@ -285,10 +295,13 @@ namespace MilitiaOrganizationSystem
                 updateItem(lvi);
                 sqlBiz.updateMilitia(militia);
             }
+
+            //通知GroupForm刷新民兵
+            ((XMLGroupTaskForm)Program.formDic["GroupForm"]).updateMilitiaNode(militia);
         }
 
         public void editSelectedItems()
-        {
+        {//编辑所有选中的item
             foreach(ListViewItem lvi in militia_ListView.SelectedItems)
             {
                 editOne(lvi);
@@ -296,12 +309,16 @@ namespace MilitiaOrganizationSystem
         }
 
         public void deleSelectedItems()
-        {
+        {//删除所有选中的item
             foreach(ListViewItem lvi in militia_ListView.SelectedItems)
             {
                 Militia militia = (Militia)lvi.Tag;
                 militia_ListView.Items.Remove(lvi);
                 sqlBiz.deleteMilitia(militia);
+
+
+                //通知GroupForm删除相应民兵节点
+                ((XMLGroupTaskForm)Program.formDic["GroupForm"]).removeMilitaNode(militia);
             }
         }
 

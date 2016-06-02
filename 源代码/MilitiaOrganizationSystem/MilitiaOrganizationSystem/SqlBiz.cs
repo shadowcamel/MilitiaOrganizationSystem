@@ -34,10 +34,11 @@ namespace MilitiaOrganizationSystem
         {//获取所有民兵信息
             return sqlDao.queryAllMilitias();
         }
+        
 
-        public void saveChanges()
+        public List<Militia> getMilitiasByGroup(string group)
         {
-            sqlDao.saveChanges();
+            return sqlDao.queryMilitiasByGroup(group);
         }
 
     }

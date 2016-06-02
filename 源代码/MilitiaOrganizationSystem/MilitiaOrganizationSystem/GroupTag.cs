@@ -12,13 +12,13 @@ namespace MilitiaOrganizationSystem
 
         public XmlNode tagXmlNode { get; set; }
         public string groupPath { get; set; }
-        public List<Militia> militias { get; }
+        public List<Militia> militias { get; set; }
 
         public GroupTag(XmlNode node)
         {
             this.tagXmlNode = node;
             groupPath = "";
-            militias = new List<Militia>();
+            militias = null;
         }
 
 

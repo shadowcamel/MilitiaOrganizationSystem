@@ -119,15 +119,37 @@ namespace MilitiaOrganizationSystem
                 return false;
             }
             GroupTag tag = (GroupTag)treeNode.Tag;
-            if(tag.militias.Count > 0)
-            {//已经有民兵了，说明可以分组
-                return true;
-            }
-            if(treeNode.Nodes.Count == 0)
-            {//没有民兵，但它是叶节点
+            if(tag.militias != null)
+            {//不为空，说明可以分组
                 return true;
             }
             return false;
+        }
+
+        public TreeNode getTreeNodeByText(TreeNodeCollection Nodes, string text)
+        {
+            foreach(TreeNode treeNode in Nodes)
+            {
+                if(treeNode.Text == text)
+                {
+                    return treeNode;
+                }
+            }
+            return null;
+        }
+
+        public TreeNode getTreeNodeByText(string text)
+        {
+            string[] groups = text.Split(new Char[] { '/' });
+            TreeNodeCollection Nodes = groups_treeView.Nodes;
+            TreeNode treeNode = null;
+            foreach (string groupName in groups)
+            {
+                treeNode = getTreeNodeByText(Nodes, groupName);
+                Nodes = treeNode.Nodes;
+            }
+
+            return treeNode;
         }
     }
 }

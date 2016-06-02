@@ -113,7 +113,24 @@ namespace MilitiaOrganizationSystem
 
                 tag.groupPath = getNodePath(node);//path
 
-                //写获取民兵信息
+                if(!node.HasChildNodes)
+                {//是叶节点,则获取此组下的民兵，并将民兵添加到treeView中
+                    try
+                    {
+                        tag.militias = BasicLevelForm.sqlBiz.getMilitiasByGroup(tag.groupPath);
+
+                        treeNode.ToolTipText += "组内已有民兵" + tag.militias.Count + "个";
+
+                        foreach(Militia militia in tag.militias)
+                        {
+                            treeNode.Nodes.Add(militia.info());
+                        }
+                    } catch(Exception e)
+                    {
+                        
+                    }
+                    
+                }
 
                 treeNode.Tag = tag;//记录节点
 

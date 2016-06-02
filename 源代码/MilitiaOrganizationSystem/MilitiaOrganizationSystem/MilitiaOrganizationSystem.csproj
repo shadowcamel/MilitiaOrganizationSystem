@@ -82,6 +82,7 @@
     <Compile Include="BasicLevelForm.Designer.cs">
       <DependentUpon>BasicLevelForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Condition.cs" />
     <Compile Include="GroupTag.cs" />
     <Compile Include="MilitiaListViewBiz.cs" />
     <Compile Include="Militia.cs" />
@@ -92,6 +93,7 @@
       <DependentUpon>MilitiaEditDialog.cs</DependentUpon>
     </Compile>
     <Compile Include="MilitiaXmlConfig.cs" />
+    <Compile Include="MoveTag.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SqlBiz.cs" />
