@@ -122,7 +122,7 @@ namespace MilitiaOrganizationSystem
             }
 
             //cList[focusIndex].;//设置光标首先出现的位置,默认是0
-            if(focusIndex < cList.Count)
+            if(focusIndex >= 0 && focusIndex < cList.Count)
             {
                 cList[focusIndex].Select();
             }

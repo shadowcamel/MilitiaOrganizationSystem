@@ -129,8 +129,7 @@ namespace MilitiaOrganizationSystem
                     }
                 }
                 
-                string[] a = { "1", "2", "3" };//分组id
-                militia.Group = a[rand.Next(a.Length)];
+                militia.Group = "未分组";
 
                 mList.Add(militia);
             }

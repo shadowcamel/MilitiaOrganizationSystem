@@ -59,9 +59,10 @@ namespace MilitiaOrganizationSystem
         {//自动的，好像当e.effect==None时不会调用这个函数
             MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
             List<Militia> mList = mt.moveMilitias;
+            militia_ListView.BeginUpdate();//开始更新界面
             foreach(Militia militia in mList)
             {
-                ListViewItem lvi = militia_ListView.FindItemWithText(militia.InfoDic["CredentialNumber"]);
+                ListViewItem lvi = findItemWithMilitia(militia);
                 militia.Group = "未分组";
                 BasicLevelForm.sqlBiz.updateMilitia(militia);
                 if (lvi != null)
@@ -78,6 +79,7 @@ namespace MilitiaOrganizationSystem
                     lvi.Remove();
                 }
             }
+            militia_ListView.EndUpdate();//结束更新界面
         }
 
         private void Militia_ListView_DragEnter(object sender, DragEventArgs e)
@@ -213,17 +215,38 @@ namespace MilitiaOrganizationSystem
 
         private void importFromXml_Click(object sender, EventArgs e)
         {
-            listViewBiz.loadAllMilitiaInDB();
+            militia_ListView.Clear();
+            listViewBiz.loadMilitiaList(MilitiaXmlConfig.generateMilitias(10000));
+        }
+
+        private ListViewItem findItemWithMilitia(Militia militia)
+        {
+            if(militia_ListView.Items.Count == 0)
+            {//必须判断，否则ListView为空时会报错
+                return null;
+            }
+            ListViewItem lvi = null;
+            int startIndex = 0;
+            do
+            {
+                lvi = militia_ListView.FindItemWithText(militia.InfoDic["CredentialNumber"], true, startIndex);//根据身份证号寻找
+                startIndex = militia_ListView.Items.IndexOf(lvi) + 1;
+
+            } while (lvi != null && ((Militia)lvi.Tag).Id != militia.Id);
+
+            return lvi;
         }
 
 
         public void updateMilitiaItem(Militia militia)
         {//刷新一个民兵的显示，（可能在分组界面更改了分组），函数被分组界面调用
-            ListViewItem lvi = militia_ListView.FindItemWithText(militia.InfoDic["CredentialNumber"]);//根据身份证号寻找
-            if(lvi != null)
+            ListViewItem lvi = findItemWithMilitia(militia);
+            
+            if (lvi != null)
             {
                 lvi.Tag = militia;
                 listViewBiz.updateItem(lvi);
+                
             }
             
         }

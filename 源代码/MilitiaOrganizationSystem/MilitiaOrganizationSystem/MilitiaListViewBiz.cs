@@ -189,11 +189,14 @@ namespace MilitiaOrganizationSystem
             {
                 
             }
-            
-            XmlNode selectNode = firstNode.SelectSingleNode("selection[@value='" + value + "']");
-            if (selectNode != null)
+            XmlNode selectNode = null;
+            if (parameters[0].Attributes["type"].Value == "enum")
             {
-                value = selectNode.Attributes["name"].Value;
+                selectNode = firstNode.SelectSingleNode("selection[@value='" + value + "']");
+                if (selectNode != null)
+                {
+                    value = selectNode.Attributes["name"].Value;
+                }
             }
             lvi.Text = value;
             if(lvi.SubItems.Count != parameters.Count)
@@ -217,10 +220,14 @@ namespace MilitiaOrganizationSystem
                 {
 
                 }
-                selectNode = node.SelectSingleNode("selection[@value='" + value + "']");
-                if (selectNode != null)
+
+                if(parameters[i].Attributes["type"].Value == "enum")
                 {
-                    value = selectNode.Attributes["name"].Value;
+                    selectNode = node.SelectSingleNode("selection[@value='" + value + "']");
+                    if (selectNode != null)
+                    {
+                        value = selectNode.Attributes["name"].Value;
+                    }
                 }
 
                 lvi.SubItems[i].Text = value;

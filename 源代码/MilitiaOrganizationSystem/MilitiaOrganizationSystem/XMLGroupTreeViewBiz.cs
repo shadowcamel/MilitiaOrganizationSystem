@@ -146,6 +146,10 @@ namespace MilitiaOrganizationSystem
             foreach (string groupName in groups)
             {
                 treeNode = getTreeNodeByText(Nodes, groupName);
+                if(treeNode == null)
+                {
+                    return null;
+                }
                 Nodes = treeNode.Nodes;
             }
 

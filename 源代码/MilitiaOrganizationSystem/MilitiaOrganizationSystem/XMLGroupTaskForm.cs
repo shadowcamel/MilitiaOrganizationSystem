@@ -102,24 +102,29 @@ namespace MilitiaOrganizationSystem
                         } else if(re == DialogResult.OK)
                         {//ok时，还要将militia从原来的组中删除，也在这个界面
                             TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
-                            GroupTag groupTag = (GroupTag)groupNode.Tag;
-                            //int index = groupTag.militias.IndexOf(militia);
-                            //MessageBox.Show(groupTag.militias.Count +"");
-                            int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
-                                if (m.Id == militia.Id)
-                                {
-                                    return true;
-                                }
-                                return false;        
-                            });
-                            if(index >= 0)
+                            if(groupNode != null)
                             {
-                                groupTag.militias.RemoveAt(index);
-                                groupNode.Nodes.RemoveAt(index);
-                            }
+                                GroupTag groupTag = (GroupTag)groupNode.Tag;
+                                //int index = groupTag.militias.IndexOf(militia);
+                                //MessageBox.Show(groupTag.militias.Count +"");
+                                int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
+                                    if (m.Id == militia.Id)
+                                    {
+                                        return true;
+                                    }
+                                    return false;
+                                });
+                                if (index >= 0)
+                                {
+                                    groupTag.militias.RemoveAt(index);
+                                    groupNode.Nodes.RemoveAt(index);
+                                }
 
-                            //通知MilitiaForm更改分组
-                            ((BasicLevelForm)Program.formDic["MilitiaForm"]).updateMilitiaItem(militia);
+                                //通知MilitiaForm更改分组
+                                militia.Group = tag.groupPath;
+                                ((BasicLevelForm)Program.formDic["MilitiaForm"]).updateMilitiaItem(militia);
+                            }
+                            
                             
                         }
                     }
@@ -220,11 +225,11 @@ namespace MilitiaOrganizationSystem
 
         public void updateMilitiaNode(Militia militia)
         {//改变一个民兵的信息（可能在编辑界面被更改了信息）,函数被编辑页面调用
-            if(militia.Group == "未分组")
+            TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
+            if(groupNode == null)
             {
                 return;
             }
-            TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
             GroupTag groupTag = (GroupTag)groupNode.Tag;
             int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
                 if (m.Id == militia.Id)
@@ -242,11 +247,11 @@ namespace MilitiaOrganizationSystem
 
         public void removeMilitaNode(Militia militia)
         {//删除一个民兵的信息（可能在编辑界面删除了某个分了组的民兵）
-            if (militia.Group == "未分组")
+            TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
+            if(groupNode == null)
             {
                 return;
             }
-            TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
             GroupTag groupTag = (GroupTag)groupNode.Tag;
             int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
                 if (m.Id == militia.Id)
