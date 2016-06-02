@@ -220,6 +220,10 @@ namespace MilitiaOrganizationSystem
 
         public void updateMilitiaNode(Militia militia)
         {//改变一个民兵的信息（可能在编辑界面被更改了信息）,函数被编辑页面调用
+            if(militia.Group == "未分组")
+            {
+                return;
+            }
             TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
             GroupTag groupTag = (GroupTag)groupNode.Tag;
             int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
@@ -238,6 +242,10 @@ namespace MilitiaOrganizationSystem
 
         public void removeMilitaNode(Militia militia)
         {//删除一个民兵的信息（可能在编辑界面删除了某个分了组的民兵）
+            if (militia.Group == "未分组")
+            {
+                return;
+            }
             TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
             GroupTag groupTag = (GroupTag)groupNode.Tag;
             int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
