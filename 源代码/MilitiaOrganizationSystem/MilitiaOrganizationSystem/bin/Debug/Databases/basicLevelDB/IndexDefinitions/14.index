@@ -1,0 +1,29 @@
+{
+  "IndexId": 14,
+  "Name": "Auto/Militias/ByGroupAndInfoDic_Name",
+  "LockMode": "Unlock",
+  "Map": "from doc in docs.Militias\nselect new {\n\tInfoDic_Name = doc.InfoDic.Name,\n\tGroup = doc.Group\n}",
+  "Maps": [
+    "from doc in docs.Militias\nselect new {\n\tInfoDic_Name = doc.InfoDic.Name,\n\tGroup = doc.Group\n}"
+  ],
+  "Reduce": null,
+  "IsMapReduce": false,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {
+    "InfoDic_Name": "InfoDic.Name",
+    "Group": "Group"
+  },
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "Auto",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}

@@ -1,0 +1,26 @@
+{
+  "IndexId": 6,
+  "Name": "Militias/GroupingByGroup",
+  "LockMode": "Unlock",
+  "Map": "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group,\n\tCount = 1\n}",
+  "Maps": [
+    "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group,\n\tCount = 1\n}"
+  ],
+  "Reduce": "from result in results\ngroup result by result.Group into g\nselect new {\n\tGroup = g.Key,\n\tCount = Enumerable.Sum(g, x => ((int)x.Count))\n}",
+  "IsMapReduce": true,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {},
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "MapReduce",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}

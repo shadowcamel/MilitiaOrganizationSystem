@@ -1,0 +1,31 @@
+{
+  "IndexId": 12,
+  "Name": "Auto/Militias/ByGroup",
+  "LockMode": "Unlock",
+  "Map": "from doc in docs.Militias\nselect new {\n\tGroup = doc.Group\n}",
+  "Maps": [
+    "from doc in docs.Militias\nselect new {\n\tGroup = doc.Group\n}"
+  ],
+  "Reduce": null,
+  "IsMapReduce": false,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [
+    "Group",
+    "__document_id"
+  ],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {
+    "Group": "Group"
+  },
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "Auto",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}
