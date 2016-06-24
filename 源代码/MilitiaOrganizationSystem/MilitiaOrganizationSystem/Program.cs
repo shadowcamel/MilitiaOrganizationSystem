@@ -32,6 +32,7 @@ namespace MilitiaOrganizationSystem
         static void initial()
         {//静态初始化
             MilitiaXmlConfig.initial();
+            PlaceXmlConfig.initial();
         }
     }
 }

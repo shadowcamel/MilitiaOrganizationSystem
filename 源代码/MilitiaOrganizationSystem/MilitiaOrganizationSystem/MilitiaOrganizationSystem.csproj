@@ -76,6 +76,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Config\PlaceXmlConfig.cs" />
     <Compile Include="Form\BasicLevelForm.cs">
       <SubType>Form</SubType>
     </Compile>

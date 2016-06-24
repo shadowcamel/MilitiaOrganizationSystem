@@ -1,19 +1,17 @@
 {
   "IndexId": 3,
-  "Name": "Count/All",
+  "Name": "Militias/Groups",
   "LockMode": "Unlock",
-  "Map": "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group,\n\tCount = 1\n}",
+  "Map": "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group\n}",
   "Maps": [
-    "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group,\n\tCount = 1\n}"
+    "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group\n}"
   ],
-  "Reduce": "from result in results\ngroup result by result.Group into g\nwhere Enumerable.Sum(g, x => ((int)x.Count)) > 1\nselect new {\n\tGroup = g.Key,\n\tCount = Enumerable.Sum(g, x => ((int)x.Count))\n}",
-  "IsMapReduce": true,
+  "Reduce": null,
+  "IsMapReduce": false,
   "IsCompiled": false,
   "Stores": {},
   "Indexes": {},
-  "SortOptions": {
-    "Count": "Int"
-  },
+  "SortOptions": {},
   "Analyzers": {},
   "Fields": [],
   "Suggestions": {},
@@ -21,7 +19,7 @@
   "SpatialIndexes": {},
   "InternalFieldsMapping": {},
   "MaxIndexOutputsPerDocument": null,
-  "Type": "MapReduce",
+  "Type": "Map",
   "DisableInMemoryIndexing": false,
   "IsTestIndex": false,
   "IsSideBySideIndex": false

@@ -43,6 +43,7 @@ namespace MilitiaOrganizationSystem
         private void Groups_treeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
             TreeNode tn = e.Node;
+            tn.Toggle();
             GroupMilitiaForm gm = new GroupMilitiaForm(BasicLevelForm.sqlBiz, tn.Name);
             gm.Show();
         }

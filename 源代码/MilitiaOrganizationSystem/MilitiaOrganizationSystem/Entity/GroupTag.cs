@@ -19,7 +19,7 @@ namespace MilitiaOrganizationSystem
         {
             this.tagXmlNode = node;
             Count = 0;
-            //degroupPath = "";
+            //groupPath = "";
             //militias = null;
         }
 

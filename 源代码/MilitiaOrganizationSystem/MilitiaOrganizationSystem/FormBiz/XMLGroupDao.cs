@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Raven.Abstractions.Data;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -85,7 +86,8 @@ namespace MilitiaOrganizationSystem
 
         public void loadToTreeView()
         {
-            addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes);
+            Dictionary<string, FacetValue> fdict = sqlBiz.getGroupNums();
+            addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes, fdict);
         }
 
         public void loadXMLFileToTreeView(string xmlFile, TreeView groups_TreeView)
@@ -97,7 +99,8 @@ namespace MilitiaOrganizationSystem
                 maxId = long.Parse(rootNode.Attributes["maxId"].Value);
                 //MessageBox.Show(maxId.ToString());
             }*/
-            addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes);
+            Dictionary<string, FacetValue> fDict = sqlBiz.getGroupNums();
+            addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes, fDict);
             saveXml();
         }
 
@@ -114,7 +117,7 @@ namespace MilitiaOrganizationSystem
             
         }
 
-        private void addXmlNodeToTreeNode(XmlNode root, TreeNodeCollection rootNodes)
+        private void addXmlNodeToTreeNode(XmlNode root, TreeNodeCollection rootNodes, Dictionary<string, FacetValue> fDic)
         {//将root下的所有节点加载到treeView中
             foreach (XmlNode node in root.ChildNodes)
             {
@@ -131,6 +134,8 @@ namespace MilitiaOrganizationSystem
 
                 GroupTag tag = new GroupTag(node);
 
+                treeNode.Text = tag.info();
+
                 
 
                 //tag.groupPath = getNodePath(node);//path
@@ -138,9 +143,12 @@ namespace MilitiaOrganizationSystem
                 if (!node.HasChildNodes)
                 {//是叶节点,则获取此组下的民兵，并将民兵添加到treeView中
                     //应该是获取数量，并显示到节点上
-                    tag.Count = sqlBiz.getCountByGroup(treeNode.Name);
-
-                    addCountUpToAllParent(treeNode, tag.Count);
+                    FacetValue fv;
+                    if(fDic.TryGetValue(treeNode.Name, out fv))
+                    {
+                        tag.Count += fv.Hits;//本身加
+                        addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
+                    }    
                     
                     treeNode.Text = tag.info();
                     /*try
@@ -165,7 +173,7 @@ namespace MilitiaOrganizationSystem
                 treeNode.Tag = tag;//记录节点
 
 
-                addXmlNodeToTreeNode(node, treeNode.Nodes);
+                addXmlNodeToTreeNode(node, treeNode.Nodes, fDic);
             }
         }
 
@@ -230,7 +238,7 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        private void mergeNode(XmlNode xmlNode, XmlNode xdNode)
+        private void mergeNode(XmlNode xmlNode, XmlNode xdNode, Dictionary<string, FacetValue> fDic)
         {//将xdNode的子节点合并到xmlNode的子节点中
             foreach(XmlNode xdChildNode in xdNode.ChildNodes)
             {
@@ -239,34 +247,85 @@ namespace MilitiaOrganizationSystem
                 {
                     //MessageBox.Show(xdChildNode.Attributes["name"].Value + " " + xmlChildNode.Attributes["name"].Value);
                     if(xdChildNode.Attributes["name"].Value == xmlChildNode.Attributes["name"].Value)
-                    {
-                        mergeNode(xmlChildNode, xdChildNode);
+                    {//这个节点有相同的
+                        //那判断它是不是叶节点，如果是叶节点，还要加一下数量
+                        if(!xdChildNode.HasChildNodes)
+                        {//是叶节点，增加数量
+                            TreeNode treeNode = groups_TreeView.Nodes.Find(getNodePath(xmlChildNode), true)[0];
+                            GroupTag tag = (GroupTag)treeNode.Tag;
+                            FacetValue fv;
+                            if (fDic.TryGetValue(treeNode.Name, out fv))
+                            {
+                                tag.Count += fv.Hits;//本身加
+                                addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
+                            }
+                        } else
+                        {//有子节点
+                            mergeNode(xmlChildNode, xdChildNode, fDic);
+                        }
                         isFinded = true;
                     }
                 }
 
                 if(!isFinded)
                 {//如果没有找到与xdChildNode相同的子节点，则将xdChildNode添加到xdNode的子节点中
-                    xmlNode.AppendChild(xmlDoc.ImportNode(xdChildNode, true));
+                    XmlNode newNode = xmlNode.AppendChild(xmlDoc.ImportNode(xdChildNode, true));
+
+                    TreeNode tn = groups_TreeView.Nodes.Find(getNodePath(xmlNode), true)[0];
+
+                    TreeNode treeNode = tn.Nodes.Add(newNode.Attributes["name"].Value);
+
+                    treeNode.ToolTipText = getToolTipText(newNode);
+
+                    treeNode.Name = getNodePath(newNode);//查找TreeNode的Key
+
+                    GroupTag tag = new GroupTag(newNode);
+
+                    treeNode.Tag = tag;
+
+                    if(newNode.HasChildNodes)
+                    {
+                        addXmlNodeToTreeNode(newNode, treeNode.Nodes, fDic);
+                    } else
+                    {
+                        FacetValue fv;
+                        if (fDic.TryGetValue(treeNode.Name, out fv))
+                        {
+                            tag.Count += fv.Hits;//本身加
+                            addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
+                        }
+
+                        treeNode.Text = tag.info();
+                    }
+                    
                 }
             }
 
         }
 
-        public void addXml(string xmlFile)
+        public void addXml(string xmlFile, string database = null)
         {//将xmlFile合并到xmlDoc中并保存
             XmlDocument xd = new XmlDocument();
             xd.Load(xmlFile);//加载
 
+            Dictionary<string, FacetValue> fdict = null;
+            if(database == null)
+            {
+                fdict = new Dictionary<string, FacetValue>();
+            } else
+            {
+                fdict = sqlBiz.getGroupNums(database);
+            }
+
             XmlNode xdRoot = xd.DocumentElement;//根节点
-            
-            mergeNode(rootNode, xdRoot);
+
+            mergeNode(rootNode, xdRoot, fdict);
 
             saveXml();
         }
 
         public void exportXml(string fileName)
-        {//将xml文件导出，并在根节点上加属性place = ""
+        {//将xml文件导出
             xmlDoc.Save(fileName);
         }
         

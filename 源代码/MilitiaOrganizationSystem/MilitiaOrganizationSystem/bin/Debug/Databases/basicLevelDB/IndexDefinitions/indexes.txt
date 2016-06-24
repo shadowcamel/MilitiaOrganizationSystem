@@ -1,6 +1,3 @@
-5 - MilitiaIndex
-6 - Militias/GroupingByGroup
-3 - Count/All
-14 - Auto/Militias/ByGroupAndInfoDic_Name
-12 - Auto/Militias/ByGroup
-4 - Raven/DocumentsByEntityName
+4 - Militias/CredentialNumbers
+3 - Militias/Groups
+1 - Raven/DocumentsByEntityName

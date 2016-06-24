@@ -10,6 +10,9 @@ using System.Windows;
 using Raven.Database.Smuggler;
 using Raven.Abstractions.Smuggler;
 using Raven.Abstractions.Data;
+using System.Linq.Expressions;
+using Raven.Client.Document;
+using Raven.Client.Indexes;
 
 namespace MilitiaOrganizationSystem
 {
@@ -18,25 +21,33 @@ namespace MilitiaOrganizationSystem
         private string dbName;
         private EmbeddableDocumentStore store;
 
+        private const int timeoutseconds = 5;
+
         //private int time;//saveChanges的次数
 
         public SqlDao(string db)
         {
             this.dbName = db;
 
-            newStoreSession();
+            newStore();
         }
 
-        private void newStoreSession()
-        {
+        private void newStore()
+        {//新建store并初始化
             //time = 0;//初始化次数为0
 
             store = new EmbeddableDocumentStore()
             {
-                DefaultDatabase = dbName//如果在这里设置了dbName，那么好像没有权限复制出去。。
+                DefaultDatabase = dbName
             };
+
+            //store.Conventions.DefaultQueryingConsistency = ConsistencyOptions.AlwaysWaitForNonStaleResultsAsOfLastWrite;
+
             store.Initialize();
-            
+
+            new Militias_CredentialNumbers().Execute(store);
+            new Militias_Groups().Execute(store);   
+
         }
 
         /*public void saveChanges()
@@ -52,13 +63,21 @@ namespace MilitiaOrganizationSystem
         
 
         public void saveMilitia(Militia militia)
-        {
-            using(var session = store.OpenSession())
+        {//保存一个民兵，若Id相同，会覆盖数据库里的(省市须指定数据库)
+            if(militia.Place == null)
+            {
+                militia.Place = dbName;
+            }
+
+            string database = militia.Place;//指定数据库
+            
+            militia.CredentialNumber = militia.InfoDic["CredentialNumber"];
+
+            using (var session = store.OpenSession(database))
             {
                 session.Store(militia);
                 session.SaveChanges();
             }
-            
         }
 
         public void bulkInsertMilitias(List<Militia> mList)
@@ -72,7 +91,7 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        public List<Militia> queryAllMilitias()
+        /*public List<Militia> queryAllMilitias()
         {//返回所有的民兵信息
             using (var session = store.OpenSession())
             {
@@ -82,7 +101,7 @@ namespace MilitiaOrganizationSystem
                 return mlist.ToList();
             }
             
-        }
+        }*/
         
 
         public List<Militia> queryMilitiasByGroup(string groupPath)
@@ -94,6 +113,8 @@ namespace MilitiaOrganizationSystem
                             select x;
                 return mlist.ToList();
             }
+
+
             /*var militias = from x in session.Query<Militia>()
                            where x.@group.Equals(groupPath)
                            select x;
@@ -107,8 +128,10 @@ namespace MilitiaOrganizationSystem
 
 
         public void deleteOneMilitia(Militia militia)
-        {//从数据库中删除一个民兵
-            using (var session = store.OpenSession())
+        {//从数据库中删除一个民兵，（省市级别须指定数据库）
+            string database = militia.Place;//指定数据库
+
+            using (var session = store.OpenSession(database))
             {
                 session.Delete(militia.Id);
                 session.SaveChanges();
@@ -133,11 +156,10 @@ namespace MilitiaOrganizationSystem
                 BackupLocation = dirInfo.FullName,
                 DatabaseName = dirInfo.Name
             });
-        }
+        }//这个有希望代替直接复制，据说直接复制对数据库会造成损害，但是restore的时候我只能restore一个，连续restore两个就会造成冲突
 
-        public async void exportOneDB(string dbName, string exportFolder)
+        /**public async void exportDocumentDataBase(string exportFolder)
         {
-            MessageBox.Show(store.DocumentDatabase.Name);
             var dataDumper = new DatabaseDataDumper(
                 store.DocumentDatabase,
                 new SmugglerDatabaseOptions
@@ -150,34 +172,285 @@ namespace MilitiaOrganizationSystem
 
             SmugglerExportOptions<RavenConnectionStringOptions> exportOptions = new SmugglerExportOptions<RavenConnectionStringOptions>
             {
-                From = new EmbeddedRavenConnectionStringOptions
-                {
-                    DataDirectory = "DataBases",
-                    DefaultDatabase = dbName
-                },
+                From = new EmbeddedRavenConnectionStringOptions(),
                 ToFile = exportFolder + "\\" + dbName + ".dump"
             };
 
             await dataDumper.ExportData(exportOptions);
-        }
+
+        }*///导出只能导出DocumentDataBase或SystemDataBase的数据，我不知道其他数据库该如何导出
+
+        /**public async void importToDocumentDataBase(string dumpFile)
+        {
+            var dataDumper = new DatabaseDataDumper(
+                store.DocumentDatabase,
+                new SmugglerDatabaseOptions
+                {
+                    OperateOnTypes = ItemType.Documents | ItemType.Indexes | ItemType.Attachments | ItemType.Transformers,
+                    Incremental = false,
+
+                }
+            );
+            SmugglerImportOptions<RavenConnectionStringOptions> importOptions = new SmugglerImportOptions<RavenConnectionStringOptions>
+            {
+                FromFile = dumpFile,
+                To = new EmbeddedRavenConnectionStringOptions()
+            };
+
+            await dataDumper.ImportData(importOptions);
+
+            MessageBox.Show("complete?");
+        }*///import的话如果id相同，会覆盖掉原数据库中的数据
 
         public void copyDbTo(string folder)
-        {
+        {//直接将除System之外的数据库复制出去
             store.Dispose();//先释放strore，才能copy
 
             DirectoryInfo dirInfo = new DirectoryInfo(SqlBiz.DataDir);
             DirectoryInfo[] dis = dirInfo.GetDirectories();
             foreach (DirectoryInfo di in dis)
             {
-                if (di.Name != "System2")
-                {
+                if (di.Name != "System")
+                {//除了System数据库，其他的都导出
                     FileTool.CopyFolder(di.FullName, folder);
                     //sqlDao.backupOneDB(di.Name, folder);
                 }
             }
 
-            newStoreSession();
+            newStore();
         }
         
+        
+        public List<Militia> queryByContition(Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string database = null)
+        {//通过lambda表达式查询数据库database里的东西
+            if(database == null)
+            {
+                database = dbName;
+            }
+            using(var session = store.OpenSession(database))
+            {
+                RavenQueryStatistics stats;
+                var mList =  session.Query<Militia>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Statistics(out stats).Where(lambdaContition).Skip(skip).Take(take).ToList();
+                sum = stats.TotalResults;
+
+                return mList;
+            }
+        }
+
+        /*public Dictionary<string, Militias_Groups.Result> getGroups(int skip, int take, out int sum, string database = null)
+        {//通过静态索引查询组内民兵个数
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            using(var session = store.OpenSession(database))
+            {
+                RavenQueryStatistics stats;
+                var gDictionary = session.Query<Militias_Groups.Result, Militias_Groups>().Statistics(out stats).Skip(skip).Take(take).ToDictionary(x => x.Group);
+                sum = stats.TotalResults;
+
+                return gDictionary;
+            }
+        }*/
+
+        public List<FacetValue> getGroupNums(int skip, int take, out int sum, string database = null)
+        {//通过静态索引查询组内民兵个数
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            using(var session = store.OpenSession(database))
+            {
+                RavenQueryStatistics stats;
+                var gfacetResults = session.Query<Militias_Groups.Result, Militias_Groups>()
+                    .Statistics(out stats)
+                    //.ProjectFromIndexFieldsInto<Militias_Groups.Result>()
+                    .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
+                sum = stats.TotalResults;
+
+                List<FacetValue> fList = gfacetResults.Results["Group"].Values;
+                //MessageBox.Show(fDic["未分组"].Hits + "");
+
+                return fList;
+            }
+
+        }
+
+        public List<FacetValue> getAggregateNums(Expression<Func<Militia, bool>> lambdaContition, string database = null)
+        {//统计
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            using (var session = store.OpenSession(database))
+            {
+                var gfacetResults = session.Query<Militia>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Where(lambdaContition)
+                    .AggregateBy(x => x.InfoDic["Education"]).ToList();
+
+                foreach(string key in gfacetResults.Results.Keys)
+                {
+                    MessageBox.Show(key);
+                }
+
+                return null;
+            }
+        }
+
+        public List<Militia> getMilitiasOfGroup(string Group, int skip, int take, out int sum, string database = null)
+        {//通过指定的Group(可以是非叶结点)，查询lambda表达式限定下的民兵列表
+            if (database == null)
+            {
+                database = dbName;
+            }
+            
+            using (var session = store.OpenSession(database))
+            {
+                RavenQueryStatistics stats;
+                var militias = session.Query<Militias_Groups.Result, Militias_Groups>().Statistics(out stats)
+                    .Where(x => x.Group.StartsWith(Group)).OfType<Militia>() //转换为militias
+                    .Skip(skip).Take(take).ToList();
+                sum = stats.TotalResults;
+
+                return militias;
+            }
+        }
+
+        public List<Militias_CredentialNumbers.Result> getCredentialNumbers(int skip, int take, out int sum, string database = null)
+        {//获取身份证号（从小到大排序了的）
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            using (var session = store.OpenSession(database))
+            {
+                RavenQueryStatistics stats;
+                var credentialNumbers = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
+                    .Statistics(out stats)
+                    .Skip(skip).Take(take)
+                    .ProjectFromIndexFieldsInto<Militias_CredentialNumbers.Result>()
+                    .OrderBy(x => x.CredentialNumber)
+                    .ToList();
+
+                sum = stats.TotalResults;
+
+                foreach(Militias_CredentialNumbers.Result r in credentialNumbers)
+                {//给r.DbName赋值，表示从这个数据库查出来的
+                    r.DbName = database;
+                }
+
+                return credentialNumbers;
+            }
+        }
+
+        public List<Militias_CredentialNumbers.Result> getAllCredentialNumbers(string database = null)
+        {//获取一个数据库的所有身份证号（从小到大排序了的）
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
+
+            //new Militias_CredentialNumbers().Execute(store.DatabaseCommands.ForDatabase(database), store.Conventions);
+
+            using (var session = store.OpenSession(database))
+            {
+                int sum = 1;
+                List<Militias_CredentialNumbers.Result> rList = new List<Militias_CredentialNumbers.Result>();
+
+                while(rList.Count < sum)
+                {
+                    RavenQueryStatistics stats;
+                    var credentialNumbers = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
+                        .Statistics(out stats)
+                        .Skip(rList.Count).Take(1000)
+                        .ProjectFromIndexFieldsInto<Militias_CredentialNumbers.Result>()
+                        .OrderBy(x => x.CredentialNumber)
+                        .ToList();
+
+                    sum = stats.TotalResults;
+
+                    foreach (Militias_CredentialNumbers.Result r in credentialNumbers)
+                    {//给r.DbName赋值，表示从这个数据库查出来的
+                        r.DbName = database;
+                    }
+
+                    rList.AddRange(credentialNumbers);
+                }
+                
+
+                return rList;
+            }
+
+        }
+
+        public List<Militia> getMilitiasByCredentialNumber(string CredentialNumber, string database = null)
+        {//根据身份证号获取民兵
+            if (database == null)
+            {
+                database = dbName;
+            }
+
+            using (var session = store.OpenSession(database))
+            {
+                var mList = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
+                    .Where(x => x.CredentialNumber == CredentialNumber)
+                    .Skip(0).Take(1000)
+                    .OfType<Militia>()
+                    .ToList();
+                
+
+                return mList;
+            }
+        }
+
+    }
+
+    public class Militias_CredentialNumbers : AbstractIndexCreationTask<Militia, Militias_CredentialNumbers.Result>
+    {
+        public class Result
+        {
+            public string CredentialNumber { get; set; } //身份证号
+            
+            public string DbName { get; set; } //数据库名，之后冲突检测的时候使用
+        }
+
+        public Militias_CredentialNumbers()
+        {
+            Map = militias => from militia in militias
+                              select new
+                              {
+                                  CredentialNumber = militia.CredentialNumber
+                              };
+
+            Sort(r => r.CredentialNumber, Raven.Abstractions.Indexing.SortOptions.String);
+        }
+    }
+
+    public class Militias_Groups : AbstractIndexCreationTask<Militia>
+    {
+        public class Result
+        {
+            public string Group { get; set; } //组名
+        }
+
+        public Militias_Groups()
+        {
+            Map = militias => from militia in militias
+                              select new
+                              {
+                                  Group = militia.Group
+                              };
+
+            
+        }
     }
 }

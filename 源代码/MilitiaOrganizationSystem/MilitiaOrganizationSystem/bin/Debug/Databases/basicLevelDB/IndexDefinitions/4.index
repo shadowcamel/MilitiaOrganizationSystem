@@ -1,23 +1,18 @@
 {
   "IndexId": 4,
-  "Name": "Raven/DocumentsByEntityName",
-  "LockMode": "LockedIgnore",
-  "Map": "from doc in docs \r\nselect new \r\n{ \r\n    Tag = doc[\"@metadata\"][\"Raven-Entity-Name\"], \r\n    LastModified = (DateTime)doc[\"@metadata\"][\"Last-Modified\"],\r\n    LastModifiedTicks = ((DateTime)doc[\"@metadata\"][\"Last-Modified\"]).Ticks \r\n};",
+  "Name": "Militias/CredentialNumbers",
+  "LockMode": "Unlock",
+  "Map": "from militia in docs.Militias\nselect new {\n\tCredentialNumber = militia.CredentialNumber\n}",
   "Maps": [
-    "from doc in docs \r\nselect new \r\n{ \r\n    Tag = doc[\"@metadata\"][\"Raven-Entity-Name\"], \r\n    LastModified = (DateTime)doc[\"@metadata\"][\"Last-Modified\"],\r\n    LastModifiedTicks = ((DateTime)doc[\"@metadata\"][\"Last-Modified\"]).Ticks \r\n};"
+    "from militia in docs.Militias\nselect new {\n\tCredentialNumber = militia.CredentialNumber\n}"
   ],
   "Reduce": null,
   "IsMapReduce": false,
   "IsCompiled": false,
   "Stores": {},
-  "Indexes": {
-    "Tag": "NotAnalyzed",
-    "LastModified": "NotAnalyzed",
-    "LastModifiedTicks": "NotAnalyzed"
-  },
+  "Indexes": {},
   "SortOptions": {
-    "LastModified": "String",
-    "LastModifiedTicks": "Long"
+    "CredentialNumber": "String"
   },
   "Analyzers": {},
   "Fields": [],
@@ -27,7 +22,7 @@
   "InternalFieldsMapping": {},
   "MaxIndexOutputsPerDocument": null,
   "Type": "Map",
-  "DisableInMemoryIndexing": true,
+  "DisableInMemoryIndexing": false,
   "IsTestIndex": false,
   "IsSideBySideIndex": false
 }

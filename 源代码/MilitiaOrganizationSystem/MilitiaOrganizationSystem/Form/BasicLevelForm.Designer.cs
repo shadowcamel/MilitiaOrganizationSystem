@@ -44,20 +44,20 @@
             this.importFromXml = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_importXMLGroupTask = new System.Windows.Forms.ToolStripMenuItem();
             this.export = new System.Windows.Forms.ToolStripMenuItem();
+            this.import = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
             this.lastPage = new System.Windows.Forms.Button();
-            this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
+            this.pageUpDown = new System.Windows.Forms.NumericUpDown();
             this.labelDi = new System.Windows.Forms.Label();
             this.labelPage = new System.Windows.Forms.Label();
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
-            this.import = new System.Windows.Forms.ToolStripMenuItem();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // militia_ListView
@@ -180,6 +180,13 @@
             this.export.Text = "导出";
             this.export.Click += new System.EventHandler(this.export_Click);
             // 
+            // import
+            // 
+            this.import.Name = "import";
+            this.import.Size = new System.Drawing.Size(44, 21);
+            this.import.Text = "导入";
+            this.import.Click += new System.EventHandler(this.import_Click);
+            // 
             // textBox1
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -213,6 +220,7 @@
             this.nextPage.TabIndex = 5;
             this.nextPage.Text = "下一页";
             this.nextPage.UseVisualStyleBackColor = true;
+            this.nextPage.Click += new System.EventHandler(this.nextPage_Click);
             // 
             // currentPage
             // 
@@ -223,6 +231,7 @@
             this.currentPage.TabIndex = 6;
             this.currentPage.Text = "刷新本页";
             this.currentPage.UseVisualStyleBackColor = true;
+            this.currentPage.Click += new System.EventHandler(this.currentPage_Click);
             // 
             // lastPage
             // 
@@ -233,14 +242,25 @@
             this.lastPage.TabIndex = 7;
             this.lastPage.Text = "上一页";
             this.lastPage.UseVisualStyleBackColor = true;
+            this.lastPage.Click += new System.EventHandler(this.lastPage_Click);
             // 
-            // numericUpDown1
+            // pageUpDown
             // 
-            this.numericUpDown1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.numericUpDown1.Location = new System.Drawing.Point(35, 573);
-            this.numericUpDown1.Name = "numericUpDown1";
-            this.numericUpDown1.Size = new System.Drawing.Size(42, 21);
-            this.numericUpDown1.TabIndex = 8;
+            this.pageUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.pageUpDown.Location = new System.Drawing.Point(35, 573);
+            this.pageUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.pageUpDown.Name = "pageUpDown";
+            this.pageUpDown.Size = new System.Drawing.Size(42, 21);
+            this.pageUpDown.TabIndex = 8;
+            this.pageUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // labelDi
             // 
@@ -271,6 +291,7 @@
             this.skipPage.TabIndex = 11;
             this.skipPage.Text = "确认跳转";
             this.skipPage.UseVisualStyleBackColor = true;
+            this.skipPage.Click += new System.EventHandler(this.skipPage_Click);
             // 
             // finalPage
             // 
@@ -281,13 +302,7 @@
             this.finalPage.TabIndex = 12;
             this.finalPage.Text = "最后一页";
             this.finalPage.UseVisualStyleBackColor = true;
-            // 
-            // import
-            // 
-            this.import.Name = "import";
-            this.import.Size = new System.Drawing.Size(44, 21);
-            this.import.Text = "导入";
-            this.import.Click += new System.EventHandler(this.import_Click);
+            this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
             // BasicLevelForm
             // 
@@ -299,7 +314,7 @@
             this.Controls.Add(this.skipPage);
             this.Controls.Add(this.labelPage);
             this.Controls.Add(this.labelDi);
-            this.Controls.Add(this.numericUpDown1);
+            this.Controls.Add(this.pageUpDown);
             this.Controls.Add(this.lastPage);
             this.Controls.Add(this.currentPage);
             this.Controls.Add(this.nextPage);
@@ -313,7 +328,7 @@
             this.rMenuStrip.ResumeLayout(false);
             this.menu_basicLevel.ResumeLayout(false);
             this.menu_basicLevel.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -339,7 +354,7 @@
         private System.Windows.Forms.Button nextPage;
         private System.Windows.Forms.Button currentPage;
         private System.Windows.Forms.Button lastPage;
-        private System.Windows.Forms.NumericUpDown numericUpDown1;
+        private System.Windows.Forms.NumericUpDown pageUpDown;
         private System.Windows.Forms.Label labelDi;
         private System.Windows.Forms.Label labelPage;
         private System.Windows.Forms.Button skipPage;

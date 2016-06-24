@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -11,12 +12,15 @@ namespace MilitiaOrganizationSystem
     {//处理treeView上的增删改(与数据相关的部分)
         private XMLGroupDao xmlGroupDao;//xml访问层
         private TreeView groups_treeView;//树视图
-        
+
+        private SynchronizationContext m_SycnContext;//同步上下文
+
 
         public XMLGroupTreeViewBiz(TreeView groups_TreeView, string xmlGroupFile, SqlBiz sqlBiz)
         {//构造函数
             xmlGroupDao = new XMLGroupDao(xmlGroupFile, sqlBiz, groups_TreeView);
             this.groups_treeView = groups_TreeView;
+            this.m_SycnContext = SynchronizationContext.Current;
 
             FormBizs.groupBiz = this;//唯一的分组任务界面
         }
@@ -110,7 +114,6 @@ namespace MilitiaOrganizationSystem
         public void addXmlGroupTask(string xmlFile)
         {//添加分组任务
             xmlGroupDao.addXml(xmlFile);
-            refresh();
         }
 
         public void exportXmlGroupTask(string fileName)
@@ -136,7 +139,7 @@ namespace MilitiaOrganizationSystem
             return false;
         }
 
-        public TreeNode getTreeNodeByText(TreeNodeCollection Nodes, string text)
+        /*public TreeNode getTreeNodeByText(TreeNodeCollection Nodes, string text)
         {
             foreach(TreeNode treeNode in Nodes)
             {
@@ -146,7 +149,7 @@ namespace MilitiaOrganizationSystem
                 }
             }
             return null;
-        }
+        }*/
 
         public TreeNode getTreeNodeByText(string text)
         {
