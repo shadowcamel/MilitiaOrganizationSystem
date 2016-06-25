@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Xml;
+using System.Reflection;
 
 namespace MilitiaOrganizationSystem
 {
@@ -37,7 +38,7 @@ namespace MilitiaOrganizationSystem
 
         
 
-        public static void generateMilitiaToXml(int n, string xmlFile)
+        /*public static void generateMilitiaToXml(int n, string xmlFile)
         {//生成n个民兵信息到xmlFile
             Random rand = new Random();
             XmlNodeList xList = parameters();
@@ -76,11 +77,38 @@ namespace MilitiaOrganizationSystem
             }
 
             militiaDoc.Save(xmlFile);
-        }
-
-        
+        }*/
 
         public static List<Militia> generateMilitias(int n)
+        {
+            Random rand = new Random();
+            XmlNodeList xList = parameters();
+            List<Militia> mList = new List<Militia>();
+            for (int i = 0; i < n; i++)
+            {
+                Militia militia = new Militia();
+                MilitiaReflection mr = new MilitiaReflection(militia);//反射类
+
+                foreach (XmlNode node in xList)
+                {
+                    if (node.Attributes["type"].Value == "string")
+                    {
+                        byte[] buffer = new byte[8];
+                        rand.NextBytes(buffer);
+                        mr.setProperty(node.Attributes["property"].Value, System.Text.Encoding.Unicode.GetString(buffer));
+                    }
+                    else if (node.Attributes["type"].Value == "enum")
+                    {
+                        mr.setProperty(node.Attributes["property"].Value, node.ChildNodes[rand.Next(node.ChildNodes.Count)].Attributes["value"].Value);
+                    }
+                }
+
+                mList.Add(militia);
+            }
+            return mList;
+        }
+
+        /*public static List<Militia> generateMilitias(int n)
         {//生成n个民兵对象为list
             Random rand = new Random();
             XmlNodeList xList = parameters();
@@ -107,7 +135,7 @@ namespace MilitiaOrganizationSystem
                 mList.Add(militia);
             }
             return mList;
-        }
+        }*/
 
         
     }

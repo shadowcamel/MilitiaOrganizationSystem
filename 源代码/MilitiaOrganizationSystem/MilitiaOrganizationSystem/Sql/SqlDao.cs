@@ -71,7 +71,7 @@ namespace MilitiaOrganizationSystem
 
             string database = militia.Place;//指定数据库
             
-            militia.CredentialNumber = militia.InfoDic["CredentialNumber"];
+            //militia.CredentialNumber = militia.InfoDic["CredentialNumber"];
 
             using (var session = store.OpenSession(database))
             {
@@ -292,7 +292,7 @@ namespace MilitiaOrganizationSystem
                 var gfacetResults = session.Query<Militia>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(lambdaContition)
-                    .AggregateBy(x => x.InfoDic["Education"]).ToList();
+                    .AggregateBy(x => x.Education).ToList();
 
                 foreach(string key in gfacetResults.Results.Keys)
                 {

@@ -96,6 +96,7 @@ namespace MilitiaOrganizationSystem
                 List<Militia> mList = mt.moveMilitias;
                 foreach(Militia militia in mList)
                 {
+                    //MilitiaReflection mr = new MilitiaReflection(militia);//反射
                     if(militia.Group == node.Name)
                     {//分组本来就是它,则无需操作
                         e.Effect = DragDropEffects.None;
@@ -103,7 +104,7 @@ namespace MilitiaOrganizationSystem
                     }
                     if(militia.Group != "未分组")
                     {//不是从未分组来分组,则需要将它从原来的组删去，故弹出对话框确认
-                        DialogResult re = MessageBox.Show(militia.InfoDic["Name"] + "已有分组为" + militia.Group + ", 是否更改其分组？", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
+                        DialogResult re = MessageBox.Show(militia.Name + "已有分组为" + militia.Group + ", 是否更改其分组？", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Warning);
                         if(re == DialogResult.Cancel)
                         {
                             e.Effect = DragDropEffects.None;

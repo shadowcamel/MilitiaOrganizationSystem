@@ -79,19 +79,19 @@ namespace MilitiaOrganizationSystem
         }
 
         public DialogResult showEditDlg(Militia oneMilitia, int focusIndex = 0)
-        {
+        {//show编辑框
             militia = oneMilitia;
-            
+            MilitiaReflection mr = new MilitiaReflection(militia);//反射
 
             for(int k = 0; k < cList.Count; k++)
             {
                 ComboBox comboBox = cList[k];
-                XmlNode xmlNode = parameters[k];
+                XmlNode xmlNode = parameters[k];//第k个属性
 
                 string strValue = "";
                 try
                 {
-                    strValue = militia.InfoDic[xmlNode.Attributes["property"].Value];
+                    strValue = mr.getProperty(xmlNode.Attributes["property"].Value).ToString();
 
                 }
                 catch (Exception e)
@@ -138,6 +138,7 @@ namespace MilitiaOrganizationSystem
                 MessageBox.Show("MilitiaEditDialog类使用错误！");
                 return;
             }
+            MilitiaReflection mr = new MilitiaReflection(militia);//反射
 
             foreach(ComboBox cbb in cList)
             {
@@ -150,7 +151,7 @@ namespace MilitiaOrganizationSystem
                 {
                     value = xmlNode.ChildNodes[cbb.SelectedIndex].Attributes["value"].Value;
                 }
-                militia.InfoDic[xmlNode.Attributes["property"].Value] = value;
+                mr.setProperty(xmlNode.Attributes["property"].Value, value);
             }
         }
     }

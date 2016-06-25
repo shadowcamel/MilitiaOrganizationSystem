@@ -46,16 +46,19 @@ namespace MilitiaOrganizationSystem
 
             foreach (Militia militia in mList)
             {
+                MilitiaReflection mr = new MilitiaReflection(militia);//反射
                 XmlElement militiaNode = militiaDoc.CreateElement("militia");
-                foreach (KeyValuePair<string, string> keyValue in militia.InfoDic)
+                foreach(string key in MilitiaReflection.keys)
                 {
-                    XmlAttribute attr = militiaDoc.CreateAttribute(keyValue.Key);
-                    attr.Value = keyValue.Value.ToString();
+                    if(key == "Id")
+                    {//Id不存入Xml文件中
+                        continue;
+                    }
+                    XmlAttribute attr = militiaDoc.CreateAttribute(key);
+                    attr.Value = mr.getProperty(key).ToString();
                     militiaNode.Attributes.Append(attr);
                 }
-                XmlAttribute attr2 = militiaDoc.CreateAttribute("Group");
-                attr2.Value = militia.Group;
-                militiaNode.Attributes.Append(attr2);
+
                 militiaRoot.AppendChild(militiaNode);
             }
 
@@ -73,12 +76,11 @@ namespace MilitiaOrganizationSystem
                 foreach(XmlNode militiaNode in rootNode.ChildNodes)
                 {
                     Militia militia = new Militia();
-                    militia.Group = militiaNode.Attributes["Group"].Value;
+                    MilitiaReflection mr = new MilitiaReflection(militia);//反射
                     foreach(XmlAttribute xa in militiaNode.Attributes)
                     {
-                        militia.InfoDic[xa.Name] = xa.Value;
+                        mr.setProperty(xa.Name, xa.Value);//设置属性
                     }
-
                     mList.Add(militia);
                 }
 

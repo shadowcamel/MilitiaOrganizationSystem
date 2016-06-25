@@ -94,12 +94,13 @@ namespace MilitiaOrganizationSystem
         public void updateItem(ListViewItem lvi)
         {//用tag更新显示
             Militia militia = (Militia)lvi.Tag;
+            MilitiaReflection mr = new MilitiaReflection(militia);//反射
             lvi.ImageIndex = 0;
             XmlNode firstNode = parameters[0];
             string value = "";
             try
             {
-                value = militia.InfoDic[parameters[0].Attributes["property"].Value].ToString();
+                value = mr.getProperty(parameters[0].Attributes["property"].Value).ToString();
             } catch(Exception e)
             {
                 
@@ -129,7 +130,7 @@ namespace MilitiaOrganizationSystem
                 value = "";
                 try
                 {
-                    value = militia.InfoDic[parameters[i].Attributes["property"].Value].ToString();
+                    value = mr.getProperty(parameters[i].Attributes["property"].Value).ToString();
                 }
                 catch (Exception e)
                 {
