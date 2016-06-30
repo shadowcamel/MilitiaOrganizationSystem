@@ -51,6 +51,7 @@
             // 
             // parasCheckBox
             // 
+            this.parasCheckBox.CheckOnClick = true;
             this.parasCheckBox.FormattingEnabled = true;
             this.parasCheckBox.Location = new System.Drawing.Point(37, 103);
             this.parasCheckBox.Name = "parasCheckBox";

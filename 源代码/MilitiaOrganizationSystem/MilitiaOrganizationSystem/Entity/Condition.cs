@@ -3,35 +3,130 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Linq.Expressions;
 
-namespace MilitiaOrganizationSystem.Entity
+namespace MilitiaOrganizationSystem
 {
-    class Condition
+    public class Condition
     {
-        public System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition { get; set; }
+        public Expression<Func<Militia, bool>> lambdaCondition { get; set; }
         public string place { get; set; }//该页面的查询条件之一指定数据库
-        private Dictionary<string, ChildCondition> conditionDict { get; set; }
+        public Dictionary<string, ChildCondition> conditionDict { get; set; }
         //查询条件的集合, key是PropertyName
+
+        private void initial()
+        {
+            conditionDict = new Dictionary<string, ChildCondition>();
+            lambdaCondition = null;
+            place = null;
+        }
         
         public Condition()
         {//构造函数
-            lambdaContition = null;
-            place = null;
+            initial();
         }
 
-        private class ChildCondition
+        public Condition(Condition condition)
+        {//复制一个condition
+            conditionDict = new Dictionary<string, ChildCondition>();
+            foreach(KeyValuePair<string, ChildCondition> kvp in condition.conditionDict)
+            {
+                conditionDict.Add(kvp.Key, kvp.Value);
+            }
+            place = condition.place;
+        }
+        
+        public Condition(string group)
+        {//以分组创建Condition
+            initial();
+
+            ChildCondition cc = new ChildCondition(MilitiaXmlConfig.getNodeByProperty("Group"));
+            cc.Method = "StartsWith";
+            cc.Values.Add(group);
+
+            conditionDict["Group"] = cc;
+            generateLambdaCondition();//生成lambda表达式
+            System.Windows.MessageBox.Show(lambdaCondition.ToString());
+        }
+
+        public class ChildCondition
         {//一个条件
-            public string PropertyType { get; set; }
+            public System.Xml.XmlNode parameterNode { get; set; }
             public string Method { get; set; }
             public List<string> Values { get; set; }
 
 
-            public ChildCondition()
+            public ChildCondition(System.Xml.XmlNode xn)
             {
-                PropertyType = null;
-                Method = null;
                 Values = new List<string>();
+                parameterNode = xn;
             }
+
+            public override string ToString()
+            {//重写toString方法，用在显示上
+                string info = parameterNode.Attributes["property"].Value + " " + Method + " ";
+                info += "[";
+                foreach(string value in Values)
+                {
+                    info += value + " "; 
+                }
+                info += "]";
+                return info;
+            }
+        }
+
+        private Expression generateExpresionByChildCondition(ParameterExpression parameter, ChildCondition cc)
+        {
+            string propertyName = cc.parameterNode.Attributes["property"].Value;
+            var property = Expression.Property(parameter, propertyName);
+            Expression expression = null;
+            switch(cc.Method)
+            {
+                case "Equal"://可能是string或enum
+                    expression = Expression.Equal(property, Expression.Constant(cc.Values[0]));
+                    for(int i = 1; i < cc.Values.Count; i++)
+                    {//如果是enum，就要或者
+                        expression = Expression.OrElse(expression, Expression.Equal(property, Expression.Constant(cc.Values[i])));
+                    }
+                    break;
+                case "GreaterThanOrEqualAndLessThan"://大于等于，并且小于,这是为int型准备的
+                    expression = Expression.AndAlso(
+                        Expression.GreaterThanOrEqual(property, Expression.Constant(int.Parse(cc.Values[0]))),
+                        Expression.LessThan(property, Expression.Constant(int.Parse(cc.Values[1])))
+                        );
+                    break;
+                default://其他的分类型考虑
+                    switch (cc.parameterNode.Attributes["type"].Value)
+                    {
+                        case "enum"://也不会出现
+                            
+                            break;
+                        case "int"://讲道理不会出现在这里
+
+                            break;
+                        default://当做string,要么startwith，要么endswith
+                            expression = Expression.Call(property,
+                                typeof(string).GetMethod(cc.Method, new Type[] { typeof(string) }),
+                                Expression.Constant(cc.Values[0])
+                                );
+                            break;
+                    }
+                    break;
+            }
+            
+            return expression;
+        }
+
+        public void generateLambdaCondition()
+        {
+            var parameter = Expression.Parameter(typeof(Militia), "x");
+            Expression expression = Expression.NotEqual(Expression.Property(parameter, "Group"), Expression.Constant(null));
+            foreach(ChildCondition cc in conditionDict.Values)
+            {
+                expression = Expression.AndAlso(expression, generateExpresionByChildCondition(parameter, cc));
+            }
+
+            lambdaCondition = Expression.Lambda<Func<Militia, bool>>(expression, parameter);
         }
     }
 }

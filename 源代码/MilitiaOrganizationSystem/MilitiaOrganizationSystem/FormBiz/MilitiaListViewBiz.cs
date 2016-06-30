@@ -18,8 +18,7 @@ namespace MilitiaOrganizationSystem
         private bool sort = false;
         private SqlBiz sqlBiz;//数据库业务逻辑层
 
-        private System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition { get; set; }
-        private string place { get; set; }//该页面的查询条件之一指定数据库
+        private Condition condition = new Condition();
         //此页面的查询条件
 
         private XmlNodeList parameters = MilitiaXmlConfig.parameters;
@@ -30,13 +29,13 @@ namespace MilitiaOrganizationSystem
         public int maxPage { get; set; }//在加载第一页的时候初始化，为最大页数
 
 
-        public MilitiaListViewBiz(ListView listView, SqlBiz sBz, System.Linq.Expressions.Expression<Func<Militia, bool>> condition)
+        public MilitiaListViewBiz(ListView listView, SqlBiz sBz, Condition condition)
         {
             militia_ListView = listView;
             displayedParameterIndexs = MilitiaXmlConfig.getAllDisplayedParameterIndexs();
             sqlBiz = sBz;
 
-            this.lambdaContition = condition;//查询条件
+            this.condition = condition;//查询条件
 
             page = 1;
             pageSize = 20;
@@ -297,7 +296,7 @@ namespace MilitiaOrganizationSystem
             if (lvi != null)
             {
                 lvi.Tag = militia;
-                if(lambdaContition.Compile()(militia))
+                if(condition.lambdaCondition.Compile()(militia))
                 {//如果满足当前的条件，才更新显示
                     updateItem(lvi);
                 } else
@@ -334,7 +333,7 @@ namespace MilitiaOrganizationSystem
         public void refreshCurrentPage()
         {//刷新本页
             int sum;
-            List<Militia> mList = sqlBiz.queryByContition(lambdaContition, (page - 1) * pageSize, pageSize, out sum);
+            List<Militia> mList = sqlBiz.queryByContition(condition.lambdaCondition, (page - 1) * pageSize, pageSize, out sum);
             maxPage = sum / pageSize + (sum % pageSize == 0 ? 0 : 1);//最大页数
             if(maxPage == 0)
             {

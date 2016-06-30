@@ -13,15 +13,15 @@ namespace MilitiaOrganizationSystem
     public partial class GroupMilitiaForm : Form
     {
         private SqlBiz sqlBiz;
-        private System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaCondition;//筛选条件
+        private Condition condition;//筛选条件
         private MilitiaListViewBiz listViewBiz;//民兵信息列表业务逻辑层
 
         public GroupMilitiaForm(SqlBiz sBiz, string group)
         {
             InitializeComponent();
             sqlBiz = sBiz;
-            lambdaCondition = x => x.Group.StartsWith(group);
-            listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, lambdaCondition);//需指定数据库
+            condition = new Condition(group);
+            listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
 
             /*//从数据库中加载相应民兵信息到显示
             int sum;
@@ -49,7 +49,7 @@ namespace MilitiaOrganizationSystem
                     {
                         Militia militia = (Militia)lvi.Tag;
                         //if militia 不符合筛选条件，则删掉这个item
-                        if (!lambdaCondition.Compile()(militia))
+                        if (!condition.lambdaCondition.Compile()(militia))
                         {
                             lvi.Remove();
                         }

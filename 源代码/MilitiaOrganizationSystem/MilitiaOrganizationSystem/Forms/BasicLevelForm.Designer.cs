@@ -45,8 +45,9 @@
             this.btn_importXMLGroupTask = new System.Windows.Forms.ToolStripMenuItem();
             this.export = new System.Windows.Forms.ToolStripMenuItem();
             this.import = new System.Windows.Forms.ToolStripMenuItem();
+            this.options = new System.Windows.Forms.ToolStripMenuItem();
             this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.conditionLabel = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
             this.lastPage = new System.Windows.Forms.Button();
@@ -55,7 +56,6 @@
             this.labelPage = new System.Windows.Forms.Label();
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
-            this.options = new System.Windows.Forms.ToolStripMenuItem();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -189,6 +189,13 @@
             this.import.Text = "导入";
             this.import.Click += new System.EventHandler(this.import_Click);
             // 
+            // options
+            // 
+            this.options.Name = "options";
+            this.options.Size = new System.Drawing.Size(44, 21);
+            this.options.Text = "设置";
+            this.options.Click += new System.EventHandler(this.options_Click);
+            // 
             // textBox1
             // 
             this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -201,17 +208,18 @@
             this.textBox1.TabIndex = 3;
             this.textBox1.Text = "未分组";
             // 
-            // label1
+            // conditionLabel
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.conditionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(12, 31);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "筛选条件：";
+            this.conditionLabel.AutoSize = true;
+            this.conditionLabel.Location = new System.Drawing.Point(12, 31);
+            this.conditionLabel.Name = "conditionLabel";
+            this.conditionLabel.Size = new System.Drawing.Size(65, 12);
+            this.conditionLabel.TabIndex = 4;
+            this.conditionLabel.Text = "筛选条件：";
+            this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
             // nextPage
             // 
@@ -306,13 +314,6 @@
             this.finalPage.UseVisualStyleBackColor = true;
             this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
-            // options
-            // 
-            this.options.Name = "options";
-            this.options.Size = new System.Drawing.Size(44, 21);
-            this.options.Text = "设置";
-            this.options.Click += new System.EventHandler(this.options_Click);
-            // 
             // BasicLevelForm
             // 
             this.AllowDrop = true;
@@ -327,7 +328,7 @@
             this.Controls.Add(this.lastPage);
             this.Controls.Add(this.currentPage);
             this.Controls.Add(this.nextPage);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.militia_ListView);
             this.Controls.Add(this.menu_basicLevel);
@@ -355,7 +356,7 @@
         private System.Windows.Forms.ToolStripMenuItem importFromXml;
         private System.Windows.Forms.ImageList militiaImageList;
         private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label conditionLabel;
         private System.Windows.Forms.ContextMenuStrip rMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem rAdd;
         private System.Windows.Forms.ToolStripMenuItem rEdit;

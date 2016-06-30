@@ -21,7 +21,7 @@ namespace MilitiaOrganizationSystem
 
         private XMLGroupTaskForm xmlGroupTaskForm;//分组界面
 
-        private System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaCondition;//此界面下的lambda表达式
+        private Condition condition;//此界面下的lambda表达式
         private string place { get; set; }//该页面的查询条件之一指定数据库
         //此页面的查询条件
 
@@ -31,8 +31,8 @@ namespace MilitiaOrganizationSystem
         {//构造函数
             InitializeComponent();
             xmlGroupTaskForm = null;
-            lambdaCondition = x => x.Group == "未分组";
-            listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, lambdaCondition);//需指定数据库
+            condition = new Condition("未分组");
+            listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
             /*//从数据库中加载未分组民兵信息到显示
             listViewBiz.loadNotGroupedMilitiasInDb();*/
 
@@ -79,7 +79,7 @@ namespace MilitiaOrganizationSystem
                     listViewBiz.addOneMilitia(militia);
                 }
 
-                if(!lambdaCondition.Compile()(militia))
+                if(!condition.lambdaCondition.Compile()(militia))
                 {//不满足筛选条件，则不能显示在这个界面
                     lvi.Remove();
                 }
@@ -111,7 +111,7 @@ namespace MilitiaOrganizationSystem
                     {
                         Militia militia = (Militia)lvi.Tag;
                         //if militia 不符合筛选条件，则删掉这个item
-                        if(!lambdaCondition.Compile()(militia))
+                        if(!condition.lambdaCondition.Compile()(militia))
                         {
                             lvi.Remove();
                         }
@@ -289,6 +289,12 @@ namespace MilitiaOrganizationSystem
         private void options_Click(object sender, EventArgs e)
         {//打开设置界面
             listViewBiz.setoption();
+        }
+
+        private void conditionLabel_Click(object sender, EventArgs e)
+        {
+            ConditionForm cfDlg = new ConditionForm(condition);
+            cfDlg.ShowDialog();
         }
     }
 }

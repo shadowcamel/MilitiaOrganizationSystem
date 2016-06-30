@@ -48,14 +48,12 @@ namespace MilitiaOrganizationSystem
         {//全选
             if(checkAll.Checked == true)
             {
-                checkedParaListBox.Items.Clear();
-                checkedIndexs.Clear();
-           
                 for (int i = 0; i < parasCheckBox.Items.Count; i++)
                 {
-                    parasCheckBox.SetItemChecked(i, true);
-                    checkedParaListBox.Items.Add(parameters[i].Attributes["name"].Value);
-                    checkedIndexs.Add(i);
+                    if(!parasCheckBox.GetItemChecked(i))
+                    {
+                        parasCheckBox.SetItemChecked(i, true);
+                    }
                 }
             }
         }
