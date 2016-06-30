@@ -13,6 +13,8 @@ namespace MilitiaOrganizationSystem
         private const string xmlMilitiaConfigFile = "Parameters.xml";
         private static XmlDocument xmlDoc = null;
         private static XmlNode rootNode;
+
+        public static XmlNodeList parameters { get; set; }
         
 
         public static void initial()
@@ -22,12 +24,25 @@ namespace MilitiaOrganizationSystem
                 xmlDoc = new XmlDocument();
                 xmlDoc.Load(xmlMilitiaConfigFile);
                 rootNode = xmlDoc.DocumentElement;
+                parameters = rootNode.SelectNodes("parameter");
             }
         }
 
-        public static XmlNodeList parameters()
-        {
-            return rootNode.SelectNodes("parameter");
+        public static List<int> getAllDisplayedParameterIndexs()
+        {//返回可以所有可以显示的参数下标
+            List<int> iList = new List<int>();
+            for(int i = 0; i < parameters.Count; i++)
+            {
+                iList.Add(i);
+            }
+            return iList;
+        }
+
+        public static List<int> getEditParameterIndexs()
+        {//返回需要编辑的参数下标
+            List<int> iList = getAllDisplayedParameterIndexs();
+            iList.RemoveRange(parameters.Count - 2, 2);
+            return iList;
         }
 
         public static string getTypeOf(string propertyName)
@@ -82,7 +97,7 @@ namespace MilitiaOrganizationSystem
         public static List<Militia> generateMilitias(int n)
         {
             Random rand = new Random();
-            XmlNodeList xList = parameters();
+            XmlNodeList xList = parameters;
             List<Militia> mList = new List<Militia>();
             for (int i = 0; i < n; i++)
             {
@@ -91,15 +106,27 @@ namespace MilitiaOrganizationSystem
 
                 foreach (XmlNode node in xList)
                 {
-                    if (node.Attributes["type"].Value == "string")
+                    string type = node.Attributes["type"].Value;
+                    string property = node.Attributes["property"].Value;
+                    switch (type)
                     {
-                        byte[] buffer = new byte[8];
-                        rand.NextBytes(buffer);
-                        mr.setProperty(node.Attributes["property"].Value, System.Text.Encoding.Unicode.GetString(buffer));
-                    }
-                    else if (node.Attributes["type"].Value == "enum")
-                    {
-                        mr.setProperty(node.Attributes["property"].Value, node.ChildNodes[rand.Next(node.ChildNodes.Count)].Attributes["value"].Value);
+                        case "enum":
+                            mr.setProperty(property, node.ChildNodes[rand.Next(node.ChildNodes.Count)].Attributes["value"].Value);
+                            break;
+                        case "int":
+                            mr.setProperty(property, rand.Next(100));
+                            break;
+                        case "group":
+                            mr.setProperty(property, "未分组");
+                            break;
+                        case "place":
+                            //不赋值
+                            break;
+                        default://当做string处理
+                            byte[] buffer = new byte[8];
+                            rand.NextBytes(buffer);
+                            mr.setProperty(node.Attributes["property"].Value, System.Text.Encoding.Unicode.GetString(buffer));
+                            break;
                     }
                 }
 

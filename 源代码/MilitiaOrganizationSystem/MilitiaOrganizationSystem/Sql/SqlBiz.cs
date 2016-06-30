@@ -48,9 +48,28 @@ namespace MilitiaOrganizationSystem
             return mList;
         }
 
-        public List<Militia> queryByContition(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum)
-        {//根据条件分页查询 
-            List<string> databases = getDatabases();//除System之外的数据库名
+        public List<string> getDatabasesByPlace(string Place)
+        {//根据Militia.Place指定要查找的数据库集合, 调用此函数时， Place应不为空
+            if(Place == null || Place == "")
+            {//如果为空，则未指定数据库，所以返回所有数据库集合
+                return getDatabases();
+            }
+            DirectoryInfo dirInfo = new DirectoryInfo(DataDir);
+            DirectoryInfo[] dis = dirInfo.GetDirectories();
+            List<string> databases = new List<string>();
+            foreach (DirectoryInfo di in dis)
+            {
+                if (di.Name.StartsWith(Place))
+                {//以Place开头的就是要找的数据库
+                    databases.Add(di.Name);
+                }
+            }
+            return databases;
+        }
+
+        public List<Militia> queryByContition(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string Place = null)
+        {//根据条件分页查询
+            List<string> databases = getDatabasesByPlace(Place);//根据Place指定数据库组
             int[] sums = new int[databases.Count];//每个数据库group下民兵的总数
             for (int i = 0; i < databases.Count; i++)
             {//获取每个数据库的总数
@@ -58,11 +77,6 @@ namespace MilitiaOrganizationSystem
             }
 
             sum = sums.Sum();//所有数据库中group下民兵总数的和
-            /*if (skip >= sum)
-            {
-                MessageBox.Show("超出范围");
-                return new List<Militia>();
-            }*/
             int skipNum = 0;
             int databaseIndex = getIndexOfDatabase(sums, skip, out skipNum);
             if (databaseIndex >= sums.Length)
@@ -84,7 +98,7 @@ namespace MilitiaOrganizationSystem
         }
 
         private int getIndexOfDatabase(int [] sums, int skip, out int skipNum)
-        {
+        {//获取应该从哪个数据库跳过skipNum个结果查找
             int skipSum = 0;
             for(int i = 0; i < sums.Length; i++)
             {
@@ -101,9 +115,9 @@ namespace MilitiaOrganizationSystem
         }
 
 
-        public List<Militia> getMilitiasByGroup(string group, int skip, int take, out int sum)
-        {
-            List<string> databases = getDatabases();//除System之外的数据库名
+        public List<Militia> getMilitiasByGroup(string group, int skip, int take, out int sum, string Place = null)
+        {//根据组名获取民兵（应该没有使用它）
+            List<string> databases = getDatabasesByPlace(Place);//除System之外的数据库名
             int[] sums = new int[databases.Count];//每个数据库group下民兵的总数
             for(int i = 0; i < databases.Count; i++)
             {//获取每个数据库的总数
@@ -128,16 +142,30 @@ namespace MilitiaOrganizationSystem
             return mList;
         }
 
-        public Dictionary<string, FacetValue> getGroupNums(string database = null)
-        {//获取某个数据库中的所有组中民兵的个数
-            int sum = 1;
-            List<FacetValue> fList = new List<FacetValue>();
-            while(fList.Count < sum)
-            {
-                fList.AddRange(sqlDao.getGroupNums(fList.Count, 1000, out sum, database));
-            }
+        public Dictionary<string, FacetValue> getGroupNums()
+        {//获取所有数据库中的所有组中民兵的个数
+            List<string> databases = getDatabases();
+            return getGroupNums(databases);
+        }
 
-            return fList.ToDictionary(x => x.Range);
+        public Dictionary<string, FacetValue> getGroupNums(List<string> databases)
+        {//获取某些数据库中的所有组中民兵的个数
+            List<FacetValue> fList = new List<FacetValue>();
+            foreach (string database in databases)
+            {
+                fList.AddRange(sqlDao.getGroupNums(database));
+            }
+            Dictionary<string, FacetValue> fDict = new Dictionary<string, FacetValue>();
+            IEnumerable<IGrouping<string, FacetValue>> iigf = fList.GroupBy(x => x.Range);//分组
+            foreach (IGrouping<string, FacetValue> igf in iigf)
+            {
+                fDict[igf.Key] = igf.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
+                {
+                    fv1.Hits += fv2.Hits;
+                    return fv1;
+                });
+            }
+            return fDict;
         }
 
         public void BulkInsertMilitias(List<Militia> mList)
@@ -153,18 +181,24 @@ namespace MilitiaOrganizationSystem
 
         public void exportAsSource(string folder)
         {//将全部数据库（System除外，因为没有权限根本复制不了）复制到folder文件夹下
-            /*DirectoryInfo dirInfo = new DirectoryInfo(DataDir);
-            DirectoryInfo[] dis = dirInfo.GetDirectories();
-            foreach (DirectoryInfo di in dis)
-            {
-                if (di.Name != "System2")
-                {
-                    //FileTool.CopyFolder(di.FullName, folder);
-                    //sqlDao.backupOneDB(di.Name, folder);
-                }
-            }*/
-            sqlDao.copyDbTo(folder);
+         /*DirectoryInfo dirInfo = new DirectoryInfo(DataDir);
+         DirectoryInfo[] dis = dirInfo.GetDirectories();
+         foreach (DirectoryInfo di in dis)
+         {
+             if (di.Name != "System2")
+             {
+                 //FileTool.CopyFolder(di.FullName, folder);
+                 //sqlDao.backupOneDB(di.Name, folder);
+             }
+         }*/
+         sqlDao.copyDbTo(folder);
+
             //sqlDao.exportDocumentDataBase(folder);
+        }
+
+        public void exportZip(Zip zip)
+        {
+            sqlDao.zipDb(zip);
         }
 
         public void importFromMilitiaXml(string fileName)
@@ -180,19 +214,40 @@ namespace MilitiaOrganizationSystem
             
         }
 
-        public void importFromSource(string folder)
+        public List<string> importUnzip(UnZip unzip)
+        {
+            return unzip.unzipAll();
+        }
+
+        public List<string> importFromSource(string folder)
         {//folder下全部是数据库文件夹，导入此文件夹下的所有数据库文件夹(复制到DataBases文件夹下)
+
             string[] dbpaths = Directory.GetDirectories(folder);
-            foreach(string dbpath in dbpaths)
+            List<string> importedDataBases = new List<string>();
+            for(int i = 0; i < dbpaths.Length; i++)
             {
-                //sqlDao.restoreOneDB(dbpath);
-                FileTool.CopyFolder(dbpath, DataDir);
+                string dbpath = dbpaths[i];
+                try
+                {
+                    //sqlDao.restoreOneDB(dbpath);
+                    FileTool.CopyFolder(dbpath, DataDir);
+                    int startIndex = dbpath.LastIndexOf('\\') + 1;
+
+                    importedDataBases.Add(dbpath.Substring(startIndex));
+                } catch(Exception e)
+                {
+
+                }
+                
             }
+            //MessageBox.Show(importedDataBases[0]);
+            return importedDataBases;
             /*string[] dumpFiles = Directory.GetFiles(folder, "*.dump");
             foreach(string dumpFile in dumpFiles)
             {
                 sqlDao.importToDocumentDataBase(dumpFile);
             }*/
+
         }
 
         private List<string> getDatabases()
@@ -278,7 +333,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public List<List<Militia>> getConflictMilitiasBetweenDatabases()
-        {//找出所有数据库之间的身份证号冲突
+        {//找出所有数据库之间的身份证号冲突,只在省市军分区调用
             Dictionary<string, List<Militias_CredentialNumbers.Result>> dict = new Dictionary<string, List<Militias_CredentialNumbers.Result>>();//记录冲突的Results
 
             List<Militias_CredentialNumbers.Result> rAllList = new List<Militias_CredentialNumbers.Result>();
@@ -289,10 +344,10 @@ namespace MilitiaOrganizationSystem
 
             for(int i = 0; i < databases.Count; i++)
             {
-                MessageBox.Show(databases[i]);
+                //MessageBox.Show(databases[i]);
                 drLists[i] = sqlDao.getAllCredentialNumbers(databases[i]);
             }
-            MessageBox.Show("获得了身份证号");
+            //MessageBox.Show("获得了身份证号");
             int interval = 1; //归并间隔
             while(interval < databases.Count)
             {//两两归并，最后总的归并在drLists[0]上
@@ -320,7 +375,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public List<List<Militia>> getConflictMilitiasOfMainDatabase()
-        {//检测主数据库的冲突
+        {//检测主数据库的冲突,应该只在基层和区县调用
             List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers();
 
             List<List<Militia>> mLList = new List<List<Militia>>();

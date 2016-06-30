@@ -303,18 +303,18 @@ namespace MilitiaOrganizationSystem
 
         }
 
-        public void addXml(string xmlFile, string database = null)
+        public void addXml(string xmlFile, List<string> databases = null)
         {//将xmlFile合并到xmlDoc中并保存
             XmlDocument xd = new XmlDocument();
             xd.Load(xmlFile);//加载
 
             Dictionary<string, FacetValue> fdict = null;
-            if(database == null)
+            if(databases == null)
             {
                 fdict = new Dictionary<string, FacetValue>();
             } else
             {
-                fdict = sqlBiz.getGroupNums(database);
+                fdict = sqlBiz.getGroupNums(databases);
             }
 
             XmlNode xdRoot = xd.DocumentElement;//根节点

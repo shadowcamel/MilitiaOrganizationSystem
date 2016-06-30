@@ -1,0 +1,26 @@
+{
+  "IndexId": 3,
+  "Name": "Militias/Groups",
+  "LockMode": "Unlock",
+  "Map": "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group\n}",
+  "Maps": [
+    "from militia in docs.Militias\nselect new {\n\tGroup = militia.Group\n}"
+  ],
+  "Reduce": null,
+  "IsMapReduce": false,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {},
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "Map",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}

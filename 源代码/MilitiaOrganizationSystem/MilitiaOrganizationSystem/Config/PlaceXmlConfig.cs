@@ -55,15 +55,32 @@ namespace MilitiaOrganizationSystem
         public static string getPlaceName(string PCD_ID)
         {//根据联合的PID-CID-DID，返回地点中文名，如北京市/北京市/东城区
             string[] IDS = PCD_ID.Split(new char[] { '-' });
-            if(IDS.Length != 3)
-            {
-                return null;
-            }
             XmlNode provinceNode = provinceXmlDoc.DocumentElement.SelectSingleNode("Province[@ID='" + IDS[0] + "']");
-            XmlNode cityNode = cityXmlDoc.DocumentElement.SelectSingleNode("City[@ID='" + IDS[1] + "']");
-            XmlNode districtNode = districXmlDoc.DocumentElement.SelectSingleNode("District[@ID='" + IDS[2] + "']");
-
-            return provinceNode.Attributes["ProvinceName"].Value + "/" + cityNode.Attributes["CityName"].Value + "/" + districtNode.Attributes["DistrictName"].Value;
+            try
+            {
+                if (IDS.Length == 1)
+                {
+                    return provinceNode.Attributes["ProvinceName"].Value;
+                }
+                else if (IDS.Length == 2)
+                {
+                    XmlNode cityNode = cityXmlDoc.DocumentElement.SelectSingleNode("City[@ID='" + IDS[1] + "']");
+                    return provinceNode.Attributes["ProvinceName"].Value + "/" + cityNode.Attributes["CityName"].Value;
+                }
+                else if (IDS.Length == 3)
+                {
+                    XmlNode cityNode = cityXmlDoc.DocumentElement.SelectSingleNode("City[@ID='" + IDS[1] + "']");
+                    XmlNode districtNode = districXmlDoc.DocumentElement.SelectSingleNode("District[@ID='" + IDS[2] + "']");
+                    return provinceNode.Attributes["ProvinceName"].Value + "/" + cityNode.Attributes["CityName"].Value + "/" + districtNode.Attributes["DistrictName"].Value;
+                }
+                else
+                {
+                    return PCD_ID;
+                }
+            } catch(Exception e)
+            {
+                return PCD_ID;
+            }
         }
     }
 }

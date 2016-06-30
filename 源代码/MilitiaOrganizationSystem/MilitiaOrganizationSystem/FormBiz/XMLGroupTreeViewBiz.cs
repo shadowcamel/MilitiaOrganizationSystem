@@ -13,14 +13,14 @@ namespace MilitiaOrganizationSystem
         private XMLGroupDao xmlGroupDao;//xml访问层
         private TreeView groups_treeView;//树视图
 
-        private SynchronizationContext m_SycnContext;//同步上下文
+        public string groupFile { get; set; }//分组文件所在路径
 
 
         public XMLGroupTreeViewBiz(TreeView groups_TreeView, string xmlGroupFile, SqlBiz sqlBiz)
         {//构造函数
             xmlGroupDao = new XMLGroupDao(xmlGroupFile, sqlBiz, groups_TreeView);
             this.groups_treeView = groups_TreeView;
-            this.m_SycnContext = SynchronizationContext.Current;
+            this.groupFile = xmlGroupFile;
 
             FormBizs.groupBiz = this;//唯一的分组任务界面
         }
@@ -111,9 +111,9 @@ namespace MilitiaOrganizationSystem
             groups_treeView.ExpandAll();
         }
 
-        public void addXmlGroupTask(string xmlFile)
+        public void addXmlGroupTask(string xmlFile, List<string> databases = null)
         {//添加分组任务
-            xmlGroupDao.addXml(xmlFile);
+            xmlGroupDao.addXml(xmlFile, databases);
         }
 
         public void exportXmlGroupTask(string fileName)

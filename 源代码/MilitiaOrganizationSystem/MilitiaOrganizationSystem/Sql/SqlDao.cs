@@ -219,6 +219,23 @@ namespace MilitiaOrganizationSystem
 
             newStore();
         }
+
+        public void zipDb(Zip zip)
+        {//直接将除System之外的数据库添加到压缩文件中
+            store.Dispose();//先释放strore，才能zip
+
+            DirectoryInfo dirInfo = new DirectoryInfo(SqlBiz.DataDir);
+            DirectoryInfo[] dis = dirInfo.GetDirectories();
+            foreach (DirectoryInfo di in dis)
+            {
+                if (di.Name != "System")
+                {//除了System数据库，其他的都导出
+                    zip.addFileOrFolder(SqlBiz.DataDir + "\\" + di.Name);
+                }
+            }
+
+            newStore();
+        }
         
         
         public List<Militia> queryByContition(Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string database = null)
@@ -227,6 +244,7 @@ namespace MilitiaOrganizationSystem
             {
                 database = dbName;
             }
+            store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
             using(var session = store.OpenSession(database))
             {
                 RavenQueryStatistics stats;
@@ -256,24 +274,23 @@ namespace MilitiaOrganizationSystem
             }
         }*/
 
-        public List<FacetValue> getGroupNums(int skip, int take, out int sum, string database = null)
+        public List<FacetValue> getGroupNums(string database = null)
         {//通过静态索引查询组内民兵个数
             if (database == null)
             {
                 database = dbName;
             }
-
-            using(var session = store.OpenSession(database))
+            store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
+            using (var session = store.OpenSession(database))
             {
-                RavenQueryStatistics stats;
+                List<FacetValue> fList;
                 var gfacetResults = session.Query<Militias_Groups.Result, Militias_Groups>()
-                    .Statistics(out stats)
-                    //.ProjectFromIndexFieldsInto<Militias_Groups.Result>()
-                    .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
-                sum = stats.TotalResults;
-
-                List<FacetValue> fList = gfacetResults.Results["Group"].Values;
+                     //.ProjectFromIndexFieldsInto<Militias_Groups.Result>()
+                     .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
+                
+                fList = gfacetResults.Results["Group"].Values;
                 //MessageBox.Show(fDic["未分组"].Hits + "");
+
 
                 return fList;
             }

@@ -9,15 +9,21 @@ using System.Xml;
 
 namespace MilitiaOrganizationSystem
 {
-    class MilitiaListViewBiz
+    public class MilitiaListViewBiz
     {
         private static MilitiaEditDialog militiaEditDlg = new MilitiaEditDialog();//编辑民兵对话框,应该只有主界面才会调用
+        private static OptionForm ofDlg = new OptionForm();
+
         private ListView militia_ListView;
-        private XmlNodeList parameters;//民兵类的参数
         private bool sort = false;
         private SqlBiz sqlBiz;//数据库业务逻辑层
 
-        private System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition { get; set; }//此页面的查询条件
+        private System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition { get; set; }
+        private string place { get; set; }//该页面的查询条件之一指定数据库
+        //此页面的查询条件
+
+        private XmlNodeList parameters = MilitiaXmlConfig.parameters;
+        public List<int> displayedParameterIndexs { get; set; }//需显示的参数下标
 
         public int pageSize { get; set; }//每页显示多少民兵
         public int page { get; set; }//第几页
@@ -27,7 +33,7 @@ namespace MilitiaOrganizationSystem
         public MilitiaListViewBiz(ListView listView, SqlBiz sBz, System.Linq.Expressions.Expression<Func<Militia, bool>> condition)
         {
             militia_ListView = listView;
-            parameters = MilitiaXmlConfig.parameters();
+            displayedParameterIndexs = MilitiaXmlConfig.getAllDisplayedParameterIndexs();
             sqlBiz = sBz;
 
             this.lambdaContition = condition;//查询条件
@@ -36,9 +42,8 @@ namespace MilitiaOrganizationSystem
             pageSize = 20;
 
             bindEvent();
-
             refreshCurrentPage();
-
+            
             FormBizs.mListBizs.Add(this);//添加到biz池中
         }
 
@@ -76,84 +81,95 @@ namespace MilitiaOrganizationSystem
         }
 
         private void addColumnHeader()
-        {
-            
-            foreach(XmlNode parameter in parameters)
-            {
+        {//添加表头
+            militia_ListView.Columns.Clear();//先清除
+            foreach(int index in displayedParameterIndexs)
+            {//根据MilitiaXmlConfig类的配置文件添加表头
+                XmlNode parameter = parameters[index];
                 ColumnHeader ch = new ColumnHeader();
                 ch.Text = parameter.Attributes["name"].Value;   //设置列标题 
                 ch.Width = 120;    //设置列宽度 
                 ch.TextAlign = HorizontalAlignment.Left;   //设置列的对齐方式 
                 militia_ListView.Columns.Add(ch);    //将列头添加到ListView控件。 
             }
-
-            militia_ListView.Columns.Add("分组");
-            
         }
 
         public void updateItem(ListViewItem lvi)
         {//用tag更新显示
             Militia militia = (Militia)lvi.Tag;
             MilitiaReflection mr = new MilitiaReflection(militia);//反射
-            lvi.ImageIndex = 0;
-            XmlNode firstNode = parameters[0];
+            lvi.ImageIndex = 0;//图片
+            /*XmlNode firstNode = displayedParameters[0];//配置文件中第一个属性
             string value = "";
             try
             {
-                value = mr.getProperty(parameters[0].Attributes["property"].Value).ToString();
+                value = mr.getProperty(firstNode.Attributes["property"].Value).ToString();
             } catch(Exception e)
             {
                 
             }
             XmlNode selectNode = null;
-            if (parameters[0].Attributes["type"].Value == "enum")
-            {
-                selectNode = firstNode.SelectSingleNode("selection[@value='" + value + "']");
-                if (selectNode != null)
-                {
-                    value = selectNode.Attributes["name"].Value;
-                }
+            switch (firstNode.Attributes["type"].Value)
+            {//type为enum的属性,需要将value转为对应的字符串显示
+                case "enum":
+                    selectNode = firstNode.SelectSingleNode("selection[@value='" + value + "']");
+                    if (selectNode != null)
+                    {
+                        value = selectNode.Attributes["name"].Value;
+                    }
+                    break;
+                case "place":
+                    value = PlaceXmlConfig.getPlaceName(value);
+                    break;
+                default:
+                    break;
             }
-            lvi.Text = value;
-            if(lvi.SubItems.Count != parameters.Count)
-            {//此lvi是新建的,则将lvi的subItems添上
-                string[] items = new string[parameters.Count];
-                for(int i = 0; i < items.Length; i++)
-                {
-                    items[i] = "";
-                }
-                lvi.SubItems.AddRange(items);
-            }
-            for (int i = 1; i < parameters.Count; i++)
+            lvi.Text = value;//显示第一个属性*/
+
+            lvi.SubItems.Clear();
+            string[] items = new string[displayedParameterIndexs.Count - 1];
+            for(int i = 0; i < items.Length; i++)
             {
-                XmlNode node = parameters[i];
-                value = "";
+               items[i] = "";
+            }
+            lvi.SubItems.AddRange(items);
+
+            for(int i = 0; i < displayedParameterIndexs.Count; i++)
+            {//更新其他属性,第一个属性显示在主属性上了
+                int index = displayedParameterIndexs[i];
+                XmlNode node = parameters[index];
+                string value = "";
                 try
                 {
-                    value = mr.getProperty(parameters[i].Attributes["property"].Value).ToString();
+                    value = mr.getProperty(node.Attributes["property"].Value).ToString();
                 }
                 catch (Exception e)
                 {
 
                 }
 
-                if(parameters[i].Attributes["type"].Value == "enum")
-                {
-                    selectNode = node.SelectSingleNode("selection[@value='" + value + "']");
-                    if (selectNode != null)
-                    {
-                        value = selectNode.Attributes["name"].Value;
-                    }
+                switch (node.Attributes["type"].Value)
+                {//type为enum的属性,需要将value转为对应的字符串显示
+                    case "enum":
+                        XmlNode selectNode = node.SelectSingleNode("selection[@value='" + value + "']");
+                        if (selectNode != null)
+                        {
+                            value = selectNode.Attributes["name"].Value;
+                        }
+                        break;
+                    case "place":
+                        value = PlaceXmlConfig.getPlaceName(value);
+                        break;
+                    default:
+                        break;
                 }
 
                 lvi.SubItems[i].Text = value;
             }
-
-            lvi.SubItems[parameters.Count].Text = militia.Group;   
         }
 
         public void loadMilitiaList(List<Militia> mList)
-        {
+        {//清空原来的，加载现在的
             militia_ListView.Clear();//先清除所有
 
             addColumnHeader();
@@ -183,13 +199,6 @@ namespace MilitiaOrganizationSystem
             loadMilitiaList(sqlBiz.getAllMilitias());
         }
 
-        public void loadNotGroupedMilitiasInDb()
-        {//加载未分组民兵到ListView
-            militia_ListView.Clear();
-            int sum;
-            loadMilitiaList(sqlBiz.getMilitiasByGroup("未分组", 0, 1000, out sum));
-        }
-
         public void addOneMilitia(Militia militia)
         {//添加一个item
             ListViewItem lvi = new ListViewItem();
@@ -208,8 +217,6 @@ namespace MilitiaOrganizationSystem
             if(militiaEditDlg.showEditDlg(militia) == DialogResult.OK)
             {
                 sqlBiz.addMilitia(militia);//先加入数据库，这样才有了Id，才能使用
-
-                MessageBox.Show(militia.Id);
 
                 addOneMilitia(militia);
             }
@@ -290,13 +297,14 @@ namespace MilitiaOrganizationSystem
             if (lvi != null)
             {
                 lvi.Tag = militia;
-                updateItem(lvi);
-
-            } else
-            {
-                MessageBox.Show("why?");
+                if(lambdaContition.Compile()(militia))
+                {//如果满足当前的条件，才更新显示
+                    updateItem(lvi);
+                } else
+                {//如果不满足条件，则删除这个lvi
+                    lvi.Remove();
+                }
             }
-
         }
 
         public void removeMilitiaItem(Militia militia)
@@ -310,11 +318,28 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        public void refreshCurrentPage()
+        public void setoption()
         {
+            if(ofDlg.showOptionDialog(this) == DialogResult.OK)
+            {//ok后更新显示
+                addColumnHeader();
+                /*foreach(ListViewItem lvi in militia_ListView.Items)
+                {
+                    updateItem(lvi);
+                }*/
+                refreshCurrentPage();
+            }
+        }
+
+        public void refreshCurrentPage()
+        {//刷新本页
             int sum;
             List<Militia> mList = sqlBiz.queryByContition(lambdaContition, (page - 1) * pageSize, pageSize, out sum);
             maxPage = sum / pageSize + (sum % pageSize == 0 ? 0 : 1);//最大页数
+            if(maxPage == 0)
+            {
+                maxPage = 1;
+            }
             if(page > maxPage)
             {
                 page = maxPage;
@@ -323,7 +348,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public void lastPage()
-        {
+        {//上一页
             if(page > 1)
             {
                 page--;
@@ -332,7 +357,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public void nextPage()
-        {
+        {//下一页
             if(page < maxPage)
             {
                 page++;
@@ -341,13 +366,13 @@ namespace MilitiaOrganizationSystem
         }
 
         public void finalPage()
-        {
+        {//最后一页
             page = maxPage;
             refreshCurrentPage();
         }
 
         public void toPage(int p)
-        {
+        {//跳页
             if(p >= 1 && p <= maxPage)
             {
                 page = p;
@@ -358,7 +383,7 @@ namespace MilitiaOrganizationSystem
 
 
         class ListViewColumnSorter : IComparer
-        {
+        {//给当前页面排序类,对数据库不起作用
 
             /// <summary>
             /// 指定按照哪个列排序
