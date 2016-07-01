@@ -1,0 +1,30 @@
+{
+  "IndexId": 7,
+  "Name": "Auto/Militias/ByEquipmentInfo_MilitaryProfessionTypeNameAndGroupAndSex",
+  "LockMode": "Unlock",
+  "Map": "from doc in docs.Militias\nselect new {\n\tEquipmentInfo_MilitaryProfessionTypeName = doc.EquipmentInfo_MilitaryProfessionTypeName,\n\tGroup = doc.Group,\n\tSex = doc.Sex\n}",
+  "Maps": [
+    "from doc in docs.Militias\nselect new {\n\tEquipmentInfo_MilitaryProfessionTypeName = doc.EquipmentInfo_MilitaryProfessionTypeName,\n\tGroup = doc.Group,\n\tSex = doc.Sex\n}"
+  ],
+  "Reduce": null,
+  "IsMapReduce": false,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {
+    "EquipmentInfo_MilitaryProfessionTypeName": "EquipmentInfo_MilitaryProfessionTypeName",
+    "Group": "Group",
+    "Sex": "Sex"
+  },
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "Auto",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}

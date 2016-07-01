@@ -333,7 +333,7 @@ namespace MilitiaOrganizationSystem
         public void refreshCurrentPage()
         {//刷新本页
             int sum;
-            List<Militia> mList = sqlBiz.queryByContition(condition.lambdaCondition, (page - 1) * pageSize, pageSize, out sum);
+            List<Militia> mList = sqlBiz.queryByContition(condition.lambdaCondition, (page - 1) * pageSize, pageSize, out sum, condition.place);
             maxPage = sum / pageSize + (sum % pageSize == 0 ? 0 : 1);//最大页数
             if(maxPage == 0)
             {

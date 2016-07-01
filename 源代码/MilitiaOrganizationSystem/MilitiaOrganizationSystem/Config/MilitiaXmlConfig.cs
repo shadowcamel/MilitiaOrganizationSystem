@@ -50,6 +50,11 @@ namespace MilitiaOrganizationSystem
             return rootNode.SelectSingleNode("parameter[@property='" + propertyName + "']");
         }
 
+        public static XmlNode getNodeByName(string name)
+        {
+            return rootNode.SelectSingleNode("parameter[@name='" + name + "']");
+        }
+
         public static string getTypeOf(string propertyName)
         {
             XmlNode node = rootNode.SelectSingleNode("parameter[@property='" + propertyName + "']");

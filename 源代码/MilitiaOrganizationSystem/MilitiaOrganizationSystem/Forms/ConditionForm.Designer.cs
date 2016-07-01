@@ -35,12 +35,12 @@
             this.deleteCondition = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.pCombobox = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.comboBox2 = new System.Windows.Forms.ComboBox();
+            this.cCombobox = new System.Windows.Forms.ComboBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.comboBox3 = new System.Windows.Forms.ComboBox();
+            this.dCombobox = new System.Windows.Forms.ComboBox();
             this.label6 = new System.Windows.Forms.Label();
             this.btn_cancel = new System.Windows.Forms.Button();
             this.btn_ok = new System.Windows.Forms.Button();
@@ -60,6 +60,7 @@
             // 
             this.conditionListBox.ContextMenuStrip = this.rMenuStrip;
             this.conditionListBox.FormattingEnabled = true;
+            this.conditionListBox.HorizontalScrollbar = true;
             this.conditionListBox.ItemHeight = 12;
             this.conditionListBox.Location = new System.Drawing.Point(305, 65);
             this.conditionListBox.Name = "conditionListBox";
@@ -85,26 +86,28 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(12, 45);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(83, 12);
+            this.label1.Size = new System.Drawing.Size(131, 12);
             this.label1.TabIndex = 2;
-            this.label1.Text = "双击选择属性:";
+            this.label1.Text = "双击选择属性添加条件:";
             // 
             // label2
             // 
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(303, 45);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(71, 12);
+            this.label2.Size = new System.Drawing.Size(167, 12);
             this.label2.TabIndex = 3;
-            this.label2.Text = "已添加条件:";
+            this.label2.Text = "已添加条件(双击可编辑条件):";
             // 
-            // comboBox1
+            // pCombobox
             // 
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(67, 9);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(121, 20);
-            this.comboBox1.TabIndex = 4;
+            this.pCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.pCombobox.FormattingEnabled = true;
+            this.pCombobox.Location = new System.Drawing.Point(67, 9);
+            this.pCombobox.Name = "pCombobox";
+            this.pCombobox.Size = new System.Drawing.Size(121, 20);
+            this.pCombobox.TabIndex = 4;
+            this.pCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label3
             // 
@@ -124,13 +127,14 @@
             this.label4.TabIndex = 6;
             this.label4.Text = "省";
             // 
-            // comboBox2
+            // cCombobox
             // 
-            this.comboBox2.FormattingEnabled = true;
-            this.comboBox2.Location = new System.Drawing.Point(217, 9);
-            this.comboBox2.Name = "comboBox2";
-            this.comboBox2.Size = new System.Drawing.Size(121, 20);
-            this.comboBox2.TabIndex = 7;
+            this.cCombobox.FormattingEnabled = true;
+            this.cCombobox.Location = new System.Drawing.Point(217, 9);
+            this.cCombobox.Name = "cCombobox";
+            this.cCombobox.Size = new System.Drawing.Size(121, 20);
+            this.cCombobox.TabIndex = 7;
+            this.cCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label5
             // 
@@ -141,13 +145,14 @@
             this.label5.TabIndex = 8;
             this.label5.Text = "市";
             // 
-            // comboBox3
+            // dCombobox
             // 
-            this.comboBox3.FormattingEnabled = true;
-            this.comboBox3.Location = new System.Drawing.Point(368, 8);
-            this.comboBox3.Name = "comboBox3";
-            this.comboBox3.Size = new System.Drawing.Size(121, 20);
-            this.comboBox3.TabIndex = 9;
+            this.dCombobox.FormattingEnabled = true;
+            this.dCombobox.Location = new System.Drawing.Point(368, 8);
+            this.dCombobox.Name = "dCombobox";
+            this.dCombobox.Size = new System.Drawing.Size(121, 20);
+            this.dCombobox.TabIndex = 9;
+            this.dCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label6
             // 
@@ -185,16 +190,16 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_cancel;
-            this.ClientSize = new System.Drawing.Size(552, 469);
+            this.ClientSize = new System.Drawing.Size(558, 469);
             this.Controls.Add(this.btn_ok);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.label6);
-            this.Controls.Add(this.comboBox3);
+            this.Controls.Add(this.dCombobox);
             this.Controls.Add(this.label5);
-            this.Controls.Add(this.comboBox2);
+            this.Controls.Add(this.cCombobox);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.pCombobox);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.conditionListBox);
@@ -213,12 +218,12 @@
         private System.Windows.Forms.ListBox conditionListBox;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.ComboBox pCombobox;//省
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.ComboBox comboBox2;
+        private System.Windows.Forms.ComboBox cCombobox;//市
         private System.Windows.Forms.Label label5;
-        private System.Windows.Forms.ComboBox comboBox3;
+        private System.Windows.Forms.ComboBox dCombobox;//区/县
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.Button btn_ok;

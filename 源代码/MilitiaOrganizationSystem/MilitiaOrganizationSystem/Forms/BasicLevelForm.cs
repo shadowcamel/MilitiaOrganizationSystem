@@ -74,14 +74,13 @@ namespace MilitiaOrganizationSystem
                 {
                     lvi.Tag = militia;
                     listViewBiz.updateItem(lvi);
-                } else
+                    if (!condition.lambdaCondition.Compile()(militia))
+                    {//不满足筛选条件，则不能显示在这个界面
+                        lvi.Remove();
+                    }
+                } else if(condition.lambdaCondition.Compile()(militia))
                 {
                     listViewBiz.addOneMilitia(militia);
-                }
-
-                if(!condition.lambdaCondition.Compile()(militia))
-                {//不满足筛选条件，则不能显示在这个界面
-                    lvi.Remove();
                 }
             }
             militia_ListView.EndUpdate();//结束更新界面
@@ -114,6 +113,9 @@ namespace MilitiaOrganizationSystem
                         if(!condition.lambdaCondition.Compile()(militia))
                         {
                             lvi.Remove();
+                        } else
+                        {
+                            listViewBiz.updateItem(lvi);//如果符合条件，则刷新显示
                         }
                     }
                 }
@@ -294,7 +296,10 @@ namespace MilitiaOrganizationSystem
         private void conditionLabel_Click(object sender, EventArgs e)
         {
             ConditionForm cfDlg = new ConditionForm(condition);
-            cfDlg.ShowDialog();
+            if(cfDlg.ShowDialog() == DialogResult.OK)
+            {//ok后刷新
+                listViewBiz.refreshCurrentPage();
+            }
         }
     }
 }

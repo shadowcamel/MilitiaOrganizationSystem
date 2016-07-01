@@ -11,12 +11,12 @@ namespace MilitiaOrganizationSystem
     {
         public Expression<Func<Militia, bool>> lambdaCondition { get; set; }
         public string place { get; set; }//该页面的查询条件之一指定数据库
-        public Dictionary<string, ChildCondition> conditionDict { get; set; }
+        public List<ChildCondition> ccList { get; set; }
         //查询条件的集合, key是PropertyName
 
         private void initial()
         {
-            conditionDict = new Dictionary<string, ChildCondition>();
+            ccList = new List<ChildCondition>();
             lambdaCondition = null;
             place = null;
         }
@@ -28,11 +28,8 @@ namespace MilitiaOrganizationSystem
 
         public Condition(Condition condition)
         {//复制一个condition
-            conditionDict = new Dictionary<string, ChildCondition>();
-            foreach(KeyValuePair<string, ChildCondition> kvp in condition.conditionDict)
-            {
-                conditionDict.Add(kvp.Key, kvp.Value);
-            }
+            ccList = new List<ChildCondition>();
+            ccList.AddRange(condition.ccList);
             place = condition.place;
         }
         
@@ -44,7 +41,7 @@ namespace MilitiaOrganizationSystem
             cc.Method = "StartsWith";
             cc.Values.Add(group);
 
-            conditionDict["Group"] = cc;
+            ccList.Add(cc);
             generateLambdaCondition();//生成lambda表达式
             System.Windows.MessageBox.Show(lambdaCondition.ToString());
         }
@@ -64,13 +61,26 @@ namespace MilitiaOrganizationSystem
 
             public override string ToString()
             {//重写toString方法，用在显示上
-                string info = parameterNode.Attributes["property"].Value + " " + Method + " ";
-                info += "[";
-                foreach(string value in Values)
+                string info = parameterNode.Attributes["name"].Value + " ";
+                switch(parameterNode.Attributes["type"].Value)
                 {
-                    info += value + " "; 
+                    case "string":
+                        info += Method + " ";
+                        info += Values[0];
+                        break;
+                    case "enum":
+                        info += ": [";
+                        foreach (string value in Values)
+                        {
+                            info += parameterNode.SelectSingleNode("selection[@value='" + value + "']").Attributes["name"].Value + ", ";
+                        }
+                        info += "]";
+                        break;
+                    case "group":
+                        info += ": ";
+                        info += Values[0];
+                        break;
                 }
-                info += "]";
                 return info;
             }
         }
@@ -121,7 +131,7 @@ namespace MilitiaOrganizationSystem
         {
             var parameter = Expression.Parameter(typeof(Militia), "x");
             Expression expression = Expression.NotEqual(Expression.Property(parameter, "Group"), Expression.Constant(null));
-            foreach(ChildCondition cc in conditionDict.Values)
+            foreach(ChildCondition cc in ccList)
             {
                 expression = Expression.AndAlso(expression, generateExpresionByChildCondition(parameter, cc));
             }
