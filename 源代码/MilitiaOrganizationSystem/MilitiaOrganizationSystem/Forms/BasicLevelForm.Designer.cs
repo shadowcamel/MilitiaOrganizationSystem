@@ -46,8 +46,7 @@
             this.export = new System.Windows.Forms.ToolStripMenuItem();
             this.import = new System.Windows.Forms.ToolStripMenuItem();
             this.options = new System.Windows.Forms.ToolStripMenuItem();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.conditionLabel = new System.Windows.Forms.Label();
+            this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
             this.lastPage = new System.Windows.Forms.Button();
@@ -56,6 +55,7 @@
             this.labelPage = new System.Windows.Forms.Label();
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
+            this.conditionLabel = new System.Windows.Forms.Label();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -196,30 +196,17 @@
             this.options.Text = "设置";
             this.options.Click += new System.EventHandler(this.options_Click);
             // 
-            // textBox1
+            // labelCondition
             // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.labelCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(83, 28);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(767, 21);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "未分组";
-            // 
-            // conditionLabel
-            // 
-            this.conditionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.conditionLabel.AutoSize = true;
-            this.conditionLabel.Location = new System.Drawing.Point(12, 31);
-            this.conditionLabel.Name = "conditionLabel";
-            this.conditionLabel.Size = new System.Drawing.Size(65, 12);
-            this.conditionLabel.TabIndex = 4;
-            this.conditionLabel.Text = "筛选条件：";
-            this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
+            this.labelCondition.AutoSize = true;
+            this.labelCondition.Location = new System.Drawing.Point(12, 31);
+            this.labelCondition.Name = "labelCondition";
+            this.labelCondition.Size = new System.Drawing.Size(65, 12);
+            this.labelCondition.TabIndex = 4;
+            this.labelCondition.Text = "筛选条件：";
             // 
             // nextPage
             // 
@@ -314,12 +301,23 @@
             this.finalPage.UseVisualStyleBackColor = true;
             this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
+            // conditionLabel
+            // 
+            this.conditionLabel.AutoSize = true;
+            this.conditionLabel.Location = new System.Drawing.Point(83, 31);
+            this.conditionLabel.Name = "conditionLabel";
+            this.conditionLabel.Size = new System.Drawing.Size(41, 12);
+            this.conditionLabel.TabIndex = 13;
+            this.conditionLabel.Text = "未分组";
+            this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
+            // 
             // BasicLevelForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 596);
+            this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.finalPage);
             this.Controls.Add(this.skipPage);
             this.Controls.Add(this.labelPage);
@@ -328,8 +326,7 @@
             this.Controls.Add(this.lastPage);
             this.Controls.Add(this.currentPage);
             this.Controls.Add(this.nextPage);
-            this.Controls.Add(this.conditionLabel);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.labelCondition);
             this.Controls.Add(this.militia_ListView);
             this.Controls.Add(this.menu_basicLevel);
             this.Name = "BasicLevelForm";
@@ -355,8 +352,7 @@
         private System.Windows.Forms.ToolStripMenuItem dele;
         private System.Windows.Forms.ToolStripMenuItem importFromXml;
         private System.Windows.Forms.ImageList militiaImageList;
-        private System.Windows.Forms.TextBox textBox1;
-        private System.Windows.Forms.Label conditionLabel;
+        private System.Windows.Forms.Label labelCondition;
         private System.Windows.Forms.ContextMenuStrip rMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem rAdd;
         private System.Windows.Forms.ToolStripMenuItem rEdit;
@@ -372,6 +368,7 @@
         private System.Windows.Forms.ToolStripMenuItem export;
         private System.Windows.Forms.ToolStripMenuItem import;
         private System.Windows.Forms.ToolStripMenuItem options;
+        private System.Windows.Forms.Label conditionLabel;
     }
 }
 

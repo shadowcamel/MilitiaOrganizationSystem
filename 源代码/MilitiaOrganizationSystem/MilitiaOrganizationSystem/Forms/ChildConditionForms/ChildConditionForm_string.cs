@@ -10,15 +10,18 @@ using System.Windows.Forms;
 
 namespace MilitiaOrganizationSystem
 {
-    public partial class ChildConditionForm_string : Form
+    public partial class ChildConditionForm_string : ChildConditionForm
     {
         private Condition.ChildCondition childCondition;
 
         private System.Xml.XmlNode paraNode;
+        
 
         public ChildConditionForm_string(Condition.ChildCondition cc)
         {
             InitializeComponent();
+
+            closeForm = true;
 
             childCondition = cc;
 
@@ -35,16 +38,31 @@ namespace MilitiaOrganizationSystem
                 radio_EndsWith.Checked = true;
                 endswithCombobox.Text = cc.Values[0];
             }
+            
         }
 
         private void btn_ok_Click(object sender, EventArgs e)
         {
             if(radio_StartsWith.Checked)
             {
+                if(startwithCombobox.Text == null || startwithCombobox.Text == "")
+                {
+                    MessageBox.Show("请输入数据！");
+                    startwithCombobox.Focus();
+                    closeForm = false;
+                    return;
+                }
                 childCondition.Method = "StartsWith";
                 childCondition.Values.Add(startwithCombobox.Text);
             } else if(radio_EndsWith.Checked)
             {
+                if (endswithCombobox.Text == null || endswithCombobox.Text == "")
+                {
+                    MessageBox.Show("请输入数据！");
+                    endswithCombobox.Focus();
+                    closeForm = false;
+                    return;
+                }
                 childCondition.Method = "EndsWith";
                 childCondition.Values.Add(endswithCombobox.Text);
             } else

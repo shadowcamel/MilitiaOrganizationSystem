@@ -12,10 +12,10 @@ namespace MilitiaOrganizationSystem
         public Expression<Func<Militia, bool>> lambdaCondition { get; set; }
         public string place { get; set; }//该页面的查询条件之一指定数据库
         public List<ChildCondition> ccList { get; set; }
-        //查询条件的集合, key是PropertyName
+        //查询条件的集合
 
         private void initial()
-        {
+        {//初始化
             ccList = new List<ChildCondition>();
             lambdaCondition = null;
             place = null;
@@ -43,7 +43,6 @@ namespace MilitiaOrganizationSystem
 
             ccList.Add(cc);
             generateLambdaCondition();//生成lambda表达式
-            System.Windows.MessageBox.Show(lambdaCondition.ToString());
         }
 
         public class ChildCondition
@@ -137,6 +136,16 @@ namespace MilitiaOrganizationSystem
             }
 
             lambdaCondition = Expression.Lambda<Func<Militia, bool>>(expression, parameter);
+        }
+
+        public override string ToString()
+        {
+            string info = "";
+            foreach(ChildCondition cc in ccList)
+            {
+                info += cc.ToString() + ", ";
+            }
+            return info;
         }
     }
 }

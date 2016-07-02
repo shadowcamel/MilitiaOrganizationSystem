@@ -11,7 +11,7 @@ using System.Xml;
 
 namespace MilitiaOrganizationSystem
 {
-    public partial class ChildConditionForm_enum : Form
+    public partial class ChildConditionForm_enum : ChildConditionForm
     {
         private Condition.ChildCondition childCondtion;
         private XmlNode paraNode;
@@ -20,6 +20,7 @@ namespace MilitiaOrganizationSystem
         {
             InitializeComponent();
 
+            closeForm = true;
             childCondtion = cc;
             paraNode = cc.parameterNode;
 
@@ -44,10 +45,20 @@ namespace MilitiaOrganizationSystem
                     }
                 }
             }
+            
         }
 
         private void btn_ok_Click(object sender, EventArgs e)
         {//ok,条件赋值
+            if (propertyvaluesListbox.CheckedIndices.Count == 0)
+            {//没有选择条件
+                MessageBox.Show("必须选择一个值！");
+                closeForm = false;
+                return;
+            } else
+            {
+                closeForm = true;
+            }
             childCondtion.Values.Clear();
             for(int i = 0; i < propertyvaluesListbox.Items.Count; i++)
             {

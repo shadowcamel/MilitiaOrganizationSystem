@@ -35,8 +35,6 @@ namespace MilitiaOrganizationSystem
             groups_treeView.DragEnter += Groups_treeView_DragEnter;
             groups_treeView.DragOver += Groups_treeView_DragOver;
             groups_treeView.DragDrop += Groups_treeView_DragDrop;
-
-            //groups_treeView.ItemDrag += Groups_treeView_ItemDrag;
             
         }
 
@@ -47,25 +45,6 @@ namespace MilitiaOrganizationSystem
             GroupMilitiaForm gm = new GroupMilitiaForm(BasicLevelForm.sqlBiz, tn.Name);
             gm.Show();
         }
-
-        /***private void Groups_treeView_ItemDrag(object sender, ItemDragEventArgs e)
-        {//拖动treeView的节点触发
-            TreeNode treeNode = (TreeNode)e.Item;
-            groups_treeView.SelectedNode = treeNode;
-            if(treeNode.Tag == null)
-            {//是民兵节点,则拖动
-                GroupTag tag = (GroupTag)treeNode.Parent.Tag;//父节点，即组的tag
-                int index = treeNode.Parent.Nodes.IndexOf(treeNode);//获取子节点在父节点的index，也是民兵的index
-                Militia militia = tag.militias[index];//获取此节点代表的民兵
-                MoveTag mt = new MoveTag(this, new List<Militia> { militia });
-                if (groups_treeView.DoDragDrop(mt, DragDropEffects.Move) == DragDropEffects.Move)
-                {//移动成功,应删除此节点
-                    tag.militias.Remove(militia);
-                    treeNode.Remove();
-                };
-                
-            }
-        }*/
 
         private void Groups_treeView_DragOver(object sender, DragEventArgs e)
         {
@@ -115,25 +94,9 @@ namespace MilitiaOrganizationSystem
                             if(groupNode != null)
                             {
                                 xmlGroupBiz.reduceCount(groupNode, 1);//减少数量
-                                //int index = groupTag.militias.IndexOf(militia);
-                                //MessageBox.Show(groupTag.militias.Count +"");
-                                /***int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
-                                    if (m.Id == militia.Id)
-                                    {
-                                        return true;
-                                    }
-                                    return false;
-                                });
-                                if (index >= 0)
-                                {
-                                    groupTag.militias.RemoveAt(index);
-                                    groupNode.Nodes.RemoveAt(index);
-                                }*/
-                                ///减少组节点显示的民兵数量
 
                                 //通知MilitiaForm更改分组
                                 militia.Group = groupNode.Name;
-                                //((BasicLevelForm)Program.formDic["MilitiaForm"]).updateMilitiaItem(militia);
                                 FormBizs.updateMilitiaItem(militia);
                             }
                             
@@ -144,8 +107,6 @@ namespace MilitiaOrganizationSystem
                     xmlGroupBiz.addCount(node, 1);
                     BasicLevelForm.sqlBiz.updateMilitia(militia);//保存分组
                     //此时此组中一定没有这个对象，前面如果民兵已有分组，到此时已经被删除
-                    //tag.militias.Add(militia);//添加到组的tag中
-                    //groups_treeView.SelectedNode = node.Nodes.Add(militia.info());//选中它
                 }
             }
         }
@@ -156,14 +117,14 @@ namespace MilitiaOrganizationSystem
             e.Effect = DragDropEffects.None;
         }
 
-        public XMLGroupTaskForm(string xmlFile)
+        public XMLGroupTaskForm()
         {//构造函数
             InitializeComponent();
             bindEvent();
 
             this.ControlBox = false;//不要最大化最小化以及×
 
-            xmlGroupBiz = new XMLGroupTreeViewBiz(groups_treeView, BasicLevelForm.xmlGroupFile, BasicLevelForm.sqlBiz);
+            xmlGroupBiz = new XMLGroupTreeViewBiz(groups_treeView, BasicLevelForm.sqlBiz);
             xmlGroupBiz.refresh();//加载xml分组文件
         }
 
@@ -222,7 +183,7 @@ namespace MilitiaOrganizationSystem
             {
                 return;
             }
-            //查看代码
+            //查看民兵
             GroupMilitiaForm gm = new GroupMilitiaForm(BasicLevelForm.sqlBiz, selectNode.Name);
             gm.Show();
 
@@ -237,29 +198,5 @@ namespace MilitiaOrganizationSystem
         {
             xmlGroupBiz.addXmlGroupTask(xmlFile);//从文件中增加分组任务
         }
-
-        /*public void updateMilitiaNode(Militia militia)
-        {//改变一个民兵的信息（可能在编辑界面被更改了信息）,函数被编辑页面调用
-            TreeNode groupNode = xmlGroupBiz.getTreeNodeByText(militia.Group);//找到他原来的组节点
-            if(groupNode == null)
-            {
-                return;
-            }
-            GroupTag groupTag = (GroupTag)groupNode.Tag;
-            int index = groupTag.militias.FindIndex(delegate (Militia m) {//不同session查询出的militia对象不是同一个,故根据Id判断
-                if (m.Id == militia.Id)
-                {
-                    return true;
-                }
-                return false;
-            });
-            if (index >= 0)
-            {
-                groupTag.militias[index] = militia;
-                groupNode.Nodes[index].Text = militia.info();
-            }
-        }*/
-
-        
     }
 }

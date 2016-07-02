@@ -13,14 +13,11 @@ namespace MilitiaOrganizationSystem
         private XMLGroupDao xmlGroupDao;//xml访问层
         private TreeView groups_treeView;//树视图
 
-        public string groupFile { get; set; }//分组文件所在路径
 
-
-        public XMLGroupTreeViewBiz(TreeView groups_TreeView, string xmlGroupFile, SqlBiz sqlBiz)
+        public XMLGroupTreeViewBiz(TreeView groups_TreeView, SqlBiz sqlBiz)
         {//构造函数
-            xmlGroupDao = new XMLGroupDao(xmlGroupFile, sqlBiz, groups_TreeView);
+            xmlGroupDao = new XMLGroupDao(sqlBiz, groups_TreeView);
             this.groups_treeView = groups_TreeView;
-            this.groupFile = xmlGroupFile;
 
             FormBizs.groupBiz = this;//唯一的分组任务界面
         }
@@ -96,12 +93,6 @@ namespace MilitiaOrganizationSystem
             GroupTag tag = (GroupTag)(selectNode.Tag);
             xmlGroupDao.deleteGroup(tag.tagXmlNode);//删除xml里面
             selectNode.Nodes.Remove(selectNode);//treeview中删除
-        }
-
-        public void loadGroupXmlFile(string xmlFile)
-        {//将xml文件加载到treeView中
-            xmlGroupDao.loadXMLFileToTreeView(xmlFile, groups_treeView);
-            groups_treeView.ExpandAll();
         }
 
         public void refresh()

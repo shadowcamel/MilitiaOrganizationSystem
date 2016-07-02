@@ -114,7 +114,7 @@ namespace MilitiaOrganizationSystem
                     ccForm = new ChildConditionForm_string(cc);
                     break;
                 case "group":
-
+                    ccForm = new ChildConditionForm_group(cc);
                     break;
                 case "int":
 

@@ -58,7 +58,7 @@ namespace MilitiaOrganizationSystem
         {//fileName为导出文件，psd为压缩密码
             Zip zip = new Zip(fileName, psd, 6);
             sqlBiz.exportZip(zip);
-            zip.addFileOrFolder(groupBiz.groupFile);
+            zip.addFileOrFolder(GroupXmlConfig.xmlGroupFile);
             zip.close();
         }
 
@@ -89,7 +89,7 @@ namespace MilitiaOrganizationSystem
         {
             UnZip unzip = new UnZip(importFile, SqlBiz.DataDir, psd);
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);
-            groupBiz.addXmlGroupTask(SqlBiz.DataDir + "\\" + Path.GetFileName(groupBiz.groupFile), importedDatabases);
+            groupBiz.addXmlGroupTask(SqlBiz.DataDir + "\\" + Path.GetFileName(GroupXmlConfig.xmlGroupFile), importedDatabases);
             List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
             System.Windows.MessageBox.Show("count = " + mlList.Count);
         }

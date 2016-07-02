@@ -14,7 +14,6 @@ namespace MilitiaOrganizationSystem
 {
     public partial class BasicLevelForm : Form
     {
-        public const string xmlGroupFile = "xmlGroupFile.xml";//分组的配置文件
         public const string dbName = "place";//数据库名
 
         public static SqlBiz sqlBiz = new SqlBiz(dbName);//静态的数据库
@@ -32,6 +31,7 @@ namespace MilitiaOrganizationSystem
             InitializeComponent();
             xmlGroupTaskForm = null;
             condition = new Condition("未分组");
+            conditionLabel.Text = condition.ToString();
             listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
             /*//从数据库中加载未分组民兵信息到显示
             listViewBiz.loadNotGroupedMilitiasInDb();*/
@@ -134,26 +134,12 @@ namespace MilitiaOrganizationSystem
 
         private void BasicLevelForm_Load(object sender, EventArgs e)
         {//加载时,同时打开分组界面
-            /**if (File.Exists(xmlGroupFile))
-            {//判断分组任务是否已经存在，如果存在，即加载分组任务
-                xmlGroupTaskForm = new XMLGroupTaskForm(xmlGroupFile);
-                xmlGroupTaskForm.Show();
-            }*/
-            xmlGroupTaskForm = new XMLGroupTaskForm(xmlGroupFile);
+            xmlGroupTaskForm = new XMLGroupTaskForm();
             xmlGroupTaskForm.Show();
         }
 
         private void importXMLGroupTask_Click(object sender, EventArgs e)
         {//导入分组任务（添加任务）
-            /**if(xmlGroupTaskForm != null)
-            {
-                DialogResult re = MessageBox.Show("分组任务已存在，是否删除之前的分组数据，重新导入编组任务？", "警告", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
-                if(re == DialogResult.Cancel)
-                {
-                    return;
-                }
-            }*/
-
             OpenFileDialog fileDialog = new OpenFileDialog();
             fileDialog.Multiselect = false;
             fileDialog.Title = "请选择文件";
@@ -161,22 +147,6 @@ namespace MilitiaOrganizationSystem
             if (fileDialog.ShowDialog() == DialogResult.OK)
             {
                 string file = fileDialog.FileName;//已经选择了文件
-                //MessageBox.Show("已选择文件:" + file, "选择文件提示", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                /**XMLGroupTaskForm lastForm = xmlGroupTaskForm;
-                try
-                {
-                    xmlGroupTaskForm = new XMLGroupTaskForm(file);
-                } catch(Exception xmlExeption)
-                {
-                    MessageBox.Show("导入xml文件出现异常！", "异常警告", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-                if (lastForm != null)
-                {//既然加载成功，那就关闭以前的，且在数据库里删除以前的分组信息
-                    lastForm.Close();
-                    //数据库操作
-                }
-                xmlGroupTaskForm.Show();*/
                 try
                 {
                     xmlGroupTaskForm.addXmlGroupTask(file);
@@ -294,10 +264,11 @@ namespace MilitiaOrganizationSystem
         }
 
         private void conditionLabel_Click(object sender, EventArgs e)
-        {
-            ConditionForm cfDlg = new ConditionForm(condition);
-            if(cfDlg.ShowDialog() == DialogResult.OK)
-            {//ok后刷新
+        {//打开筛选条件界面
+            ConditionForm cf = new ConditionForm(condition);
+            if(cf.ShowDialog() == DialogResult.OK)
+            {
+                conditionLabel.Text = condition.ToString();
                 listViewBiz.refreshCurrentPage();
             }
         }

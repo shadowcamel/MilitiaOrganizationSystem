@@ -12,8 +12,6 @@ namespace MilitiaOrganizationSystem
 {
     class XMLGroupDao
     {//分组任务xml访问层
-
-        private string xmlGroupFileName;
         private XmlDocument xmlDoc;
         private XmlNode rootNode;//根节点
         private SqlBiz sqlBiz;//数据库业务逻辑层
@@ -32,14 +30,7 @@ namespace MilitiaOrganizationSystem
 
         private void saveXml()
         {//保存xml文件
-            /**if(rootNode.Attributes["maxId"] == null)
-            {
-                XmlAttribute attr = xmlDoc.CreateAttribute("maxId");
-                attr.Value = "";
-                rootNode.Attributes.SetNamedItem(attr);
-            }
-            rootNode.Attributes["maxId"].Value = maxId.ToString();*/
-            xmlDoc.Save(xmlGroupFileName);
+            GroupXmlConfig.saveXml();
         }
 
         public string getToolTipText(XmlNode node)
@@ -52,56 +43,19 @@ namespace MilitiaOrganizationSystem
 
             return ToolTipText;
         }
-
-        private string getNodePath(XmlNode node)
-        {
-            string path = node.Attributes["name"].Value;
-            while(node.ParentNode.Attributes["name"] != null)
-            {
-                path = node.ParentNode.Attributes["name"].Value + "/" + path;
-                node = node.ParentNode;
-            }
-            return path;
-        }
         
-        public XMLGroupDao(string xmlGroupFile, SqlBiz sBiz, TreeView tv)
+        public XMLGroupDao(SqlBiz sBiz, TreeView tv)
         {//构造函数,传进需要保存的xml文件名,之后就从这个文件中读取和保存
-            this.xmlGroupFileName = xmlGroupFile;
-            xmlDoc = new XmlDocument();
-            if(File.Exists(xmlGroupFile))
-            {//如果文件存在，则加载到xmlDoc中
-                xmlDoc.Load(xmlGroupFile);
-                rootNode = xmlDoc.DocumentElement;
-            } else
-            {//如果不存在，则新建
-                XmlDeclaration dec = xmlDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
-                xmlDoc.AppendChild(dec);
-                rootNode = xmlDoc.CreateElement("root");
-                xmlDoc.AppendChild(rootNode);
-            }
+            xmlDoc = GroupXmlConfig.xmlDoc;
+            rootNode = GroupXmlConfig.rootNode;
             sqlBiz = sBiz;//数据库业务逻辑层
             groups_TreeView = tv;
-            /**maxId = 1;*/
         }
 
         public void loadToTreeView()
         {
-            Dictionary<string, FacetValue> fdict = sqlBiz.getGroupNums();
-            addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes, fdict);
-        }
-
-        public void loadXMLFileToTreeView(string xmlFile, TreeView groups_TreeView)
-        {//将xml分组文件加载到treeView中
-            xmlDoc.Load(xmlFile);
-            rootNode = xmlDoc.DocumentElement;
-            /**if(rootNode.Attributes["maxId"] != null)
-            {
-                maxId = long.Parse(rootNode.Attributes["maxId"].Value);
-                //MessageBox.Show(maxId.ToString());
-            }*/
             Dictionary<string, FacetValue> fDict = sqlBiz.getGroupNums();
             addXmlNodeToTreeNode(rootNode, groups_TreeView.Nodes, fDict);
-            saveXml();
         }
 
         public void addCountUpToAllParent(TreeNode tn, int Count)
@@ -121,24 +75,16 @@ namespace MilitiaOrganizationSystem
         {//将root下的所有节点加载到treeView中
             foreach (XmlNode node in root.ChildNodes)
             {
-                /**if (node.Attributes["Id"] == null)
-                {
-                    setId(node);//给节点增加Id属性
-                }*/
 
                 TreeNode treeNode = rootNodes.Add(node.Attributes["name"].Value);
 
                 treeNode.ToolTipText = getToolTipText(node);
 
-                treeNode.Name = getNodePath(node);//查找TreeNode的Key
+                treeNode.Name = GroupXmlConfig.getNodePath(node);//查找TreeNode的Key
 
                 GroupTag tag = new GroupTag(node);
 
                 treeNode.Text = tag.info();
-
-                
-
-                //tag.groupPath = getNodePath(node);//path
 
                 if (!node.HasChildNodes)
                 {//是叶节点,则获取此组下的民兵，并将民兵添加到treeView中
@@ -150,28 +96,10 @@ namespace MilitiaOrganizationSystem
                         addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
                     }    
                     
-                    treeNode.Text = tag.info();
-                    /*try
-                    {
-                        tag.militias = BasicLevelForm.sqlBiz.getMilitiasByGroup(tag.groupPath);
-
-                        treeNode.ToolTipText += "组内已有民兵" + tag.militias.Count + "个";
-
-                        foreach(Militia militia in tag.militias)
-                        {
-                            TreeNode mNode = treeNode.Nodes.Add(militia.info());
-                            mNode.Name = militia.Id;//查找TreeNode的key
-                        }
-                    } catch(Exception e)
-                    {
-                        
-                    }*/
-                    
+                    treeNode.Text = tag.info();              
                 }
 
-
                 treeNode.Tag = tag;//记录节点
-
 
                 addXmlNodeToTreeNode(node, treeNode.Nodes, fDic);
             }
@@ -251,7 +179,7 @@ namespace MilitiaOrganizationSystem
                         //那判断它是不是叶节点，如果是叶节点，还要加一下数量
                         if(!xdChildNode.HasChildNodes)
                         {//是叶节点，增加数量
-                            TreeNode treeNode = groups_TreeView.Nodes.Find(getNodePath(xmlChildNode), true)[0];
+                            TreeNode treeNode = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlChildNode), true)[0];
                             GroupTag tag = (GroupTag)treeNode.Tag;
                             FacetValue fv;
                             if (fDic.TryGetValue(treeNode.Name, out fv))
@@ -271,13 +199,13 @@ namespace MilitiaOrganizationSystem
                 {//如果没有找到与xdChildNode相同的子节点，则将xdChildNode添加到xdNode的子节点中
                     XmlNode newNode = xmlNode.AppendChild(xmlDoc.ImportNode(xdChildNode, true));
 
-                    TreeNode tn = groups_TreeView.Nodes.Find(getNodePath(xmlNode), true)[0];
+                    TreeNode tn = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlNode), true)[0];
 
                     TreeNode treeNode = tn.Nodes.Add(newNode.Attributes["name"].Value);
 
                     treeNode.ToolTipText = getToolTipText(newNode);
 
-                    treeNode.Name = getNodePath(newNode);//查找TreeNode的Key
+                    treeNode.Name = GroupXmlConfig.getNodePath(newNode);//查找TreeNode的Key
 
                     GroupTag tag = new GroupTag(newNode);
 
@@ -328,8 +256,6 @@ namespace MilitiaOrganizationSystem
         {//将xml文件导出
             xmlDoc.Save(fileName);
         }
-        
-
     }
 
 }
