@@ -75,7 +75,19 @@ namespace MilitiaOrganizationSystem
                 List<Militia> mList = mt.moveMilitias;
                 foreach(Militia militia in mList)
                 {
-                    //MilitiaReflection mr = new MilitiaReflection(militia);//反射
+                    if(militia.Id == null)
+                    {//删除后的民兵来分组
+                        if (MessageBox.Show("民兵：" + militia.info() + " 已经被删除，是否恢复它并继续操作？", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                        {
+                            militia.Group = "未分组";
+                            FormBizs.sqlBiz.addMilitia(militia);
+                            //相当于新建一个民兵，并分组
+                        } else
+                        {
+                            continue;
+                        }
+                    }
+                    
                     if(militia.Group == node.Name)
                     {//分组本来就是它,则无需操作
                         e.Effect = DragDropEffects.None;
@@ -94,10 +106,6 @@ namespace MilitiaOrganizationSystem
                             if(groupNode != null)
                             {
                                 xmlGroupBiz.reduceCount(groupNode, 1);//减少数量
-
-                                //通知MilitiaForm更改分组
-                                militia.Group = groupNode.Name;
-                                FormBizs.updateMilitiaItem(militia);
                             }
                             
                             
@@ -106,7 +114,8 @@ namespace MilitiaOrganizationSystem
                     militia.Group = node.Name;
                     xmlGroupBiz.addCount(node, 1);
                     BasicLevelForm.sqlBiz.updateMilitia(militia);//保存分组
-                    //此时此组中一定没有这个对象，前面如果民兵已有分组，到此时已经被删除
+                    //通知MilitiaForm更改分组
+                    FormBizs.updateMilitiaItem(militia);
                 }
             }
         }

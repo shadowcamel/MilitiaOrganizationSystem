@@ -125,7 +125,8 @@ namespace MilitiaOrganizationSystem
             }
             lvi.Text = value;//显示第一个属性*/
 
-            lvi.SubItems.Clear();
+            lvi.SubItems.Clear();//会删除第一个key
+
             string[] items = new string[displayedParameterIndexs.Count - 1];
             for(int i = 0; i < items.Length; i++)
             {
@@ -165,6 +166,8 @@ namespace MilitiaOrganizationSystem
 
                 lvi.SubItems[i].Text = value;
             }
+
+            lvi.Name = militia.Id;//设置查询的Key
         }
 
         public void loadMilitiaList(List<Militia> mList)
@@ -181,7 +184,7 @@ namespace MilitiaOrganizationSystem
 
                 lvi.Tag = militia;//设置Tag
 
-                lvi.Name = militia.Id;//设置查询的Key
+                //lvi.Name = militia.Id;//设置查询的Key, updateItem会设置
 
                 updateItem(lvi);//更新显示
 
@@ -202,7 +205,7 @@ namespace MilitiaOrganizationSystem
         {//添加一个item
             ListViewItem lvi = new ListViewItem();
             lvi.Tag = militia;
-            lvi.Name = militia.Id;//之前一定是存了数据库的
+            //lvi.Name = militia.Id;//之前一定是存了数据库的, updateItem会设置key
             updateItem(lvi);
             militia_ListView.Items.Add(lvi);
             militia_ListView.SelectedItems.Clear();
@@ -253,7 +256,7 @@ namespace MilitiaOrganizationSystem
                 FormBizs.removeMilitiaItem(militia);
                 FormBizs.groupBiz.reduceCount(militia);
                 militia_ListView.Items.Remove(lvi);
-                sqlBiz.deleteMilitia(militia);   
+                sqlBiz.deleteMilitia(militia);  
             }
         }
 
@@ -321,11 +324,6 @@ namespace MilitiaOrganizationSystem
         {
             if(ofDlg.showOptionDialog(this) == DialogResult.OK)
             {//ok后更新显示
-                addColumnHeader();
-                /*foreach(ListViewItem lvi in militia_ListView.Items)
-                {
-                    updateItem(lvi);
-                }*/
                 refreshCurrentPage();
             }
         }

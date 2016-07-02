@@ -1,7 +1,4 @@
-14 - Auto/Militias/ByGroupAndSex
 17 - Auto/Militias/ByCredentialNumberAndEquipmentInfo_MilitaryProfessionTypeNameAndGroupAndNameAndSex
 12 - Militias/CredentialNumbers
 13 - Militias/Groups
-16 - Auto/Militias/ByEquipmentInfo_MilitaryProfessionTypeNameAndGroupAndNameAndSex
 1 - Raven/DocumentsByEntityName
-15 - Auto/Militias/ByEquipmentInfo_MilitaryProfessionTypeNameAndGroupAndSex

@@ -22,7 +22,7 @@ namespace MilitiaOrganizationSystem
             sqlBiz = sBiz;
             condition = new Condition(group);
             listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
-
+            updatePageUpDown();
             /*//从数据库中加载相应民兵信息到显示
             int sum;
             listViewBiz.loadMilitiaList(sqlBiz.getMilitiasByGroup(group, 0, 1000, out sum));*/
@@ -60,8 +60,8 @@ namespace MilitiaOrganizationSystem
 
         private void updatePageUpDown()
         {
-            pageUpDown.Value = listViewBiz.page;
             pageUpDown.Maximum = listViewBiz.maxPage;
+            pageUpDown.Value = listViewBiz.page;
         }
 
         private void skipPage_Click(object sender, EventArgs e)

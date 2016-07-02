@@ -27,9 +27,18 @@ namespace MilitiaOrganizationSystem
             initialPlaceCombobox();//初始化采集地显示
 
             //初始化属性显示
-            foreach (System.Xml.XmlNode xn in parameters)
+            for(int i = 0; i < parameters.Count; i++)
             {//添加属性名
+                System.Xml.XmlNode xn = parameters[i];
                 parasCheckBox.Items.Add(xn.Attributes["name"].Value);
+                foreach(Condition.ChildCondition cc in currentCondition.ccList)
+                {
+                    if(cc.parameterNode == xn)
+                    {
+                        parasCheckBox.SetItemChecked(i, true);
+                        break;
+                    }
+                }
             }
 
             condition = currentCondition;//直接引用

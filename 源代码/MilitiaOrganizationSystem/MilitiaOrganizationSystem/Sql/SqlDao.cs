@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
-using System.Windows;
 using Raven.Database.Smuggler;
 using Raven.Abstractions.Smuggler;
 using Raven.Abstractions.Data;
@@ -23,8 +22,6 @@ namespace MilitiaOrganizationSystem
 
         private const int timeoutseconds = 5;
 
-        //private int time;//saveChanges的次数
-
         public SqlDao(string db)
         {
             this.dbName = db;
@@ -34,7 +31,6 @@ namespace MilitiaOrganizationSystem
 
         private void newStore()
         {//新建store并初始化
-            //time = 0;//初始化次数为0
 
             store = new EmbeddableDocumentStore()
             {
@@ -49,17 +45,6 @@ namespace MilitiaOrganizationSystem
             new Militias_Groups().Execute(store);   
 
         }
-
-        /*public void saveChanges()
-        {
-            session.SaveChanges();
-            time++;
-            if(time > 25)
-            {//重新开启store和session
-                session.Dispose();
-                store.Dispose();
-            }
-        }*/
         
 
         public void saveMilitia(Militia militia)
@@ -70,8 +55,6 @@ namespace MilitiaOrganizationSystem
             }
 
             string database = militia.Place;//指定数据库
-            
-            //militia.CredentialNumber = militia.InfoDic["CredentialNumber"];
 
             using (var session = store.OpenSession(database))
             {
@@ -90,18 +73,6 @@ namespace MilitiaOrganizationSystem
                 }
             }
         }
-
-        /*public List<Militia> queryAllMilitias()
-        {//返回所有的民兵信息
-            using (var session = store.OpenSession())
-            {
-                var mlist = from x in session.Query<Militia>()
-                            where x.Id != ""
-                            select x;
-                return mlist.ToList();
-            }
-            
-        }*/
         
 
         public List<Militia> queryMilitiasByGroup(string groupPath)
@@ -113,17 +84,6 @@ namespace MilitiaOrganizationSystem
                             select x;
                 return mlist.ToList();
             }
-
-
-            /*var militias = from x in session.Query<Militia>()
-                           where x.@group.Equals(groupPath)
-                           select x;
-            List<Militia> mList = militias.ToList();
-            if(mList == null)
-            {
-                mList = new List<Militia>();
-            }
-            return mList;*/
         }
 
 
@@ -289,34 +249,35 @@ namespace MilitiaOrganizationSystem
                      .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
                 
                 fList = gfacetResults.Results["Group"].Values;
-                //MessageBox.Show(fDic["未分组"].Hits + "");
-
 
                 return fList;
             }
 
         }
 
-        public List<FacetValue> getAggregateNums(Expression<Func<Militia, bool>> lambdaContition, string database = null)
+        public List<FacetValue> getAggregateNums(Expression<Func<Militia, bool>> lambdaContition, string propertyName, string database = null)
         {//统计
             if (database == null)
             {
                 database = dbName;
             }
 
+            var parameter = Expression.Parameter(typeof(Militia), "x");
+            var property = Expression.Property(parameter, propertyName);
+            var propertyExpression = Expression.Lambda<Func<Militia, object>>(property, parameter);
+
+            store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
             using (var session = store.OpenSession(database))
             {
                 var gfacetResults = session.Query<Militia>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(lambdaContition)
-                    .AggregateBy(x => x.Education).ToList();
-
-                foreach(string key in gfacetResults.Results.Keys)
+                    .AggregateBy(propertyExpression).CountOn(x => x.Group).ToList();
+                foreach (string key in gfacetResults.Results.Keys)
                 {
-                    MessageBox.Show(key);
+                    System.Windows.MessageBox.Show(key);
                 }
-
-                return null;
+                return gfacetResults.Results[propertyName].Values;
             }
         }
 

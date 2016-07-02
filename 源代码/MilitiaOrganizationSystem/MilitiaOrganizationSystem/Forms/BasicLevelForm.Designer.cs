@@ -46,6 +46,8 @@
             this.export = new System.Windows.Forms.ToolStripMenuItem();
             this.import = new System.Windows.Forms.ToolStripMenuItem();
             this.options = new System.Windows.Forms.ToolStripMenuItem();
+            this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
+            this.latestMilitias = new System.Windows.Forms.ToolStripMenuItem();
             this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
@@ -56,6 +58,7 @@
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
+            this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -122,7 +125,10 @@
             this.btn_importXMLGroupTask,
             this.export,
             this.import,
-            this.options});
+            this.options,
+            this.doConflict,
+            this.latestMilitias,
+            this.stastistics});
             this.menu_basicLevel.Location = new System.Drawing.Point(0, 0);
             this.menu_basicLevel.Name = "menu_basicLevel";
             this.menu_basicLevel.Size = new System.Drawing.Size(850, 25);
@@ -195,6 +201,20 @@
             this.options.Size = new System.Drawing.Size(44, 21);
             this.options.Text = "设置";
             this.options.Click += new System.EventHandler(this.options_Click);
+            // 
+            // doConflict
+            // 
+            this.doConflict.Name = "doConflict";
+            this.doConflict.Size = new System.Drawing.Size(68, 21);
+            this.doConflict.Text = "检测冲突";
+            this.doConflict.Click += new System.EventHandler(this.doConflict_Click);
+            // 
+            // latestMilitias
+            // 
+            this.latestMilitias.Name = "latestMilitias";
+            this.latestMilitias.Size = new System.Drawing.Size(104, 21);
+            this.latestMilitias.Text = "最近操作的民兵";
+            this.latestMilitias.Click += new System.EventHandler(this.latestMilitias_Click);
             // 
             // labelCondition
             // 
@@ -311,6 +331,13 @@
             this.conditionLabel.Text = "未分组";
             this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
+            // stastistics
+            // 
+            this.stastistics.Name = "stastistics";
+            this.stastistics.Size = new System.Drawing.Size(44, 21);
+            this.stastistics.Text = "统计";
+            this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
+            // 
             // BasicLevelForm
             // 
             this.AllowDrop = true;
@@ -351,7 +378,6 @@
         private System.Windows.Forms.ToolStripMenuItem modify;
         private System.Windows.Forms.ToolStripMenuItem dele;
         private System.Windows.Forms.ToolStripMenuItem importFromXml;
-        private System.Windows.Forms.ImageList militiaImageList;
         private System.Windows.Forms.Label labelCondition;
         private System.Windows.Forms.ContextMenuStrip rMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem rAdd;
@@ -369,6 +395,10 @@
         private System.Windows.Forms.ToolStripMenuItem import;
         private System.Windows.Forms.ToolStripMenuItem options;
         private System.Windows.Forms.Label conditionLabel;
+        private System.Windows.Forms.ImageList militiaImageList;
+        private System.Windows.Forms.ToolStripMenuItem doConflict;
+        private System.Windows.Forms.ToolStripMenuItem latestMilitias;
+        private System.Windows.Forms.ToolStripMenuItem stastistics;
     }
 }
 

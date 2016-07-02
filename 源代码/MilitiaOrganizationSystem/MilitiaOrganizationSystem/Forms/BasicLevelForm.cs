@@ -21,6 +21,7 @@ namespace MilitiaOrganizationSystem
         private XMLGroupTaskForm xmlGroupTaskForm;//分组界面
 
         private Condition condition;//此界面下的lambda表达式
+
         private string place { get; set; }//该页面的查询条件之一指定数据库
         //此页面的查询条件
 
@@ -33,6 +34,7 @@ namespace MilitiaOrganizationSystem
             condition = new Condition("未分组");
             conditionLabel.Text = condition.ToString();
             listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
+            updatePageUpDown();
             /*//从数据库中加载未分组民兵信息到显示
             listViewBiz.loadNotGroupedMilitiasInDb();*/
 
@@ -64,6 +66,19 @@ namespace MilitiaOrganizationSystem
             militia_ListView.BeginUpdate();//开始更新界面
             foreach(Militia militia in mList)
             {
+                if(militia.Id == null)
+                {//是删除后移动过来的
+                    if(MessageBox.Show("民兵：" + militia.info() + " 已经被删除，是否恢复它并继续操作？", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    {
+                        militia.Group = "未分组";
+                        sqlBiz.addMilitia(militia);
+                        if (condition.lambdaCondition.Compile()(militia))
+                        {//如果满足条件，就添加到显示
+                            listViewBiz.addOneMilitia(militia);
+                        }
+                    }
+                    continue;
+                }
                 //在之前让原分组界面的个数减少1
                 FormBizs.groupBiz.reduceCount(militia);
                 ListViewItem lvi = listViewBiz.findItemWithMilitia(militia);
@@ -223,8 +238,8 @@ namespace MilitiaOrganizationSystem
 
         private void updatePageUpDown()
         {//更新显示
-            pageUpDown.Value = listViewBiz.page;
             pageUpDown.Maximum = listViewBiz.maxPage;
+            pageUpDown.Value = listViewBiz.page;
         }
 
         private void skipPage_Click(object sender, EventArgs e)
@@ -271,6 +286,29 @@ namespace MilitiaOrganizationSystem
                 conditionLabel.Text = condition.ToString();
                 listViewBiz.refreshCurrentPage();
             }
+        }
+
+        private void doConflict_Click(object sender, EventArgs e)
+        {//检测冲突，在数据库之间
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+            ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
+            cmf.ShowDialog();
+        }
+
+        private void latestMilitias_Click(object sender, EventArgs e)
+        {//最近编辑的民兵
+            FormBizs.latestMilitiaForm.Show();
+        }
+
+        private void stastistics_Click(object sender, EventArgs e)
+        {
+            var dict =  sqlBiz.getEnumStatistics(condition.lambdaCondition, "Education", condition.place);
+            string info = "";
+            foreach(KeyValuePair<string, Raven.Abstractions.Data.FacetValue> kvp in dict)
+            {
+                info += kvp.Key + ":" + kvp.Value.Hits + ", ";
+            }
+            MessageBox.Show(info);
         }
     }
 }

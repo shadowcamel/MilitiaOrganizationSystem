@@ -88,6 +88,7 @@
             this.pageUpDown.Name = "pageUpDown";
             this.pageUpDown.Size = new System.Drawing.Size(42, 21);
             this.pageUpDown.TabIndex = 8;
+            this.pageUpDown.Minimum = 1;
             // 
             // labelDi
             // 

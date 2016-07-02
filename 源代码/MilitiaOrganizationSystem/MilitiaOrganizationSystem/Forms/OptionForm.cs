@@ -17,9 +17,13 @@ namespace MilitiaOrganizationSystem
 
         private System.Xml.XmlNodeList parameters = MilitiaXmlConfig.parameters;
 
+        private bool closeForm;//指定是否可以关闭窗口
+
         public OptionForm()
         {
             InitializeComponent();
+
+            closeForm = true;
             
             foreach(System.Xml.XmlNode xn in parameters)
             {
@@ -28,6 +32,16 @@ namespace MilitiaOrganizationSystem
 
             checkAll.CheckedChanged += CheckAll_CheckedChanged;
             parasCheckBox.ItemCheck += ParasCheckBox_ItemCheck;
+            FormClosing += OptionForm_FormClosing;
+        }
+
+        private void OptionForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(!closeForm)
+            {
+                closeForm = true;
+                e.Cancel = true;
+            }
         }
 
         private void ParasCheckBox_ItemCheck(object sender, ItemCheckEventArgs e)
@@ -80,6 +94,15 @@ namespace MilitiaOrganizationSystem
 
         private void btn_ok_Click(object sender, EventArgs e)
         {//ok，保存设置
+            if(checkedIndexs.Count == 0)
+            {
+                MessageBox.Show("请至少选择一个属性！");
+                closeForm = false;
+                return;
+            } else
+            {
+                closeForm = true;
+            }
             listviewBiz.pageSize = (int)pageSize.Value;//最大显示数量
             listviewBiz.displayedParameterIndexs.Clear();
             listviewBiz.displayedParameterIndexs.AddRange(checkedIndexs);//不能直接赋值，因为这个类是共享的

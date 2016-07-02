@@ -17,6 +17,8 @@ namespace MilitiaOrganizationSystem
         public static XMLGroupTreeViewBiz groupBiz = null;
         public static List<MilitiaListViewBiz> mListBizs = new List<MilitiaListViewBiz>();
 
+        public static LatestMilitiaForm latestMilitiaForm = new LatestMilitiaForm();
+
 
         public static void updateMilitiaItem(Militia militia)
         {

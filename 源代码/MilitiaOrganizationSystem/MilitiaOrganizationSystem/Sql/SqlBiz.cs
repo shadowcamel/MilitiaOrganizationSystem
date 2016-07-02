@@ -25,16 +25,20 @@ namespace MilitiaOrganizationSystem
         public void addMilitia(Militia militia)
         {//增
             sqlDao.saveMilitia(militia);
+            FormBizs.latestMilitiaForm.newOperationOn(militia, "新添加");
         }
 
         public void updateMilitia(Militia militia)
         {//改
             sqlDao.saveMilitia(militia);
+            FormBizs.latestMilitiaForm.newOperationOn(militia, "被编辑或改变分组");
         }
 
         public void deleteMilitia(Militia militia)
         {//删
             sqlDao.deleteOneMilitia(militia);
+
+            FormBizs.latestMilitiaForm.newOperationOn(militia, "被删除");
         }
 
         public List<Militia> getAllMilitias()
@@ -140,32 +144,6 @@ namespace MilitiaOrganizationSystem
             }
 
             return mList;
-        }
-
-        public Dictionary<string, FacetValue> getGroupNums()
-        {//获取所有数据库中的所有组中民兵的个数
-            List<string> databases = getDatabases();
-            return getGroupNums(databases);
-        }
-
-        public Dictionary<string, FacetValue> getGroupNums(List<string> databases)
-        {//获取某些数据库中的所有组中民兵的个数
-            List<FacetValue> fList = new List<FacetValue>();
-            foreach (string database in databases)
-            {
-                fList.AddRange(sqlDao.getGroupNums(database));
-            }
-            Dictionary<string, FacetValue> fDict = new Dictionary<string, FacetValue>();
-            IEnumerable<IGrouping<string, FacetValue>> iigf = fList.GroupBy(x => x.Range);//分组
-            foreach (IGrouping<string, FacetValue> igf in iigf)
-            {
-                fDict[igf.Key] = igf.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
-                {
-                    fv1.Hits += fv2.Hits;
-                    return fv1;
-                });
-            }
-            return fDict;
         }
 
         public void BulkInsertMilitias(List<Militia> mList)
@@ -278,6 +256,15 @@ namespace MilitiaOrganizationSystem
                 mString += r.CredentialNumber + ",";
             }
             MessageBox.Show(mString);*/
+            if(rList.Count == 0)
+            {//不必归并
+                return;
+            }
+            if(rMainList.Count == 0)
+            {
+                rMainList.AddRange(rList);
+                return;
+            }
             int i = 0, j = 0;
             while(j < rList.Count && string.Compare(rMainList[i].CredentialNumber, rList[j].CredentialNumber) > 0)
             {
@@ -376,7 +363,7 @@ namespace MilitiaOrganizationSystem
 
         public List<List<Militia>> getConflictMilitiasOfMainDatabase()
         {//检测主数据库的冲突,应该只在基层和区县调用
-            List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers();
+            List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers();//从小到大排序的身份证号
 
             List<List<Militia>> mLList = new List<List<Militia>>();
 
@@ -395,7 +382,54 @@ namespace MilitiaOrganizationSystem
             }
 
             return mLList;
-        } 
+        }
+
+        public Dictionary<string, FacetValue> getGroupNums()
+        {//获取所有数据库中的所有组中民兵的个数
+            List<string> databases = getDatabases();
+            return getGroupNums(databases);
+        }
+
+        public Dictionary<string, FacetValue> getGroupNums(List<string> databases)
+        {//获取某些数据库中的所有组中民兵的个数
+            List<FacetValue> fList = new List<FacetValue>();
+            foreach (string database in databases)
+            {
+                fList.AddRange(sqlDao.getGroupNums(database));
+            }
+            Dictionary<string, FacetValue> fDict = new Dictionary<string, FacetValue>();
+            IEnumerable<IGrouping<string, FacetValue>> iigf = fList.GroupBy(x => x.Range);//分组
+            foreach (IGrouping<string, FacetValue> igf in iigf)
+            {
+                fDict[igf.Key] = igf.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
+                {
+                    fv1.Hits += fv2.Hits;
+                    return fv1;
+                });
+            }
+            return fDict;
+        }
+
+        public Dictionary<string, FacetValue> getEnumStatistics(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, string propertyName, string Place = null)
+        {//根据某个属性，统计各属性值的民兵个数
+            List<FacetValue> fList = new List<FacetValue>();
+            List<string> databases = getDatabasesByPlace(Place);
+            foreach(string database in databases)
+            {
+                fList.AddRange(sqlDao.getAggregateNums(lambdaContition, propertyName, database));
+            }
+            Dictionary<string, FacetValue> fDict = new Dictionary<string, FacetValue>();
+            IEnumerable<IGrouping<string, FacetValue>> iigf = fList.GroupBy(x => x.Range);//分组
+            foreach (IGrouping<string, FacetValue> igf in iigf)
+            {
+                fDict[igf.Key] = igf.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
+                {
+                    fv1.Hits += fv2.Hits;
+                    return fv1;
+                });
+            }
+            return fDict;
+        }
 
     }
 }
