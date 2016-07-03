@@ -42,7 +42,8 @@ namespace MilitiaOrganizationSystem
             store.Initialize();
 
             new Militias_CredentialNumbers().Execute(store);
-            new Militias_Groups().Execute(store);   
+            new Militias_Groups().Execute(store);
+            new Militias_All().Execute(store);
 
         }
         
@@ -269,7 +270,7 @@ namespace MilitiaOrganizationSystem
             store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
             using (var session = store.OpenSession(database))
             {
-                var gfacetResults = session.Query<Militia>()
+                var gfacetResults = session.Query<Militia, Militias_All>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(lambdaContition)
                     .AggregateBy(propertyExpression).CountOn(x => x.Group).ToList();
@@ -336,8 +337,6 @@ namespace MilitiaOrganizationSystem
             }
 
             store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
-
-            //new Militias_CredentialNumbers().Execute(store.DatabaseCommands.ForDatabase(database), store.Conventions);
 
             using (var session = store.OpenSession(database))
             {
@@ -429,6 +428,49 @@ namespace MilitiaOrganizationSystem
                               };
 
             
+        }
+    }
+
+    public class Militias_All : AbstractIndexCreationTask<Militia>
+    {
+        public Militias_All()
+        {
+            Map = militias => from militia in militias
+                              select new
+                              {
+                                  Group = militia.Group,
+                                  Place = militia.Place,
+
+                                  Name = militia.Name,
+                                  Sex = militia.Sex,
+                                  Source = militia.Source,
+                                  Ethnic = militia.Ethnic,
+                                  Resvalueence = militia.Resvalueence,
+                                  PoliticalStatus = militia.PoliticalStatus,
+                                  CredentialNumber = militia.CredentialNumber,
+                                  Education = militia.Education,
+                                  MilitaryForceType = militia.MilitaryForceType,
+                                  MilitaryRank = militia.MilitaryRank,
+                                  Available = militia.Available,
+                                  EquipmentInfo_Available = militia.EquipmentInfo_Available,
+                                  EquipmentInfo_MilitaryProfessionTypeName = militia.EquipmentInfo_MilitaryProfessionTypeName,
+                                  RetirementRank = militia.RetirementRank,
+                                  RetirementMilitaryForceType = militia.RetirementMilitaryForceType,
+                                  CadreServiced = militia.CadreServiced,
+                                  CadreProfessionalTrained = militia.CadreProfessionalTrained,
+                                  CadreAttendedCommittee = militia.CadreAttendedCommittee,
+                                  CadreTrained = militia.CadreTrained,
+                                  CadreFullTime = militia.CadreFullTime,
+                                  Trained = militia.Trained,
+                                  TeamingPosition = militia.TeamingPosition,
+                                  ReplyStatus = militia.ReplyStatus,
+                                  MilitaryProfessionTypeName = militia.MilitaryProfessionTypeName,
+                                  RetirementProfessionType = militia.RetirementProfessionType,
+                                  MilitaryProfessionName = militia.MilitaryProfessionName,
+                                  RetirementProfessionSmallType = militia.RetirementProfessionSmallType,
+                                  RetirementProfessionName = militia.RetirementProfessionName
+
+                              };
         }
     }
 }

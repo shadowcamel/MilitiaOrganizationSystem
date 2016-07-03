@@ -52,6 +52,7 @@ namespace MilitiaOrganizationSystem
             Id = null;
         }
 
+
         public string info()
         {
             return "姓名：" + Name + ", 身份证：" + CredentialNumber;

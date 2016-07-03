@@ -92,8 +92,6 @@ namespace MilitiaOrganizationSystem
             UnZip unzip = new UnZip(importFile, SqlBiz.DataDir, psd);
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);
             groupBiz.addXmlGroupTask(SqlBiz.DataDir + "\\" + Path.GetFileName(GroupXmlConfig.xmlGroupFile), importedDatabases);
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
-            System.Windows.MessageBox.Show("count = " + mlList.Count);
         }
     }
 }

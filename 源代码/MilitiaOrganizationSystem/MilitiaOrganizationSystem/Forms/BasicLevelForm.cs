@@ -223,6 +223,7 @@ namespace MilitiaOrganizationSystem
 
         private void import_Click(object sender, EventArgs e)
         {//导入
+            MessageBox.Show("开始导入， time = " + DateTime.Now);
             OpenFileDialog ofdlg = new OpenFileDialog();
             ofdlg.Multiselect = true;//支持多选
             ofdlg.Filter = "民兵编组系统导出文件(*.dump)|*.dump";
@@ -233,6 +234,18 @@ namespace MilitiaOrganizationSystem
                 {
                     FormBizs.importOne(file, "hello");
                 }
+            }
+            MessageBox.Show("导入完毕， time = " + DateTime.Now);
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+            MessageBox.Show("拿到冲突, time = " + DateTime.Now);
+            if(mlList.Count == 0)
+            {
+                MessageBox.Show("没有检测到冲突");
+            } else
+            {
+                MessageBox.Show("检测到冲突");
+                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
+                cmf.ShowDialog();
             }
         }
 
@@ -302,7 +315,7 @@ namespace MilitiaOrganizationSystem
 
         private void stastistics_Click(object sender, EventArgs e)
         {
-            var dict =  sqlBiz.getEnumStatistics(condition.lambdaCondition, "Education", condition.place);
+            var dict =  sqlBiz.getEnumStatistics(condition.lambdaCondition, "PoliticalStatus", condition.place);
             string info = "";
             foreach(KeyValuePair<string, Raven.Abstractions.Data.FacetValue> kvp in dict)
             {

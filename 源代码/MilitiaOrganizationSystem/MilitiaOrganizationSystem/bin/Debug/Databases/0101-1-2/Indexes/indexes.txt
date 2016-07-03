@@ -1,4 +1,0 @@
-1 - Raven/DocumentsByEntityName
-12 - Militias/CredentialNumbers
-13 - Militias/Groups
-17 - Auto/Militias/ByCredentialNumberAndEquipmentInfo_MilitaryProfessionTypeNameAndGroupAndNameAndSex
