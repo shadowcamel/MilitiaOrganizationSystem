@@ -13,6 +13,18 @@ namespace MilitiaOrganizationSystem
     public partial class XMLGroupTaskForm : Form
     {
         private XMLGroupTreeViewBiz xmlGroupBiz;
+        private SqlBiz sqlBiz;
+
+        public XMLGroupTaskForm()
+        {//构造函数
+            InitializeComponent();
+            bindEvent();
+
+            this.ControlBox = false;//不要最大化最小化以及×
+            sqlBiz = FormBizs.sqlBiz;
+            xmlGroupBiz = new XMLGroupTreeViewBiz(groups_treeView, sqlBiz);
+            xmlGroupBiz.refresh();//加载xml分组文件
+        }
 
 
         private void bindEvent()
@@ -42,7 +54,7 @@ namespace MilitiaOrganizationSystem
         {
             TreeNode tn = e.Node;
             tn.Toggle();
-            GroupMilitiaForm gm = new GroupMilitiaForm(BasicLevelForm.sqlBiz, tn.Name);
+            GroupMilitiaForm gm = new GroupMilitiaForm(sqlBiz, tn.Name);
             gm.Show();
         }
 
@@ -80,7 +92,7 @@ namespace MilitiaOrganizationSystem
                         if (MessageBox.Show("民兵：" + militia.info() + " 已经被删除，是否恢复它并继续操作？", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
                         {
                             militia.Group = "未分组";
-                            FormBizs.sqlBiz.addMilitia(militia);
+                            sqlBiz.addMilitia(militia);
                             //相当于新建一个民兵，并分组
                         } else
                         {
@@ -113,7 +125,7 @@ namespace MilitiaOrganizationSystem
                     }
                     militia.Group = node.Name;
                     xmlGroupBiz.addCount(node, 1);
-                    BasicLevelForm.sqlBiz.updateMilitia(militia);//保存分组
+                    sqlBiz.updateMilitia(militia);//保存分组
                     //通知MilitiaForm更改分组
                     FormBizs.updateMilitiaItem(militia);
                 }
@@ -124,17 +136,6 @@ namespace MilitiaOrganizationSystem
         {
             this.Focus();
             e.Effect = DragDropEffects.None;
-        }
-
-        public XMLGroupTaskForm()
-        {//构造函数
-            InitializeComponent();
-            bindEvent();
-
-            this.ControlBox = false;//不要最大化最小化以及×
-
-            xmlGroupBiz = new XMLGroupTreeViewBiz(groups_treeView, BasicLevelForm.sqlBiz);
-            xmlGroupBiz.refresh();//加载xml分组文件
         }
 
         private void Groups_treeView_MouseClick(object sender, MouseEventArgs e)
@@ -193,7 +194,7 @@ namespace MilitiaOrganizationSystem
                 return;
             }
             //查看民兵
-            GroupMilitiaForm gm = new GroupMilitiaForm(BasicLevelForm.sqlBiz, selectNode.Name);
+            GroupMilitiaForm gm = new GroupMilitiaForm(sqlBiz, selectNode.Name);
             gm.Show();
 
         }

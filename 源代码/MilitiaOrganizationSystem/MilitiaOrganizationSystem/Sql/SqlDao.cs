@@ -266,7 +266,6 @@ namespace MilitiaOrganizationSystem
             var parameter = Expression.Parameter(typeof(Militia), "x");
             var property = Expression.Property(parameter, propertyName);
             var propertyExpression = Expression.Lambda<Func<Militia, object>>(property, parameter);
-
             store.DatabaseCommands.GlobalAdmin.EnsureDatabaseExists(database);
             using (var session = store.OpenSession(database))
             {

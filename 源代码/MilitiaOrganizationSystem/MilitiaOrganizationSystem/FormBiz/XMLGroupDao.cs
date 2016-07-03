@@ -199,9 +199,16 @@ namespace MilitiaOrganizationSystem
                 {//如果没有找到与xdChildNode相同的子节点，则将xdChildNode添加到xdNode的子节点中
                     XmlNode newNode = xmlNode.AppendChild(xmlDoc.ImportNode(xdChildNode, true));
 
-                    TreeNode tn = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlNode), true)[0];
+                    TreeNodeCollection tnc = null;
+                    if(xmlNode == rootNode)
+                    {//如果是根节点，还需考虑,bug
+                        tnc = groups_TreeView.Nodes;
+                    } else
+                    {
+                        tnc = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlNode), true)[0].Nodes;
+                    }
 
-                    TreeNode treeNode = tn.Nodes.Add(newNode.Attributes["name"].Value);
+                    TreeNode treeNode = tnc.Add(newNode.Attributes["name"].Value);
 
                     treeNode.ToolTipText = getToolTipText(newNode);
 

@@ -17,16 +17,43 @@ namespace MilitiaOrganizationSystem
         {
             initial();//初始化静态类l
 
-            
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            if (PsdXmlConfig.ClientType == "")
+            {
+                SetForm sf = new SetForm();
+                if(sf.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+            } else
+            {
+                LoginForm lf = new LoginForm();
+                if(lf.ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+            }
 
-            BasicLevelForm basicLevelForm = new BasicLevelForm();
+            Form mainForm = null;
+            switch(PsdXmlConfig.ClientType)
+            {
+                case "省军分区":
+                    mainForm = new ProvinceForm();
+                    break;
+                case "市军分区":
+                    mainForm = new CityForm();
+                    break;
+                case "区县人武部":
+                    mainForm = new DistrictForm();
+                    break;
+                case "基层":
+                    mainForm = new BasicLevelForm();
+                    break;
+            }
 
-
-            Application.Run(basicLevelForm);
+            Application.Run(mainForm);
         }
 
         static void initial()
@@ -34,6 +61,7 @@ namespace MilitiaOrganizationSystem
             MilitiaXmlConfig.initial();
             PlaceXmlConfig.initial();
             GroupXmlConfig.initial();
+            PsdXmlConfig.initial();
         }
     }
 }

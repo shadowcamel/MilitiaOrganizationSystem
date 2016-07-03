@@ -29,6 +29,7 @@ namespace MilitiaOrganizationSystem
                 xmlDoc.AppendChild(dec);
                 rootNode = xmlDoc.CreateElement("root");
                 xmlDoc.AppendChild(rootNode);
+                saveXml();
             }
         }
 

@@ -79,6 +79,24 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Forms\ClientForms\ProvinceForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClientForms\ProvinceForm.Designer.cs">
+      <DependentUpon>ProvinceForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ClientForms\CityForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClientForms\CityForm.Designer.cs">
+      <DependentUpon>CityForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\ClientForms\DistrictForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ClientForms\DistrictForm.Designer.cs">
+      <DependentUpon>DistrictForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ConflictMilitiasForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -118,10 +136,10 @@
     <Compile Include="Entity\MilitiaReflection.cs" />
     <Compile Include="Config\PlaceXmlConfig.cs" />
     <Compile Include="Entity\Condition.cs" />
-    <Compile Include="Forms\BasicLevelForm.cs">
+    <Compile Include="Forms\ClientForms\BasicLevelForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\BasicLevelForm.Designer.cs">
+    <Compile Include="Forms\ClientForms\BasicLevelForm.Designer.cs">
       <DependentUpon>BasicLevelForm.cs</DependentUpon>
     </Compile>
     <Compile Include="FormBiz\FormBizs.cs" />
@@ -155,8 +173,27 @@
     <Compile Include="Forms\LatestMilitiaForm.Designer.cs">
       <DependentUpon>LatestMilitiaForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\InfoStatisticsForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\InfoStatisticsForm.Designer.cs">
+      <DependentUpon>InfoStatisticsForm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\LoginForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\LoginForm.Designer.cs">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Config\PsdXmlConfig.cs" />
+    <Compile Include="Forms\SetForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\SetForm.Designer.cs">
+      <DependentUpon>SetForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Sql\SqlBiz.cs" />
     <Compile Include="Sql\SqlDao.cs" />
     <Compile Include="FormBiz\XMLGroupDao.cs" />
@@ -171,6 +208,15 @@
     <Compile Include="Tool\md5.cs" />
     <Compile Include="Tool\UnZip.cs" />
     <Compile Include="Tool\Zip.cs" />
+    <EmbeddedResource Include="Forms\ClientForms\ProvinceForm.resx">
+      <DependentUpon>ProvinceForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClientForms\CityForm.resx">
+      <DependentUpon>CityForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ClientForms\DistrictForm.resx">
+      <DependentUpon>DistrictForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConflictMilitiasForm.resx">
       <DependentUpon>ConflictMilitiasForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -186,7 +232,7 @@
     <EmbeddedResource Include="Forms\ConditionForm.resx">
       <DependentUpon>ConditionForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\BasicLevelForm.resx">
+    <EmbeddedResource Include="Forms\ClientForms\BasicLevelForm.resx">
       <DependentUpon>BasicLevelForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\GroupMilitiaForm.resx">
@@ -201,6 +247,12 @@
     <EmbeddedResource Include="Forms\LatestMilitiaForm.resx">
       <DependentUpon>LatestMilitiaForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\InfoStatisticsForm.resx">
+      <DependentUpon>InfoStatisticsForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\LoginForm.resx">
+      <DependentUpon>LoginForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -212,6 +264,9 @@
     </Compile>
     <EmbeddedResource Include="Forms\XMLGroupTaskForm.resx">
       <DependentUpon>XMLGroupTaskForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\SetForm.resx">
+      <DependentUpon>SetForm.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

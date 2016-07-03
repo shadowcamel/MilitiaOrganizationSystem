@@ -31,6 +31,7 @@ namespace MilitiaOrganizationSystem
             ccList = new List<ChildCondition>();
             ccList.AddRange(condition.ccList);
             place = condition.place;
+            lambdaCondition = condition.lambdaCondition;
         }
         
         public Condition(string group)
