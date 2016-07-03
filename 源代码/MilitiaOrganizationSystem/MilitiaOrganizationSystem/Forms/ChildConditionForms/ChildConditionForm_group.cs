@@ -22,6 +22,8 @@ namespace MilitiaOrganizationSystem
 
             childCondition = cc;
 
+            TreeNode tn = groupTreeView.Nodes.Add("未分组");
+            tn.Name = "未分组";
             GroupXmlConfig.loadToTreeViewSimplely(groupTreeView);
             groupTreeView.ExpandAll();
         }
@@ -30,8 +32,14 @@ namespace MilitiaOrganizationSystem
         {//ok，给条件赋值
             childCondition.Values.Clear();
             TreeNode selectNode = groupTreeView.SelectedNode;
-            System.Xml.XmlNode xmlNode = ((GroupTag)selectNode.Tag).tagXmlNode;
-            childCondition.Values.Add(GroupXmlConfig.getNodePath(xmlNode));
+            if(selectNode.Name == "未分组")
+            {
+                childCondition.Values.Add("未分组");
+            } else
+            {
+                System.Xml.XmlNode xmlNode = ((GroupTag)selectNode.Tag).tagXmlNode;
+                childCondition.Values.Add(GroupXmlConfig.getNodePath(xmlNode));
+            }
             childCondition.Method = "StartsWith";
         }
     }

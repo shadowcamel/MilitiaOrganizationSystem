@@ -11,16 +11,12 @@ namespace MilitiaOrganizationSystem
     {//标记，将xmlNode与treeNode相连
 
         public XmlNode tagXmlNode { get; set; }
-        //public string groupPath { get; set; }
-        //public List<Militia> militias { get; set; }
         public int Count { get; set; }//代表此组下的民兵数量
 
         public GroupTag(XmlNode node)
         {
             this.tagXmlNode = node;
             Count = 0;
-            //groupPath = "";
-            //militias = null;
         }
 
         public string info()

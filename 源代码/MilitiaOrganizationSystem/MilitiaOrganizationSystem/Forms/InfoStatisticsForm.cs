@@ -30,6 +30,7 @@ namespace MilitiaOrganizationSystem
             }
 
             condition = new Condition(c);//复制传过来的条件
+            conditionLabel.Text = condition.ToString();
 
             propertyCombobox.SelectedIndexChanged += PropertyCombobox_SelectedIndexChanged;
         }
@@ -81,6 +82,15 @@ namespace MilitiaOrganizationSystem
                     break;
                 default:
                     break;
+            }
+        }
+
+        private void conditionLabel_Click(object sender, EventArgs e)
+        {//能变换条件，因为condition是复制过来的，所以不会影响宿主
+            ConditionForm cf = new ConditionForm(condition);
+            if (cf.ShowDialog() == DialogResult.OK)
+            {
+                conditionLabel.Text = condition.ToString();
             }
         }
     }

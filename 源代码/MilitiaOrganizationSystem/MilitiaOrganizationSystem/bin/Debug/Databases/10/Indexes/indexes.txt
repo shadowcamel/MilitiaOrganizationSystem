@@ -1,4 +1,0 @@
-32 - Militias/CredentialNumbers
-1 - Raven/DocumentsByEntityName
-33 - Militias/All
-34 - Militias/Groups

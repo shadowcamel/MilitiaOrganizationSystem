@@ -94,5 +94,21 @@ namespace MilitiaOrganizationSystem
             listViewBiz.finalPage();
             updatePageUpDown();
         }
+
+        private void conditionLabel_Click(object sender, EventArgs e)
+        {//打开筛选条件界面
+            ConditionForm cf = new ConditionForm(condition);
+            if (cf.ShowDialog() == DialogResult.OK)
+            {
+                conditionLabel.Text = condition.ToString();
+                listViewBiz.refreshCurrentPage();
+            }
+        }
+
+        private void statistics_Click(object sender, EventArgs e)
+        {
+            InfoStatisticsForm isf = new InfoStatisticsForm(condition);
+            isf.Show();
+        }
     }
 }

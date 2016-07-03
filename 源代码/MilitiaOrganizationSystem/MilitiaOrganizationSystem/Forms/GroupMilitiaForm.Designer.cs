@@ -39,11 +39,11 @@
             this.skipPage = new System.Windows.Forms.Button();
             this.militia_ListView = new System.Windows.Forms.ListView();
             this.militiaImageList = new System.Windows.Forms.ImageList(this.components);
-            this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.statistics = new System.Windows.Forms.ToolStripMenuItem();
             this.finalPage = new System.Windows.Forms.Button();
+            this.conditionLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
             this.menuStrip.SuspendLayout();
             this.SuspendLayout();
@@ -85,10 +85,19 @@
             // 
             this.pageUpDown.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.pageUpDown.Location = new System.Drawing.Point(27, 496);
+            this.pageUpDown.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             this.pageUpDown.Name = "pageUpDown";
             this.pageUpDown.Size = new System.Drawing.Size(42, 21);
             this.pageUpDown.TabIndex = 8;
-            this.pageUpDown.Minimum = 1;
+            this.pageUpDown.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // labelDi
             // 
@@ -144,18 +153,6 @@
             this.militiaImageList.TransparentColor = System.Drawing.Color.Transparent;
             this.militiaImageList.Images.SetKeyName(0, "u=1978385908,3347853851&fm=21&gp=0.jpg");
             // 
-            // textBox1
-            // 
-            this.textBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.textBox1.Location = new System.Drawing.Point(77, 30);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(817, 21);
-            this.textBox1.TabIndex = 3;
-            this.textBox1.Text = "未分组";
-            // 
             // label1
             // 
             this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -183,6 +180,7 @@
             this.statistics.Name = "statistics";
             this.statistics.Size = new System.Drawing.Size(44, 21);
             this.statistics.Text = "统计";
+            this.statistics.Click += new System.EventHandler(this.statistics_Click);
             // 
             // finalPage
             // 
@@ -195,11 +193,22 @@
             this.finalPage.UseVisualStyleBackColor = true;
             this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
+            // conditionLabel
+            // 
+            this.conditionLabel.AutoSize = true;
+            this.conditionLabel.Location = new System.Drawing.Point(75, 33);
+            this.conditionLabel.Name = "conditionLabel";
+            this.conditionLabel.Size = new System.Drawing.Size(41, 12);
+            this.conditionLabel.TabIndex = 15;
+            this.conditionLabel.Text = "未分组";
+            this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
+            // 
             // GroupMilitiaForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(895, 520);
+            this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.finalPage);
             this.Controls.Add(this.skipPage);
             this.Controls.Add(this.labelPage);
@@ -211,7 +220,6 @@
             this.Controls.Add(this.militia_ListView);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip);
-            this.Controls.Add(this.textBox1);
             this.Name = "GroupMilitiaForm";
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).EndInit();
             this.menuStrip.ResumeLayout(false);
@@ -231,10 +239,10 @@
         private System.Windows.Forms.Button skipPage;
         private System.Windows.Forms.ListView militia_ListView;
         private System.Windows.Forms.ImageList militiaImageList;
-        private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem statistics;
         private System.Windows.Forms.Button finalPage;
+        private System.Windows.Forms.Label conditionLabel;
     }
 }

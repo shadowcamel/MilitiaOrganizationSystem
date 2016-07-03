@@ -13,8 +13,8 @@ using System.Windows.Forms;
 namespace MilitiaOrganizationSystem
 {
     public partial class BasicLevelForm : Form
-    {
-        public static string dbName = PsdXmlConfig.Place;//数据库名
+    {//基层主界面
+        public static string dbName = LoginXmlConfig.Place;//数据库名
 
         public static SqlBiz sqlBiz = new SqlBiz(dbName);//静态的数据库
 
@@ -221,34 +221,6 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        private void import_Click(object sender, EventArgs e)
-        {//导入
-            MessageBox.Show("开始导入， time = " + DateTime.Now);
-            OpenFileDialog ofdlg = new OpenFileDialog();
-            ofdlg.Multiselect = true;//支持多选
-            ofdlg.Filter = "民兵编组系统导出文件(*.dump)|*.dump";
-            if(ofdlg.ShowDialog() == DialogResult.OK)
-            {
-                string[] files = ofdlg.FileNames;
-                foreach(string file in files)
-                {
-                    FormBizs.importOne(file, "hello");
-                }
-            }
-            MessageBox.Show("导入完毕， time = " + DateTime.Now);
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
-            MessageBox.Show("拿到冲突, time = " + DateTime.Now);
-            if(mlList.Count == 0)
-            {
-                MessageBox.Show("没有检测到冲突");
-            } else
-            {
-                MessageBox.Show("检测到冲突");
-                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
-                cmf.ShowDialog();
-            }
-        }
-
         private void updatePageUpDown()
         {//更新显示
             pageUpDown.Maximum = listViewBiz.maxPage;
@@ -302,8 +274,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void doConflict_Click(object sender, EventArgs e)
-        {//检测冲突，在数据库之间
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+        {//检测冲突，在主数据库里面
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();
             ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
             cmf.ShowDialog();
         }

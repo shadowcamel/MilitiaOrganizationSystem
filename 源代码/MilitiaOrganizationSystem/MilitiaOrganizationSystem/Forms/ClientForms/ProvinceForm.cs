@@ -13,8 +13,8 @@ using System.Windows.Forms;
 namespace MilitiaOrganizationSystem
 {
     public partial class ProvinceForm : Form
-    {
-        public static string dbName = PsdXmlConfig.Place;//数据库名
+    {//省军分区主界面
+        public static string dbName = LoginXmlConfig.Place;//数据库名
 
         public static SqlBiz sqlBiz = new SqlBiz(dbName);//静态的数据库
 

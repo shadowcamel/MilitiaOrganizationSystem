@@ -43,6 +43,17 @@ namespace MilitiaOrganizationSystem
 
             condition = currentCondition;//直接引用
 
+            string placeName = PlaceXmlConfig.getPlaceName(condition.place);
+            string[] placeNames = placeName.Split(new char[] { '/' });
+            pCombobox.SelectedItem = placeNames[0];
+            if(placeNames.Length >= 2)
+            {
+                cCombobox.SelectedItem = placeNames[1];
+                if(placeNames.Length == 3)
+                {
+                    dCombobox.SelectedItem = placeNames[2];
+                }
+            }
 
             //显示到listbox
             foreach (Condition.ChildCondition cc in condition.ccList)
@@ -126,10 +137,10 @@ namespace MilitiaOrganizationSystem
                     ccForm = new ChildConditionForm_group(cc);
                     break;
                 case "int":
-
+                    return DialogResult.Cancel;
                     break;
                 case "place":
-
+                    return DialogResult.Cancel;
                     break;
                 default:
 

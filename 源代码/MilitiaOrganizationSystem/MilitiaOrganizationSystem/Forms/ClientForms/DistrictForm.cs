@@ -13,8 +13,8 @@ using System.Windows.Forms;
 namespace MilitiaOrganizationSystem
 {
     public partial class DistrictForm : Form
-    {
-        public static string dbName = PsdXmlConfig.Place;//数据库名
+    {//区县人武部主界面
+        public static string dbName = LoginXmlConfig.Place;//数据库名
 
         public static SqlBiz sqlBiz = new SqlBiz(dbName);//静态的数据库
 
@@ -236,7 +236,7 @@ namespace MilitiaOrganizationSystem
                 }
             }
             MessageBox.Show("导入完毕， time = " + DateTime.Now);
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();//因为是区县人武部，所以只有一个数据库
             MessageBox.Show("拿到冲突, time = " + DateTime.Now);
             if(mlList.Count == 0)
             {

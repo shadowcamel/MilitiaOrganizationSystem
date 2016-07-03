@@ -20,7 +20,7 @@ namespace MilitiaOrganizationSystem
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            if (PsdXmlConfig.ClientType == "")
+            if (LoginXmlConfig.ClientType == "")
             {
                 SetForm sf = new SetForm();
                 if(sf.ShowDialog() != DialogResult.OK)
@@ -37,7 +37,7 @@ namespace MilitiaOrganizationSystem
             }
 
             Form mainForm = null;
-            switch(PsdXmlConfig.ClientType)
+            switch(LoginXmlConfig.ClientType)
             {
                 case "省军分区":
                     mainForm = new ProvinceForm();
@@ -61,7 +61,7 @@ namespace MilitiaOrganizationSystem
             MilitiaXmlConfig.initial();
             PlaceXmlConfig.initial();
             GroupXmlConfig.initial();
-            PsdXmlConfig.initial();
+            LoginXmlConfig.initial();
         }
     }
 }

@@ -44,10 +44,10 @@
             this.importFromXml = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_importXMLGroupTask = new System.Windows.Forms.ToolStripMenuItem();
             this.export = new System.Windows.Forms.ToolStripMenuItem();
-            this.import = new System.Windows.Forms.ToolStripMenuItem();
             this.options = new System.Windows.Forms.ToolStripMenuItem();
             this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
             this.latestMilitias = new System.Windows.Forms.ToolStripMenuItem();
+            this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
             this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
@@ -58,7 +58,6 @@
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
-            this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -124,11 +123,10 @@
             this.btn_militaInfomation,
             this.btn_importXMLGroupTask,
             this.export,
-            this.import,
             this.options,
-            this.doConflict,
             this.latestMilitias,
-            this.stastistics});
+            this.stastistics,
+            this.doConflict});
             this.menu_basicLevel.Location = new System.Drawing.Point(0, 0);
             this.menu_basicLevel.Name = "menu_basicLevel";
             this.menu_basicLevel.Size = new System.Drawing.Size(850, 25);
@@ -188,13 +186,6 @@
             this.export.Text = "导出";
             this.export.Click += new System.EventHandler(this.export_Click);
             // 
-            // import
-            // 
-            this.import.Name = "import";
-            this.import.Size = new System.Drawing.Size(44, 21);
-            this.import.Text = "导入";
-            this.import.Click += new System.EventHandler(this.import_Click);
-            // 
             // options
             // 
             this.options.Name = "options";
@@ -215,6 +206,13 @@
             this.latestMilitias.Size = new System.Drawing.Size(104, 21);
             this.latestMilitias.Text = "最近操作的民兵";
             this.latestMilitias.Click += new System.EventHandler(this.latestMilitias_Click);
+            // 
+            // stastistics
+            // 
+            this.stastistics.Name = "stastistics";
+            this.stastistics.Size = new System.Drawing.Size(44, 21);
+            this.stastistics.Text = "统计";
+            this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
             // 
             // labelCondition
             // 
@@ -331,13 +329,6 @@
             this.conditionLabel.Text = "未分组";
             this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
-            // stastistics
-            // 
-            this.stastistics.Name = "stastistics";
-            this.stastistics.Size = new System.Drawing.Size(44, 21);
-            this.stastistics.Text = "统计";
-            this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
-            // 
             // BasicLevelForm
             // 
             this.AllowDrop = true;
@@ -392,7 +383,6 @@
         private System.Windows.Forms.Button skipPage;
         private System.Windows.Forms.Button finalPage;
         private System.Windows.Forms.ToolStripMenuItem export;
-        private System.Windows.Forms.ToolStripMenuItem import;
         private System.Windows.Forms.ToolStripMenuItem options;
         private System.Windows.Forms.Label conditionLabel;
         private System.Windows.Forms.ImageList militiaImageList;

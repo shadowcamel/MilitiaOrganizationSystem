@@ -156,6 +156,7 @@
             this.conditionLabel.Size = new System.Drawing.Size(41, 12);
             this.conditionLabel.TabIndex = 26;
             this.conditionLabel.Text = "未分组";
+            this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
             // InfoStatisticsForm
             // 

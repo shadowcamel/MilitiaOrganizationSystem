@@ -70,6 +70,7 @@ namespace MilitiaOrganizationSystem
             {
                 foreach (Militia m in mList)
                 {
+                    m.Place = dbName;//赋值数据库名为Place(采集地)
                     bulkInsert.Store(m);
                 }
             }

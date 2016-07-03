@@ -18,7 +18,7 @@ namespace MilitiaOrganizationSystem
         {//初始化
             ccList = new List<ChildCondition>();
             lambdaCondition = null;
-            place = null;
+            place = LoginXmlConfig.Place;//初始化为本采集地
         }
         
         public Condition()
@@ -141,7 +141,7 @@ namespace MilitiaOrganizationSystem
 
         public override string ToString()
         {
-            string info = "";
+            string info = "采集地：" + PlaceXmlConfig.getPlaceName(place) + ", ";
             foreach(ChildCondition cc in ccList)
             {
                 info += cc.ToString() + ", ";
