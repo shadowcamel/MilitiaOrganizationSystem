@@ -18,7 +18,6 @@ namespace MilitiaOrganizationSystem
         public SqlBiz(string dbName)
         {//构造函数
             sqlDao = new SqlDao(dbName);//根据数据库实例化数据访问层
-
             FormBizs.sqlBiz = this;//程序中唯一的sqlBiz实例
         }
 
@@ -54,7 +53,8 @@ namespace MilitiaOrganizationSystem
 
         public List<string> getDatabasesByPlace(string Place)
         {//根据Militia.Place指定要查找的数据库集合, 调用此函数时， Place应不为空
-            if(Place == null || Place == "")
+            return getDatabases();
+            /**if(Place == null || Place == "")
             {//如果为空，则未指定数据库，所以返回所有数据库集合
                 return getDatabases();
             }
@@ -68,7 +68,7 @@ namespace MilitiaOrganizationSystem
                     databases.Add(di.Name);
                 }
             }
-            return databases;
+            return databases;*/
         }
 
         public List<Militia> queryByContition(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string Place = null)
@@ -151,10 +151,25 @@ namespace MilitiaOrganizationSystem
             sqlDao.bulkInsertMilitias(mList);
         }
 
-        public void exportAsXmlFile(string fileName)
+        public List<string> exportAsXmlFile(string fileName)
         {//将数据库里的所有民兵信息写入xml文件中
-            List<Militia> mList = getAllMilitias();
-            FileTool.MilitiaListToXml(mList, fileName);
+            if(!Directory.Exists(Path.GetDirectoryName(fileName)))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(fileName));
+            }
+            List<string> exportFiles = new List<string>();
+            int count = 0;
+            int sum = 1;
+            while(count < sum)
+            {
+                List<Militia> mList = sqlDao.getMilitias(count, 5000, out sum);
+                count += mList.Count;
+                string exportFile = fileName + count;
+                FileTool.MilitiaListToXml(mList, exportFile);
+                exportFiles.Add(exportFile);
+            }
+
+            return exportFiles;
         }
 
 
@@ -362,7 +377,7 @@ namespace MilitiaOrganizationSystem
             return mLList;
         }
 
-        public List<List<Militia>> getConflictMilitiasOfMainDatabase()
+        /*public List<List<Militia>> getConflictMilitiasOfMainDatabase()
         {//检测主数据库的冲突,应该只在基层和区县调用
             List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers();//从小到大排序的身份证号
 
@@ -380,6 +395,20 @@ namespace MilitiaOrganizationSystem
                         i++;
                     }
                 }
+            }
+
+            return mLList;
+        }*/
+
+        public List<List<Militia>> getConflictMilitiasOfMainDatabase()
+        {
+            List<Militias_ConflictCredentialNumbers.Result> rList = sqlDao.getConflictCredentialNumbers();//从小到大排序的身份证号
+
+            List<List<Militia>> mLList = new List<List<Militia>>();
+
+            foreach(Militias_ConflictCredentialNumbers.Result r in rList)
+            {
+                mLList.Add(sqlDao.getMilitiasByCredentialNumber(r.CredentialNumber));
             }
 
             return mLList;

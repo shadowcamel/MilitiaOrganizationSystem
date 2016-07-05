@@ -102,9 +102,9 @@ namespace MilitiaOrganizationSystem
             groups_treeView.ExpandAll();
         }
 
-        public void addXmlGroupTask(string xmlFile, List<string> databases = null)
+        public void addXmlGroupTask(string xmlFile)
         {//添加分组任务
-            xmlGroupDao.addXml(xmlFile, databases);
+            xmlGroupDao.addXml(xmlFile);
         }
 
         public void exportXmlGroupTask(string fileName)

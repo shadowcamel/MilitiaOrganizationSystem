@@ -415,9 +415,10 @@ namespace MilitiaOrganizationSystem
                 while (rList.Count < sum)
                 {
                     RavenQueryStatistics stats;
-                    var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_CredentialNumbers>()
+                    var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_ConflictCredentialNumbers>()
                         .Statistics(out stats)
                         .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                        .Where(x => x.Count > 1)
                         .Skip(rList.Count).Take(1000)
                         //.ProjectFromIndexFieldsInto<Militias_ConflictCredentialNumbers.Result>()
                         .ToList();
@@ -460,6 +461,7 @@ namespace MilitiaOrganizationSystem
         public class Result
         {
             public string CredentialNumber { get; set; } //身份证号
+            public int Count { get; set; }
         }
 
         public Militias_ConflictCredentialNumbers()
@@ -467,14 +469,15 @@ namespace MilitiaOrganizationSystem
             Map = militias => from militia in militias
                               select new
                               {
-                                  CredentialNumber = militia.CredentialNumber
+                                  CredentialNumber = militia.CredentialNumber,
+                                  Count = 1
                               };
             Reduce = rs => from r in rs
                            group r by r.CredentialNumber into g
-                           where g.Count() > 1
                            select new
                            {
-                               g.Key
+                               CredentialNumber = g.Key,
+                               Count = g.Sum(x => x.Count)
                            };
         }
     }

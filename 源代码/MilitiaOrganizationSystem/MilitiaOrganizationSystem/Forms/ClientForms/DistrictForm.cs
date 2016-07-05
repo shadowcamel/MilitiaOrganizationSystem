@@ -157,7 +157,7 @@ namespace MilitiaOrganizationSystem
 
         private void doConflict_Click(object sender, EventArgs e)
         {//检测冲突，在数据库之间
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();
             ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
             cmf.ShowDialog();
         }

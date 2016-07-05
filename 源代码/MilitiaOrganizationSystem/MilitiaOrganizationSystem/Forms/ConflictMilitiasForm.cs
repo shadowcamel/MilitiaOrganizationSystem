@@ -144,6 +144,7 @@ namespace MilitiaOrganizationSystem
                 {
                     if (!lvi.Checked)
                     {
+                        FormBizs.removeMilitiaItem((Militia)lvi.Tag);
                         FormBizs.sqlBiz.deleteMilitia((Militia)lvi.Tag);
                     }
                 }

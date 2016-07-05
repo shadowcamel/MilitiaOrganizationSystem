@@ -166,7 +166,7 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        private void mergeNode(XmlNode xmlNode, XmlNode xdNode, Dictionary<string, FacetValue> fDic)
+        private void mergeNode(XmlNode xmlNode, XmlNode xdNode)
         {//将xdNode的子节点合并到xmlNode的子节点中
             foreach(XmlNode xdChildNode in xdNode.ChildNodes)
             {
@@ -176,20 +176,9 @@ namespace MilitiaOrganizationSystem
                     //MessageBox.Show(xdChildNode.Attributes["name"].Value + " " + xmlChildNode.Attributes["name"].Value);
                     if(xdChildNode.Attributes["name"].Value == xmlChildNode.Attributes["name"].Value)
                     {//这个节点有相同的
-                        //那判断它是不是叶节点，如果是叶节点，还要加一下数量
-                        if(!xdChildNode.HasChildNodes)
-                        {//是叶节点，增加数量
-                            TreeNode treeNode = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlChildNode), true)[0];
-                            GroupTag tag = (GroupTag)treeNode.Tag;
-                            FacetValue fv;
-                            if (fDic.TryGetValue(treeNode.Name, out fv))
-                            {
-                                tag.Count += fv.Hits;//本身加
-                                addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
-                            }
-                        } else
+                        if(xdChildNode.HasChildNodes)
                         {//有子节点
-                            mergeNode(xmlChildNode, xdChildNode, fDic);
+                            mergeNode(xmlChildNode, xdChildNode);
                         }
                         isFinded = true;
                     }
@@ -198,63 +187,20 @@ namespace MilitiaOrganizationSystem
                 if(!isFinded)
                 {//如果没有找到与xdChildNode相同的子节点，则将xdChildNode添加到xdNode的子节点中
                     XmlNode newNode = xmlNode.AppendChild(xmlDoc.ImportNode(xdChildNode, true));
-
-                    TreeNodeCollection tnc = null;
-                    if(xmlNode == rootNode)
-                    {//如果是根节点，还需考虑,bug
-                        tnc = groups_TreeView.Nodes;
-                    } else
-                    {
-                        tnc = groups_TreeView.Nodes.Find(GroupXmlConfig.getNodePath(xmlNode), true)[0].Nodes;
-                    }
-
-                    TreeNode treeNode = tnc.Add(newNode.Attributes["name"].Value);
-
-                    treeNode.ToolTipText = getToolTipText(newNode);
-
-                    treeNode.Name = GroupXmlConfig.getNodePath(newNode);//查找TreeNode的Key
-
-                    GroupTag tag = new GroupTag(newNode);
-
-                    treeNode.Tag = tag;
-
-                    if(newNode.HasChildNodes)
-                    {
-                        addXmlNodeToTreeNode(newNode, treeNode.Nodes, fDic);
-                    } else
-                    {
-                        FacetValue fv;
-                        if (fDic.TryGetValue(treeNode.Name, out fv))
-                        {
-                            tag.Count += fv.Hits;//本身加
-                            addCountUpToAllParent(treeNode, fv.Hits);//所有父节点加
-                        }
-
-                        treeNode.Text = tag.info();
-                    }
                     
                 }
             }
 
         }
 
-        public void addXml(string xmlFile, List<string> databases = null)
-        {//将xmlFile合并到xmlDoc中并保存
+        public void addXml(string xmlFile)
+        {//将xmlFile合并到xmlDoc中并保存,如果database=null，则不会更新界面
             XmlDocument xd = new XmlDocument();
             xd.Load(xmlFile);//加载
 
-            Dictionary<string, FacetValue> fdict = null;
-            if(databases == null)
-            {
-                fdict = new Dictionary<string, FacetValue>();
-            } else
-            {
-                fdict = sqlBiz.getGroupNums(databases);
-            }
-
             XmlNode xdRoot = xd.DocumentElement;//根节点
 
-            mergeNode(rootNode, xdRoot, fdict);
+            mergeNode(rootNode, xdRoot);
 
             saveXml();
         }
