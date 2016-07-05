@@ -43,8 +43,8 @@ namespace MilitiaOrganizationSystem
                 {//移动成功后
                     foreach (ListViewItem lvi in latestMilitias_listview.SelectedItems)
                     {
-                        if(lvi.Name == null || lvi.Name == "")
-                        {
+                        if((lvi.Name == null || lvi.Name == "") && ((Militia)(lvi.Tag)).Id != null)
+                        {//如果原来是null，后来变为了不是null，说明是恢复了.应该删除此项
                             lvi.Remove();
                         }
                     }

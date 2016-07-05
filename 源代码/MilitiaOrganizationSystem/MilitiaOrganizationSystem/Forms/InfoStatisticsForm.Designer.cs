@@ -41,6 +41,10 @@
             this.label8 = new System.Windows.Forms.Label();
             this.btn_statistics = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
+            this.label9 = new System.Windows.Forms.Label();
+            this.sumLabel = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.categoryNum = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // label6
@@ -158,11 +162,51 @@
             this.conditionLabel.Text = "未分组";
             this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(364, 243);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(41, 12);
+            this.label9.TabIndex = 27;
+            this.label9.Text = "总数：";
+            // 
+            // sumLabel
+            // 
+            this.sumLabel.AutoSize = true;
+            this.sumLabel.Location = new System.Drawing.Point(411, 243);
+            this.sumLabel.Name = "sumLabel";
+            this.sumLabel.Size = new System.Drawing.Size(29, 12);
+            this.sumLabel.TabIndex = 28;
+            this.sumLabel.Text = "xx人";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(49, 210);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(65, 12);
+            this.label10.TabIndex = 29;
+            this.label10.Text = "类的个数：";
+            // 
+            // categoryNum
+            // 
+            this.categoryNum.AutoSize = true;
+            this.categoryNum.Location = new System.Drawing.Point(120, 210);
+            this.categoryNum.Name = "categoryNum";
+            this.categoryNum.Size = new System.Drawing.Size(29, 12);
+            this.categoryNum.TabIndex = 30;
+            this.categoryNum.Text = "xx个";
+            // 
             // InfoStatisticsForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 292);
+            this.Controls.Add(this.categoryNum);
+            this.Controls.Add(this.label10);
+            this.Controls.Add(this.sumLabel);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.btn_statistics);
             this.Controls.Add(this.label8);
@@ -198,5 +242,9 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Button btn_statistics;
         private System.Windows.Forms.Label conditionLabel;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Label sumLabel;
+        private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.Label categoryNum;
     }
 }

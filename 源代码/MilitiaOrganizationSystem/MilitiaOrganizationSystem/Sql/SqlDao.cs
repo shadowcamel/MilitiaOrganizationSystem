@@ -20,7 +20,7 @@ namespace MilitiaOrganizationSystem
         private string dbName;
         private EmbeddableDocumentStore store;
 
-        private const int timeoutseconds = 60;
+        private const int timeoutseconds = 600;
 
         public SqlDao(string db)
         {
@@ -270,7 +270,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public List<FacetValue> getAggregateNums(Expression<Func<Militia, bool>> lambdaContition, string propertyName, string database = null)
-        {//统计
+        {//统计,默认类的个数不超过1000
             if (database == null)
             {
                 database = dbName;
@@ -286,10 +286,7 @@ namespace MilitiaOrganizationSystem
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(lambdaContition)
                     .AggregateBy(propertyExpression).CountOn(x => x.Group).ToList();
-                foreach (string key in gfacetResults.Results.Keys)
-                {
-                    System.Windows.MessageBox.Show(key);
-                }
+                
                 return gfacetResults.Results[propertyName].Values;
             }
         }

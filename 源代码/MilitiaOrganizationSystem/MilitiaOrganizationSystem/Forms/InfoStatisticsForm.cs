@@ -36,8 +36,9 @@ namespace MilitiaOrganizationSystem
         }
 
         private void PropertyCombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        {//选择了某个属性时
             catagoriesListBox.Items.Clear();
+            categoryNum.Text = "0个";
             statisticsParameter = parameters[propertyCombobox.SelectedIndex];
             switch(statisticsParameter.Attributes["type"].Value)
             {
@@ -46,6 +47,7 @@ namespace MilitiaOrganizationSystem
                     {
                         catagoriesListBox.Items.Add(xn.Attributes["name"].Value);
                     }
+                    categoryNum.Text = statisticsParameter.ChildNodes.Count + "个";
                     break;
                 default:
                     catagoriesListBox.Items.Clear();
@@ -70,6 +72,7 @@ namespace MilitiaOrganizationSystem
                             condition.lambdaCondition, 
                             statisticsParameter.Attributes["property"].Value, 
                             condition.place);
+                    int sum = 0;
                     foreach(XmlNode xn in statisticsParameter.ChildNodes)
                     {
                         int num = 0;
@@ -79,8 +82,9 @@ namespace MilitiaOrganizationSystem
                             num = fv.Hits;
                         }
                         statisticsListBox.Items.Add(xn.Attributes["name"].Value + ": " + num + "人");
+                        sum += num;
                     }
-
+                    sumLabel.Text = sum + "人";
                     break;
                 default:
                     break;

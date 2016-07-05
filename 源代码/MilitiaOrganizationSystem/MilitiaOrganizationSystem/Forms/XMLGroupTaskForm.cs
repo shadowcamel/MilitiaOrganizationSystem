@@ -83,10 +83,16 @@ namespace MilitiaOrganizationSystem
             TreeNode node = groups_treeView.SelectedNode;
             if(e.Effect == DragDropEffects.Move)
             {//已经允许放时,必定已经选中了一个节点,所以node不为空; 现在已经放下，表示move
+                GroupTag gt = (GroupTag)node.Tag;//tag
                 MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
                 List<Militia> mList = mt.moveMilitias;
                 foreach(Militia militia in mList)
                 {
+                    if(int.Parse(gt.tagXmlNode.Attributes["count"].Value) <= gt.Count)
+                    {//民兵数量超出了预订数量
+                        MessageBox.Show("此组民兵数量已满！");
+                        return;
+                    }
                     if(militia.Id == null)
                     {//删除后的民兵来分组
                         if (MessageBox.Show("民兵：" + militia.info() + " 已经被删除，是否恢复它并继续操作？", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
