@@ -20,7 +20,7 @@ namespace MilitiaOrganizationSystem
         private string dbName;
         private EmbeddableDocumentStore store;
 
-        private const int timeoutseconds = 5;
+        private const int timeoutseconds = 60;
 
         public SqlDao(string db)
         {
@@ -36,14 +36,13 @@ namespace MilitiaOrganizationSystem
             {
                 DefaultDatabase = dbName
             };
-
-            //store.Conventions.DefaultQueryingConsistency = ConsistencyOptions.AlwaysWaitForNonStaleResultsAsOfLastWrite;
-
+            
             store.Initialize();
 
             new Militias_CredentialNumbers().Execute(store);
             new Militias_Groups().Execute(store);
             new Militias_All().Execute(store);
+            new Militias_ConflictCredentialNumbers().Execute(store);
 
         }
         
@@ -70,21 +69,12 @@ namespace MilitiaOrganizationSystem
             {
                 foreach (Militia m in mList)
                 {
-                    m.Place = dbName;//赋值数据库名为Place(采集地)
+                    if (m.Place == null)
+                    {
+                        m.Place = dbName;//赋值采集地
+                    }
                     bulkInsert.Store(m);
                 }
-            }
-        }
-        
-
-        public List<Militia> queryMilitiasByGroup(string groupPath)
-        {
-            using (var session = store.OpenSession())
-            {
-                var mlist = from x in session.Query<Militia>()
-                            where x.Group.StartsWith(groupPath)
-                            select x;
-                return mlist.ToList();
             }
         }
 
@@ -219,6 +209,27 @@ namespace MilitiaOrganizationSystem
             }
         }
 
+        public List<Militia> getMilitias(int skip, int take, out int sum)
+        {//直接从数据库里取数据，不用任何条件,且take的大小限制为0~30000，因为session的次数限制30次
+            using (var session = store.OpenSession())
+            {
+                List<Militia> mList = new List<Militia>();
+                sum = skip + 1;
+                while (skip + mList.Count < sum && mList.Count < take)
+                {
+                    RavenQueryStatistics stats;
+                    var militias = session.Query<Militia>()
+                        .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                        .Statistics(out stats).Skip(skip + mList.Count).Take(take - mList.Count).ToList();
+                    sum = stats.TotalResults;
+
+                    mList.AddRange(militias);
+                }
+
+                return mList;
+            }
+        }
+
         /*public Dictionary<string, Militias_Groups.Result> getGroups(int skip, int take, out int sum, string database = null)
         {//通过静态索引查询组内民兵个数
             if (database == null)
@@ -247,7 +258,8 @@ namespace MilitiaOrganizationSystem
             {
                 List<FacetValue> fList;
                 var gfacetResults = session.Query<Militias_Groups.Result, Militias_Groups>()
-                     //.ProjectFromIndexFieldsInto<Militias_Groups.Result>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                     .ProjectFromIndexFieldsInto<Militias_Groups.Result>()
                      .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
                 
                 fList = gfacetResults.Results["Group"].Values;
@@ -293,6 +305,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var militias = session.Query<Militias_Groups.Result, Militias_Groups>().Statistics(out stats)
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(x => x.Group.StartsWith(Group)).OfType<Militia>() //转换为militias
                     .Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
@@ -313,6 +326,7 @@ namespace MilitiaOrganizationSystem
                 RavenQueryStatistics stats;
                 var credentialNumbers = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
                     .Statistics(out stats)
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Skip(skip).Take(take)
                     .ProjectFromIndexFieldsInto<Militias_CredentialNumbers.Result>()
                     .OrderBy(x => x.CredentialNumber)
@@ -348,6 +362,7 @@ namespace MilitiaOrganizationSystem
                     RavenQueryStatistics stats;
                     var credentialNumbers = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
                         .Statistics(out stats)
+                        .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                         .Skip(rList.Count).Take(1000)
                         .ProjectFromIndexFieldsInto<Militias_CredentialNumbers.Result>()
                         .OrderBy(x => x.CredentialNumber)
@@ -379,6 +394,7 @@ namespace MilitiaOrganizationSystem
             using (var session = store.OpenSession(database))
             {
                 var mList = session.Query<Militias_CredentialNumbers.Result, Militias_CredentialNumbers>()
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(x => x.CredentialNumber == CredentialNumber)
                     .Skip(0).Take(1000)
                     .OfType<Militia>()
@@ -386,6 +402,33 @@ namespace MilitiaOrganizationSystem
                 
 
                 return mList;
+            }
+        }
+
+        public List<Militias_ConflictCredentialNumbers.Result> getConflictCredentialNumbers()
+        {//获取所有冲突的身份证号,主数据库的
+            using (var session = store.OpenSession())
+            {
+                int sum = 1;
+                List<Militias_ConflictCredentialNumbers.Result> rList = new List<Militias_ConflictCredentialNumbers.Result>();
+
+                while (rList.Count < sum)
+                {
+                    RavenQueryStatistics stats;
+                    var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_CredentialNumbers>()
+                        .Statistics(out stats)
+                        .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                        .Skip(rList.Count).Take(1000)
+                        //.ProjectFromIndexFieldsInto<Militias_ConflictCredentialNumbers.Result>()
+                        .ToList();
+
+                    sum = stats.TotalResults;
+
+                    rList.AddRange(credentialNumbers);
+                }
+
+
+                return rList;
             }
         }
 
@@ -409,6 +452,30 @@ namespace MilitiaOrganizationSystem
                               };
 
             Sort(r => r.CredentialNumber, Raven.Abstractions.Indexing.SortOptions.String);
+        }
+    }
+
+    public class Militias_ConflictCredentialNumbers : AbstractIndexCreationTask<Militia, Militias_ConflictCredentialNumbers.Result>
+    {//用数据库检测冲突的索引
+        public class Result
+        {
+            public string CredentialNumber { get; set; } //身份证号
+        }
+
+        public Militias_ConflictCredentialNumbers()
+        {
+            Map = militias => from militia in militias
+                              select new
+                              {
+                                  CredentialNumber = militia.CredentialNumber
+                              };
+            Reduce = rs => from r in rs
+                           group r by r.CredentialNumber into g
+                           where g.Count() > 1
+                           select new
+                           {
+                               g.Key
+                           };
         }
     }
 

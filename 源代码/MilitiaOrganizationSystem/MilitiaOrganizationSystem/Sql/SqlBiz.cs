@@ -157,6 +157,7 @@ namespace MilitiaOrganizationSystem
             FileTool.MilitiaListToXml(mList, fileName);
         }
 
+
         public void exportAsSource(string folder)
         {//将全部数据库（System除外，因为没有权限根本复制不了）复制到folder文件夹下
          /*DirectoryInfo dirInfo = new DirectoryInfo(DataDir);
@@ -323,7 +324,7 @@ namespace MilitiaOrganizationSystem
         {//找出所有数据库之间的身份证号冲突,只在省市军分区调用
             Dictionary<string, List<Militias_CredentialNumbers.Result>> dict = new Dictionary<string, List<Militias_CredentialNumbers.Result>>();//记录冲突的Results
 
-            List<Militias_CredentialNumbers.Result> rAllList = new List<Militias_CredentialNumbers.Result>();
+            //List<Militias_CredentialNumbers.Result> rAllList = new List<Militias_CredentialNumbers.Result>();
 
             List<string> databases = getDatabases();
             

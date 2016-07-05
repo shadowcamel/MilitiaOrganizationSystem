@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BasicLevelForm));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DistrictForm));
             this.militia_ListView = new System.Windows.Forms.ListView();
             this.rMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.rAdd = new System.Windows.Forms.ToolStripMenuItem();
@@ -48,6 +48,7 @@
             this.options = new System.Windows.Forms.ToolStripMenuItem();
             this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
             this.latestMilitias = new System.Windows.Forms.ToolStripMenuItem();
+            this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
             this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
@@ -58,7 +59,7 @@
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
-            this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
+            this.button1 = new System.Windows.Forms.Button();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -216,6 +217,13 @@
             this.latestMilitias.Text = "最近操作的民兵";
             this.latestMilitias.Click += new System.EventHandler(this.latestMilitias_Click);
             // 
+            // stastistics
+            // 
+            this.stastistics.Name = "stastistics";
+            this.stastistics.Size = new System.Drawing.Size(44, 21);
+            this.stastistics.Text = "统计";
+            this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
+            // 
             // labelCondition
             // 
             this.labelCondition.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -271,7 +279,7 @@
             0,
             0});
             this.pageUpDown.Name = "pageUpDown";
-            this.pageUpDown.Size = new System.Drawing.Size(42, 21);
+            this.pageUpDown.Size = new System.Drawing.Size(54, 21);
             this.pageUpDown.TabIndex = 8;
             this.pageUpDown.Value = new decimal(new int[] {
             1,
@@ -293,7 +301,7 @@
             // 
             this.labelPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPage.AutoSize = true;
-            this.labelPage.Location = new System.Drawing.Point(83, 578);
+            this.labelPage.Location = new System.Drawing.Point(104, 579);
             this.labelPage.Name = "labelPage";
             this.labelPage.Size = new System.Drawing.Size(17, 12);
             this.labelPage.TabIndex = 10;
@@ -302,7 +310,7 @@
             // skipPage
             // 
             this.skipPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.skipPage.Location = new System.Drawing.Point(106, 573);
+            this.skipPage.Location = new System.Drawing.Point(127, 573);
             this.skipPage.Name = "skipPage";
             this.skipPage.Size = new System.Drawing.Size(75, 23);
             this.skipPage.TabIndex = 11;
@@ -317,7 +325,7 @@
             this.finalPage.Name = "finalPage";
             this.finalPage.Size = new System.Drawing.Size(75, 23);
             this.finalPage.TabIndex = 12;
-            this.finalPage.Text = "最后一页";
+            this.finalPage.Text = "尾页";
             this.finalPage.UseVisualStyleBackColor = true;
             this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
@@ -331,19 +339,24 @@
             this.conditionLabel.Text = "未分组";
             this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
-            // stastistics
+            // button1
             // 
-            this.stastistics.Name = "stastistics";
-            this.stastistics.Size = new System.Drawing.Size(44, 21);
-            this.stastistics.Text = "统计";
-            this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(442, 574);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 22);
+            this.button1.TabIndex = 16;
+            this.button1.Text = "首页";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
-            // BasicLevelForm
+            // DistrictForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 596);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.finalPage);
             this.Controls.Add(this.skipPage);
@@ -356,8 +369,8 @@
             this.Controls.Add(this.labelCondition);
             this.Controls.Add(this.militia_ListView);
             this.Controls.Add(this.menu_basicLevel);
-            this.Name = "BasicLevelForm";
-            this.Text = "基层主页";
+            this.Name = "DistrictForm";
+            this.Text = "区县主页";
             this.Load += new System.EventHandler(this.BasicLevelForm_Load);
             this.rMenuStrip.ResumeLayout(false);
             this.menu_basicLevel.ResumeLayout(false);
@@ -399,6 +412,7 @@
         private System.Windows.Forms.ToolStripMenuItem doConflict;
         private System.Windows.Forms.ToolStripMenuItem latestMilitias;
         private System.Windows.Forms.ToolStripMenuItem stastistics;
+        private System.Windows.Forms.Button button1;
     }
 }
 

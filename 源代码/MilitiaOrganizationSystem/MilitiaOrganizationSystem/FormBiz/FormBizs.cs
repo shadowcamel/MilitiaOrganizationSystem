@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.IO;
+using System.Windows.Forms;
 
 namespace MilitiaOrganizationSystem
 {
@@ -56,7 +57,18 @@ namespace MilitiaOrganizationSystem
             
         }*/
 
-        public static void export(string fileName, string psd)
+        public static void export()
+        {
+            FolderBrowserDialog fbdlg = new FolderBrowserDialog();
+            fbdlg.Description = "请选择要导出的文件路径";
+            if (fbdlg.ShowDialog() == DialogResult.OK)
+            {
+                string folder = fbdlg.SelectedPath;
+                export(folder + "\\" + LoginXmlConfig.Place + ".zip", "hello");
+            }
+        }
+
+        private static void export(string fileName, string psd)
         {//fileName为导出文件，psd为压缩密码
             //导出之前，先检测冲突
             List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();//主数据库
@@ -108,11 +120,40 @@ namespace MilitiaOrganizationSystem
 
         }*/
 
-        public static void importOne(string importFile, string psd)
+        public static void import()
+        {
+            MessageBox.Show("开始导入， time = " + DateTime.Now);
+            OpenFileDialog ofdlg = new OpenFileDialog();
+            ofdlg.Multiselect = true;//支持多选
+            ofdlg.Filter = "民兵编组系统导出文件(*.dump)|*.*";
+            if (ofdlg.ShowDialog() == DialogResult.OK)
+            {
+                string[] files = ofdlg.FileNames;
+                foreach (string file in files)
+                {
+                    importOne(file, "hello");
+                }
+            }
+            MessageBox.Show("导入完毕， time = " + DateTime.Now);
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasBetweenDatabases();
+            MessageBox.Show("拿到冲突, time = " + DateTime.Now);
+            if (mlList.Count == 0)
+            {
+                MessageBox.Show("没有检测到冲突");
+            }
+            else
+            {
+                MessageBox.Show("检测到冲突");
+                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
+                cmf.ShowDialog();
+            }
+        }
+
+        private static void importOne(string importFile, string psd)
         {//导入一个
             UnZip unzip = new UnZip(importFile, SqlBiz.DataDir, psd);
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);
-            if(LoginXmlConfig.Place == "区县人武部")
+            if(LoginXmlConfig.ClientType == "区县人武部")
             {//如果是区县人武部
                 sqlBiz.importFromMilitiaXml(SqlBiz.DataDir + "\\" + Path.GetFileName(exportMilitiaFileName));
                 //先导入数据库，然后刷新分组任务显示

@@ -37,6 +37,7 @@ namespace MilitiaOrganizationSystem
 
         private void PropertyCombobox_SelectedIndexChanged(object sender, EventArgs e)
         {
+            catagoriesListBox.Items.Clear();
             statisticsParameter = parameters[propertyCombobox.SelectedIndex];
             switch(statisticsParameter.Attributes["type"].Value)
             {
@@ -47,6 +48,7 @@ namespace MilitiaOrganizationSystem
                     }
                     break;
                 default:
+                    catagoriesListBox.Items.Clear();
                     break;
             }
         }

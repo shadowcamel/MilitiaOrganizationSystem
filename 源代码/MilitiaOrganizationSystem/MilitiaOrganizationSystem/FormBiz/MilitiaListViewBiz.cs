@@ -12,13 +12,13 @@ namespace MilitiaOrganizationSystem
     public class MilitiaListViewBiz
     {
         private static MilitiaEditDialog militiaEditDlg = new MilitiaEditDialog();//编辑民兵对话框,应该只有主界面才会调用
-        private static OptionForm ofDlg = new OptionForm();
+        private static OptionForm ofDlg = new OptionForm();//设置界面，设置页面最大显示数量以及显示的属性
 
         private ListView militia_ListView;
         private bool sort = false;
         private SqlBiz sqlBiz;//数据库业务逻辑层
 
-        private Condition condition = new Condition();
+        private Condition condition;
         //此页面的查询条件
 
         private XmlNodeList parameters = MilitiaXmlConfig.parameters;
@@ -344,6 +344,12 @@ namespace MilitiaOrganizationSystem
             loadMilitiaList(mList);
         }
 
+        public void firstPage()
+        {//第一页
+            page = 1;
+            refreshCurrentPage();
+        }
+
         public void lastPage()
         {//上一页
             if(page > 1)
@@ -483,6 +489,134 @@ namespace MilitiaOrganizationSystem
                     return OrderOfSort;
                 }
             }
+        }
+
+
+
+        public void Militia_ListView_DragOver(object sender, DragEventArgs e)
+        {
+            //MessageBox.Show((sender == militia_ListView) + "");
+            MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
+            if (mt.source == this)
+            {//如果是从自己移过来的
+                e.Effect = DragDropEffects.None;
+            }
+            else
+            {
+                e.Effect = DragDropEffects.Move;
+            }
+        }
+
+        public void Militia_ListView_DragDrop(object sender, DragEventArgs e)
+        {//自动的，好像当e.effect==None时不会调用这个函数
+            MoveTag mt = (MoveTag)e.Data.GetData(typeof(MoveTag));
+            List<Militia> mList = mt.moveMilitias;
+            militia_ListView.BeginUpdate();//开始更新界面
+            foreach (Militia militia in mList)
+            {
+                if (militia.Id == null)
+                {//是删除后移动过来的
+                    if (MessageBox.Show("民兵：" + militia.info() + " 已经被删除，是否恢复它并继续操作？", "提示", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                    {
+                        militia.Group = "未分组";
+                        sqlBiz.addMilitia(militia);
+                        if (condition.lambdaCondition.Compile()(militia))
+                        {//如果满足条件，就添加到显示
+                            this.addOneMilitia(militia);
+                        }
+                    }
+                    continue;
+                }
+                //在之前让原分组界面的个数减少1
+                FormBizs.groupBiz.reduceCount(militia);
+                ListViewItem lvi = this.findItemWithMilitia(militia);
+                militia.Group = "未分组";
+                FormBizs.updateMilitiaItem(militia);//通知所有的民兵列表更新
+                sqlBiz.updateMilitia(militia);//保存
+                if (lvi != null)
+                {
+                    lvi.Tag = militia;
+                    this.updateItem(lvi);
+                    if (!condition.lambdaCondition.Compile()(militia))
+                    {//不满足筛选条件，则不能显示在这个界面
+                        lvi.Remove();
+                    }
+                }
+                else if (condition.lambdaCondition.Compile()(militia))
+                {
+                    this.addOneMilitia(militia);
+                }
+            }
+            militia_ListView.EndUpdate();//结束更新界面
+        }
+
+        public void Militia_ListView_DragEnter(object sender, DragEventArgs e)
+        {
+            militia_ListView.Focus();
+            e.Effect = DragDropEffects.Move;
+        }
+
+        public void Militia_ListView_ItemDrag(object sender, ItemDragEventArgs e)
+        {//移动选中的items
+
+            if (e.Button == MouseButtons.Left)
+            {
+                List<Militia> mList = new List<Militia>();
+                foreach (ListViewItem lvi in militia_ListView.SelectedItems)
+                {
+                    Militia militia = (Militia)lvi.Tag;
+                    mList.Add(militia);
+                }
+                MoveTag mt = new MoveTag(this, mList);
+                if (militia_ListView.DoDragDrop(mt, DragDropEffects.Move) == DragDropEffects.Move)
+                {//移动成功后
+                    foreach (ListViewItem lvi in militia_ListView.SelectedItems)
+                    {
+                        Militia militia = (Militia)lvi.Tag;
+                        //if militia 不符合筛选条件，则删掉这个item
+                        if (!condition.lambdaCondition.Compile()(militia))
+                        {
+                            lvi.Remove();
+                        }
+                        else
+                        {
+                            this.updateItem(lvi);//如果符合条件，则刷新显示
+                        }
+                    }
+                }
+            }
+        }
+
+        public void Militia_ListView_MouseDoubleClick(object sender, MouseEventArgs e)
+        {//双击编辑
+            ListViewItem lvi = militia_ListView.GetItemAt(e.X, e.Y);
+            int subIndex = lvi.SubItems.IndexOf(lvi.GetSubItemAt(e.X, e.Y));
+            if (lvi != null)
+            {
+                this.editOne(lvi, this.displayedParameterIndexs[subIndex]);//弹出编辑窗口，并指定光标在subIndex处
+            }
+        }
+
+        public void importXMLGroupTask_Click(object sender, EventArgs e)
+        {//导入分组任务（添加任务）
+            OpenFileDialog fileDialog = new OpenFileDialog();
+            fileDialog.Multiselect = false;
+            fileDialog.Title = "请选择文件";
+            fileDialog.Filter = "所有文件(*.*)|*.*";
+            if (fileDialog.ShowDialog() == DialogResult.OK)
+            {
+                string file = fileDialog.FileName;//已经选择了文件
+                try
+                {
+                    FormBizs.groupBiz.addXmlGroupTask(file);
+                }
+                catch (Exception xmlExeption)
+                {
+                    MessageBox.Show("导入xml文件出现异常！", "异常警告", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+
+            }
+
         }
     }
 }

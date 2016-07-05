@@ -8,8 +8,6 @@ namespace MilitiaOrganizationSystem
 {
     public class Militia
     {//民兵类
-        //public Dictionary<string, string> InfoDic { get; }//信息字典
-
         public string Group { get; set; }//分组路径
         public string Place { get; set; }//采集地ID，也是数据库名
 
@@ -67,11 +65,6 @@ namespace MilitiaOrganizationSystem
             {
                 return false;
             }
-        }
-
-        public bool satisfy()
-        {
-            return true;
         }
     }
 }

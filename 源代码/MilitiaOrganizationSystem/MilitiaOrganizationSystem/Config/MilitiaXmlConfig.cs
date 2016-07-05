@@ -133,9 +133,13 @@ namespace MilitiaOrganizationSystem
                             //不赋值
                             break;
                         default://当做string处理
-                            byte[] buffer = new byte[8];
-                            rand.NextBytes(buffer);
-                            mr.setProperty(node.Attributes["property"].Value, System.Text.Encoding.Unicode.GetString(buffer));
+                            char[] arr = new char[] { '1', '2', '3', '4', 'a', 'b', 'c', 'd', '7', '8', '9', '5', '0', 'f', 'g', 'j', 'k' };
+                            string value = "";
+                            for(int k = 0; k < 18; k++)
+                            {
+                                value += arr[rand.Next(arr.Length)];
+                            }
+                            mr.setProperty(node.Attributes["property"].Value, value);
                             break;
                     }
                 }

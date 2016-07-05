@@ -203,10 +203,5 @@ namespace MilitiaOrganizationSystem
         {
             xmlGroupBiz.addRoot();
         }
-
-        public void addXmlGroupTask(string xmlFile)
-        {
-            xmlGroupBiz.addXmlGroupTask(xmlFile);//从文件中增加分组任务
-        }
     }
 }

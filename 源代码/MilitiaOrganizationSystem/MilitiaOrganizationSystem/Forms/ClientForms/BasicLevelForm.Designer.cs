@@ -45,9 +45,9 @@
             this.btn_importXMLGroupTask = new System.Windows.Forms.ToolStripMenuItem();
             this.export = new System.Windows.Forms.ToolStripMenuItem();
             this.options = new System.Windows.Forms.ToolStripMenuItem();
-            this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
             this.latestMilitias = new System.Windows.Forms.ToolStripMenuItem();
             this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
+            this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
             this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
@@ -58,6 +58,7 @@
             this.skipPage = new System.Windows.Forms.Button();
             this.finalPage = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
+            this.button1 = new System.Windows.Forms.Button();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -147,29 +148,29 @@
             // add
             // 
             this.add.Name = "add";
-            this.add.Size = new System.Drawing.Size(168, 22);
+            this.add.Size = new System.Drawing.Size(188, 22);
             this.add.Text = "添加";
             this.add.Click += new System.EventHandler(this.add_Click);
             // 
             // modify
             // 
             this.modify.Name = "modify";
-            this.modify.Size = new System.Drawing.Size(168, 22);
+            this.modify.Size = new System.Drawing.Size(188, 22);
             this.modify.Text = "编辑";
             this.modify.Click += new System.EventHandler(this.modify_Click);
             // 
             // dele
             // 
             this.dele.Name = "dele";
-            this.dele.Size = new System.Drawing.Size(168, 22);
+            this.dele.Size = new System.Drawing.Size(188, 22);
             this.dele.Text = "删除";
             this.dele.Click += new System.EventHandler(this.dele_Click);
             // 
             // importFromXml
             // 
             this.importFromXml.Name = "importFromXml";
-            this.importFromXml.Size = new System.Drawing.Size(168, 22);
-            this.importFromXml.Text = "从xml文件中导入";
+            this.importFromXml.Size = new System.Drawing.Size(188, 22);
+            this.importFromXml.Text = "随机生成5000个民兵";
             this.importFromXml.Click += new System.EventHandler(this.importFromXml_Click);
             // 
             // btn_importXMLGroupTask
@@ -193,13 +194,6 @@
             this.options.Text = "设置";
             this.options.Click += new System.EventHandler(this.options_Click);
             // 
-            // doConflict
-            // 
-            this.doConflict.Name = "doConflict";
-            this.doConflict.Size = new System.Drawing.Size(68, 21);
-            this.doConflict.Text = "检测冲突";
-            this.doConflict.Click += new System.EventHandler(this.doConflict_Click);
-            // 
             // latestMilitias
             // 
             this.latestMilitias.Name = "latestMilitias";
@@ -213,6 +207,13 @@
             this.stastistics.Size = new System.Drawing.Size(44, 21);
             this.stastistics.Text = "统计";
             this.stastistics.Click += new System.EventHandler(this.stastistics_Click);
+            // 
+            // doConflict
+            // 
+            this.doConflict.Name = "doConflict";
+            this.doConflict.Size = new System.Drawing.Size(68, 21);
+            this.doConflict.Text = "检测冲突";
+            this.doConflict.Click += new System.EventHandler(this.doConflict_Click);
             // 
             // labelCondition
             // 
@@ -269,7 +270,7 @@
             0,
             0});
             this.pageUpDown.Name = "pageUpDown";
-            this.pageUpDown.Size = new System.Drawing.Size(42, 21);
+            this.pageUpDown.Size = new System.Drawing.Size(55, 21);
             this.pageUpDown.TabIndex = 8;
             this.pageUpDown.Value = new decimal(new int[] {
             1,
@@ -291,7 +292,7 @@
             // 
             this.labelPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.labelPage.AutoSize = true;
-            this.labelPage.Location = new System.Drawing.Point(83, 578);
+            this.labelPage.Location = new System.Drawing.Point(107, 578);
             this.labelPage.Name = "labelPage";
             this.labelPage.Size = new System.Drawing.Size(17, 12);
             this.labelPage.TabIndex = 10;
@@ -300,7 +301,7 @@
             // skipPage
             // 
             this.skipPage.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.skipPage.Location = new System.Drawing.Point(106, 573);
+            this.skipPage.Location = new System.Drawing.Point(136, 573);
             this.skipPage.Name = "skipPage";
             this.skipPage.Size = new System.Drawing.Size(75, 23);
             this.skipPage.TabIndex = 11;
@@ -315,7 +316,7 @@
             this.finalPage.Name = "finalPage";
             this.finalPage.Size = new System.Drawing.Size(75, 23);
             this.finalPage.TabIndex = 12;
-            this.finalPage.Text = "最后一页";
+            this.finalPage.Text = "尾页";
             this.finalPage.UseVisualStyleBackColor = true;
             this.finalPage.Click += new System.EventHandler(this.finalPage_Click);
             // 
@@ -329,12 +330,24 @@
             this.conditionLabel.Text = "未分组";
             this.conditionLabel.Click += new System.EventHandler(this.conditionLabel_Click);
             // 
+            // button1
+            // 
+            this.button1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.button1.Location = new System.Drawing.Point(442, 573);
+            this.button1.Name = "button1";
+            this.button1.Size = new System.Drawing.Size(75, 23);
+            this.button1.TabIndex = 14;
+            this.button1.Text = "首页";
+            this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
+            // 
             // BasicLevelForm
             // 
             this.AllowDrop = true;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(850, 596);
+            this.Controls.Add(this.button1);
             this.Controls.Add(this.conditionLabel);
             this.Controls.Add(this.finalPage);
             this.Controls.Add(this.skipPage);
@@ -389,6 +402,7 @@
         private System.Windows.Forms.ToolStripMenuItem doConflict;
         private System.Windows.Forms.ToolStripMenuItem latestMilitias;
         private System.Windows.Forms.ToolStripMenuItem stastistics;
+        private System.Windows.Forms.Button button1;
     }
 }
 

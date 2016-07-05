@@ -21,12 +21,9 @@ namespace MilitiaOrganizationSystem
             InitializeComponent();
             sqlBiz = sBiz;
             condition = new Condition(group);
+            conditionLabel.Text = condition.ToString();
             listViewBiz = new MilitiaListViewBiz(militia_ListView, sqlBiz, condition);//需指定数据库
             updatePageUpDown();
-            /*//从数据库中加载相应民兵信息到显示
-            int sum;
-            listViewBiz.loadMilitiaList(sqlBiz.getMilitiasByGroup(group, 0, 1000, out sum));*/
-
 
             militia_ListView.ItemDrag += Militia_ListView_ItemDrag;
         }
