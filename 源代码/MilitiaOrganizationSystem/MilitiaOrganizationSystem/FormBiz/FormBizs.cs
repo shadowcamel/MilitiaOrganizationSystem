@@ -61,7 +61,7 @@ namespace MilitiaOrganizationSystem
 
         public static void export()
         {//导出之前，先检查冲突
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitias();//主数据库
+            /*List<List<Militia>> mlList = sqlBiz.getConflictMilitias();//主数据库
             if (mlList.Count > 0)
             {//检测到冲突
                 ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
@@ -73,7 +73,7 @@ namespace MilitiaOrganizationSystem
             } else
             {
                 MessageBox.Show("没有检查到冲突,可以导出");
-            }
+            }*/
 
 
 
@@ -163,11 +163,15 @@ namespace MilitiaOrganizationSystem
 
         private static void importOne(string importFile, string psd)
         {//导入一个
-            UnZip unzip = new UnZip(importFile, SqlBiz.DataDir, psd);//解压到数据库中
+            if(!Directory.Exists("import"))
+            {
+                Directory.CreateDirectory("import");
+            }
+            UnZip unzip = new UnZip(importFile, "import", psd);//解压到数据库中
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);//开始解压
             unzip.close();
 
-            string[] files = Directory.GetFiles(SqlBiz.DataDir);
+            string[] files = Directory.GetFiles("import");
             foreach(string file in files)
             {//导入militiaXml或者GroupXml
                 if(Path.GetFileName(file).StartsWith(Path.GetFileName(exportMilitiaFileName)))
@@ -180,6 +184,9 @@ namespace MilitiaOrganizationSystem
                 //导入之后，删去
                 File.Delete(file);
             }
+
+            string[] databases = Directory.GetDirectories("import");
+            sqlBiz.restoreDbs(databases.ToList());
         }
     }
 }

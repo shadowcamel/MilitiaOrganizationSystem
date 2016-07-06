@@ -151,6 +151,24 @@ namespace MilitiaOrganizationSystem
             sqlDao.bulkInsertMilitias(mList);
         }
 
+        public void backupAllDb(string folder)
+        {//将所有数据库备份到folder下
+            if(!Directory.Exists(folder))
+            {
+                Directory.CreateDirectory(folder);
+            }
+            List<string> databases = getDatabases();
+            foreach(string database in databases)
+            {
+                sqlDao.backupOneDB(database, folder);
+            }
+        }
+
+        public void restoreDbs(List<string> databaseFolders)
+        {
+            sqlDao.restoreDbs(databaseFolders);
+        }
+
         public List<string> exportAsXmlFile(string fileName)
         {//将数据库里的所有民兵信息写入xml文件中
             if(!Directory.Exists(Path.GetDirectoryName(fileName)))
@@ -192,7 +210,14 @@ namespace MilitiaOrganizationSystem
 
         public void exportZip(Zip zip)
         {//将所有出System的数据库导入到zip中
-            sqlDao.zipDb(zip);
+            backupAllDb("export");
+            string[] databases = Directory.GetDirectories("export");
+            foreach(string database in databases)
+            {
+                MessageBox.Show(database);
+                zip.addFileOrFolder(database);
+                Directory.Delete(database, true);//删除
+            }
         }
 
         public void importFromMilitiaXml(string fileName)
@@ -413,6 +438,8 @@ namespace MilitiaOrganizationSystem
 
             return mLList;
         }*/
+
+
 
         public List<List<Militia>> getConflictMilitias()
         {//找出所有数据库之间,以及之内的身份证号冲突

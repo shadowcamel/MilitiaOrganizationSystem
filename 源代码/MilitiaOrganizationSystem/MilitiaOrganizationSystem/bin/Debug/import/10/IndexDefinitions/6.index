@@ -1,0 +1,30 @@
+{
+  "IndexId": 6,
+  "Name": "Militias/CredentialNumbers",
+  "LockMode": "Unlock",
+  "Map": "from militia in docs.Militias\nselect new {\n\tCredentialNumber = militia.CredentialNumber,\n\tDbName = militia.Place\n}",
+  "Maps": [
+    "from militia in docs.Militias\nselect new {\n\tCredentialNumber = militia.CredentialNumber,\n\tDbName = militia.Place\n}"
+  ],
+  "Reduce": null,
+  "IsMapReduce": false,
+  "IsCompiled": false,
+  "Stores": {},
+  "Indexes": {},
+  "SortOptions": {},
+  "Analyzers": {},
+  "Fields": [
+    "CredentialNumber",
+    "DbName",
+    "__document_id"
+  ],
+  "Suggestions": {},
+  "TermVectors": {},
+  "SpatialIndexes": {},
+  "InternalFieldsMapping": {},
+  "MaxIndexOutputsPerDocument": null,
+  "Type": "Map",
+  "DisableInMemoryIndexing": false,
+  "IsTestIndex": false,
+  "IsSideBySideIndex": false
+}

@@ -107,9 +107,20 @@ namespace MilitiaOrganizationSystem
             store.DatabaseCommands.GlobalAdmin.StartRestore(new Raven.Abstractions.Data.DatabaseRestoreRequest
             {
                 BackupLocation = dirInfo.FullName,
-                DatabaseName = dirInfo.Name
+                DatabaseName = dirInfo.Name,
+                
             });
         }//这个有希望代替直接复制，据说直接复制对数据库会造成损害，但是restore的时候我只能restore一个，连续restore两个就会造成冲突
+
+        public void restoreDbs(List<string> databaseFolders)
+        {
+            foreach(string database in databaseFolders)
+            {
+                restoreOneDB(database);
+                store.Dispose();//释放后再继续恢复
+                newStore();
+            }
+        }
 
         /**public async void exportDocumentDataBase(string exportFolder)
         {
@@ -325,7 +336,6 @@ namespace MilitiaOrganizationSystem
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Skip(skip).Take(take)
                     .ProjectFromIndexFieldsInto<Militias_CredentialNumbers.Result>()
-                    //.OrderBy(x => x.CredentialNumber)
                     .ToList();
 
                 sum = stats.TotalResults;

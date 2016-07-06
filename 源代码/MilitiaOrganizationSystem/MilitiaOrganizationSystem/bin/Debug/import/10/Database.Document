@@ -1,0 +1,9 @@
+{
+  "Id": "10",
+  "Settings": {
+    "Raven/DataDir": "~\\10",
+    "Raven/StorageTypeName": "Esent"
+  },
+  "SecuredSettings": {},
+  "Disabled": false
+}
