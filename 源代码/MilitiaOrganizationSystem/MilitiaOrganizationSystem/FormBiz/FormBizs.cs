@@ -12,8 +12,7 @@ namespace MilitiaOrganizationSystem
     {//全局管理Form的类
         public const string exportGroupFileName = "groupTask.xml";
         public const string exportMilitiaFileName = "export/militiaList";
-
-        public const string importDataDir = "import";
+        
 
 
 
@@ -61,7 +60,23 @@ namespace MilitiaOrganizationSystem
         }*/
 
         public static void export()
-        {
+        {//导出之前，先检查冲突
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitias();//主数据库
+            if (mlList.Count > 0)
+            {//检测到冲突
+                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
+                if (cmf.ShowDialog() != DialogResult.OK)
+                {
+                    MessageBox.Show("没有处理完冲突，请处理完冲突再导出！");
+                    return;
+                }
+            } else
+            {
+                MessageBox.Show("没有检查到冲突,可以导出");
+            }
+
+
+
             FolderBrowserDialog fbdlg = new FolderBrowserDialog();
             fbdlg.Description = "请选择要导出的文件路径";
             if (fbdlg.ShowDialog() == DialogResult.OK)
@@ -73,21 +88,21 @@ namespace MilitiaOrganizationSystem
 
         private static void export(string fileName, string psd)
         {//fileName为导出文件，psd为压缩密码
-            //导出之前，先检测冲突
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();//主数据库
-            if(mlList.Count > 0)
-            {//检测到冲突
-                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
-                cmf.ShowDialog();
-            }
-
             Zip zip = new Zip(fileName, psd, 6);
-            List<string> exportMilitiaFiles = sqlBiz.exportAsXmlFile(exportMilitiaFileName);//为文件
-            foreach(string exportFile in exportMilitiaFiles)
+            if(LoginXmlConfig.ClientType == "基层")
             {
-                zip.addFileOrFolder(exportFile);
-                File.Delete(exportFile);//加入压缩文件后，删去文件
+                List<string> exportMilitiaFiles = sqlBiz.exportAsXmlFile(exportMilitiaFileName);//为文件
+                foreach (string exportFile in exportMilitiaFiles)
+                {
+                    zip.addFileOrFolder(exportFile);
+                    File.Delete(exportFile);//加入压缩文件后，删去文件
+                }
+            } else
+            {//区县人武部，市军分区，省军分区
+                sqlBiz.exportZip(zip);
             }
+            
+            
             zip.addFileOrFolder(GroupXmlConfig.xmlGroupFile);//导出分组文件
             zip.close();
         }
@@ -130,7 +145,7 @@ namespace MilitiaOrganizationSystem
                 }
             }
             MessageBox.Show("导入完毕， time = " + DateTime.Now);
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitiasOfMainDatabase();
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitias();
             MessageBox.Show("拿到冲突, time = " + DateTime.Now);
             if (mlList.Count == 0)
             {
@@ -148,15 +163,11 @@ namespace MilitiaOrganizationSystem
 
         private static void importOne(string importFile, string psd)
         {//导入一个
-            if(!Directory.Exists(importDataDir))
-            {
-                Directory.CreateDirectory(importDataDir);
-            }
-            UnZip unzip = new UnZip(importFile, importDataDir, psd);//解压到importDataDir中
-            sqlBiz.importUnzip(unzip);//开始解压
+            UnZip unzip = new UnZip(importFile, SqlBiz.DataDir, psd);//解压到数据库中
+            List<string> importedDatabases = sqlBiz.importUnzip(unzip);//开始解压
             unzip.close();
 
-            string[] files = Directory.GetFiles(importDataDir);
+            string[] files = Directory.GetFiles(SqlBiz.DataDir);
             foreach(string file in files)
             {//导入militiaXml或者GroupXml
                 if(Path.GetFileName(file).StartsWith(Path.GetFileName(exportMilitiaFileName)))
@@ -166,9 +177,9 @@ namespace MilitiaOrganizationSystem
                 {
                     groupBiz.addXmlGroupTask(file);
                 }
+                //导入之后，删去
+                File.Delete(file);
             }
-            //导入之后，删去import文件夹
-            Directory.Delete(importDataDir, true);
         }
     }
 }

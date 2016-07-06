@@ -53,8 +53,7 @@ namespace MilitiaOrganizationSystem
 
         public List<string> getDatabasesByPlace(string Place)
         {//根据Militia.Place指定要查找的数据库集合, 调用此函数时， Place应不为空
-            return getDatabases();
-            /**if(Place == null || Place == "")
+            if(Place == null || Place == "")
             {//如果为空，则未指定数据库，所以返回所有数据库集合
                 return getDatabases();
             }
@@ -68,7 +67,7 @@ namespace MilitiaOrganizationSystem
                     databases.Add(di.Name);
                 }
             }
-            return databases;*/
+            return databases;
         }
 
         public List<Militia> queryByContition(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string Place = null)
@@ -103,6 +102,7 @@ namespace MilitiaOrganizationSystem
 
         private int getIndexOfDatabase(int [] sums, int skip, out int skipNum)
         {//获取应该从哪个数据库跳过skipNum个结果查找
+            //sum是各个数据库民兵的总数
             int skipSum = 0;
             for(int i = 0; i < sums.Length; i++)
             {
@@ -191,12 +191,12 @@ namespace MilitiaOrganizationSystem
         }
 
         public void exportZip(Zip zip)
-        {
+        {//将所有出System的数据库导入到zip中
             sqlDao.zipDb(zip);
         }
 
         public void importFromMilitiaXml(string fileName)
-        {
+        {//从xml导入民兵到数据库中
             List<Militia> mList = FileTool.XmlToMilitiaList(fileName);
             if(mList == null)
             {
@@ -209,7 +209,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public List<string> importUnzip(UnZip unzip)
-        {
+        {//导入zip文件，解压到unzip中
             return unzip.unzipAll();
         }
 
@@ -217,7 +217,7 @@ namespace MilitiaOrganizationSystem
         {//folder下全部是数据库文件夹，导入此文件夹下的所有数据库文件夹(复制到DataBases文件夹下)
 
             string[] dbpaths = Directory.GetDirectories(folder);
-            List<string> importedDataBases = new List<string>();
+            List<string> importedDataBases = new List<string>();//导入成功的数据库
             for(int i = 0; i < dbpaths.Length; i++)
             {
                 string dbpath = dbpaths[i];
@@ -259,9 +259,9 @@ namespace MilitiaOrganizationSystem
             return databases;
         }
 
-        private void mergeAndSaveConfilictMilitias(List<Militias_CredentialNumbers.Result> rMainList, List<Militias_CredentialNumbers.Result> rList, Dictionary<string, List<Militias_CredentialNumbers.Result>> dict)
+        /**private void mergeAndSaveConfilictMilitias(List<Militias_CredentialNumbers.Result> rMainList, List<Militias_CredentialNumbers.Result> rList, Dictionary<string, List<Militias_CredentialNumbers.Result>> dict)
         {//将rList归并到rMainList，并将冲突的民兵根据身份证号存进dict中
-            /*string mString = "";
+            /string mString = "";
             foreach(Militias_CredentialNumbers.Result r in rMainList)
             {
                 mString += r.CredentialNumber + ",";
@@ -271,7 +271,7 @@ namespace MilitiaOrganizationSystem
             {
                 mString += r.CredentialNumber + ",";
             }
-            MessageBox.Show(mString);*/
+            MessageBox.Show(mString);/
             if(rList.Count == 0)
             {//不必归并
                 return;
@@ -333,9 +333,9 @@ namespace MilitiaOrganizationSystem
             {//说明次链表还没有归并完
                 rMainList.InsertRange(rMainList.Count, rList.GetRange(j, rList.Count - j));
             }
-        }
+        }**/
 
-        public List<List<Militia>> getConflictMilitiasBetweenDatabases()
+        /**public List<List<Militia>> getConflictMilitiasBetweenDatabases()
         {//找出所有数据库之间的身份证号冲突,只在省市军分区调用
             Dictionary<string, List<Militias_CredentialNumbers.Result>> dict = new Dictionary<string, List<Militias_CredentialNumbers.Result>>();//记录冲突的Results
 
@@ -375,7 +375,7 @@ namespace MilitiaOrganizationSystem
             }
 
             return mLList;
-        }
+        }*/
 
         /*public List<List<Militia>> getConflictMilitiasOfMainDatabase()
         {//检测主数据库的冲突,应该只在基层和区县调用
@@ -400,8 +400,8 @@ namespace MilitiaOrganizationSystem
             return mLList;
         }*/
 
-        public List<List<Militia>> getConflictMilitiasOfMainDatabase()
-        {
+        /*public List<List<Militia>> getConflictMilitiasOfMainDatabase()
+        {//数据库本身的索引方法
             List<Militias_ConflictCredentialNumbers.Result> rList = sqlDao.getConflictCredentialNumbers();//从小到大排序的身份证号
 
             List<List<Militia>> mLList = new List<List<Militia>>();
@@ -412,7 +412,93 @@ namespace MilitiaOrganizationSystem
             }
 
             return mLList;
+        }*/
+
+        public List<List<Militia>> getConflictMilitias()
+        {//找出所有数据库之间,以及之内的身份证号冲突
+         //字典树方法
+            DictTree dt = new DictTree();
+
+            Dictionary<string, List<char>> conflictDict = new Dictionary<string, List<char>>();
+           
+            List<string> databases = getDatabases();
+
+            for (int i = 0; i < databases.Count; i++)
+            {
+                int sum = 1;
+                int count = 0;
+                while(count < sum)
+                {
+                List<Militias_CredentialNumbers.Result> rList = sqlDao.getCredentialNumbers(count, 1000, out sum, databases[i]);
+                count += rList.Count;//更新count，访问完所有数据
+                //List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers(databases[i]);
+                foreach (Militias_CredentialNumbers.Result r in rList)
+                    {
+                        char conflictI;
+                        if (!dt.insert(r.CredentialNumber, (char)i, out conflictI))
+                        {//如果有冲突（插入失败)
+                            List<char> results;
+                            if (!conflictDict.TryGetValue(r.CredentialNumber, out results))
+                            {//如果没有加入冲突字典，则新建一个，再添加进冲突字典
+                                results = new List<char>();
+                                results.Add((char)i);
+                                if (!results.Contains(conflictI))
+                                {//有可能是同一数据库
+                                    results.Add(conflictI);
+                                }
+                                conflictDict[r.CredentialNumber] = results;
+                            }
+                            else
+                            {//如果已经加入了冲突字典，那么只需要添加现在的
+                                if (!results.Contains((char)i))
+                                {//有可能是同一数据库的冲突，所以
+                                    results.Add((char)i);
+                                }
+                            }
+                        }
+                    }
+                }
+                
+            }
+
+            //冲突检测完毕
+
+            List<List<Militia>> mlList = new List<List<Militia>>();
+            foreach(KeyValuePair<string, List<char>> kvp in conflictDict)
+            {
+                List<Militia> mList = new List<Militia>();
+                foreach(char i in kvp.Value)
+                {//通过身份证，数据库下标（i)获取民兵列表
+                    mList.AddRange(sqlDao.getMilitiasByCredentialNumber(kvp.Key, databases[(int)i]));
+                }
+                mlList.Add(mList);
+            }
+            return mlList;
         }
+
+        /**public List<List<Militia>> getConflictMilitiasOfMainDatabase()
+        {//字典树方法查询
+            DictTree dt = new DictTree();
+            Dictionary<string, List<Militias_CredentialNumbers.Result>> conflictDict = new Dictionary<string, List<Militias_CredentialNumbers.Result>>();//记录冲突的Result
+            List<Militias_CredentialNumbers.Result> rList = sqlDao.getAllCredentialNumbers();
+            foreach(Militias_CredentialNumbers.Result r in rList)
+            {
+                if(!dt.insert(r.CredentialNumber))
+                {//如果有冲突（插入失败)
+                    List<Militias_CredentialNumbers.Result> results;
+                    if(!conflictDict.TryGetValue(r.CredentialNumber, out results))
+                    {//如果已经加入了冲突字典，则什么也不做
+                        //如果没有加入冲突字典，则新建一个，再添加进冲突字典
+                        results = new List<Militias_CredentialNumbers.Result>();
+                        results.Add(r);
+                        conflictDict[r.CredentialNumber] = results;
+                    }
+                }
+            }
+
+            //添加进了冲突字典
+
+        }*/
 
         public Dictionary<string, FacetValue> getGroupNums()
         {//获取所有数据库中的所有组中民兵的个数

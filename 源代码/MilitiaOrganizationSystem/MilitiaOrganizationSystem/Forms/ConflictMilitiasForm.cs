@@ -37,7 +37,7 @@ namespace MilitiaOrganizationSystem
         {//冲突检测界面
             InitializeComponent();
 
-            closeForm = false;
+            closeForm = true;
 
             mlList = llm;
 
@@ -80,6 +80,7 @@ namespace MilitiaOrganizationSystem
             if(!closeForm)
             {
                 e.Cancel = true;
+                closeForm = true;
             }
         }
 
@@ -150,7 +151,10 @@ namespace MilitiaOrganizationSystem
                 }
 
                 MessageBox.Show("执行成功");
-            }    
+            } else
+            {
+                closeForm = false;
+            }
         }
     }
 }

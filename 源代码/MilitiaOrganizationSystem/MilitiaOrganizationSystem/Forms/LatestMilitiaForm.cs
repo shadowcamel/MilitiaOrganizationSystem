@@ -76,7 +76,6 @@ namespace MilitiaOrganizationSystem
             }
             lvi.ToolTipText = operation;
             updateItem(lvi);
-            MessageBox.Show(lvi.Name + " " + ((Militia)lvi.Tag).Id + " " + militia.Id);
             latestMilitias_listview.Items.Insert(0, lvi);
         }
 

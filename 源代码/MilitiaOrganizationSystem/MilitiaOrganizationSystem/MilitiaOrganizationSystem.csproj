@@ -210,6 +210,7 @@
       <DependentUpon>XMLGroupTaskForm.cs</DependentUpon>
     </Compile>
     <Compile Include="FormBiz\XMLGroupTreeViewBiz.cs" />
+    <Compile Include="Tool\DictTree.cs" />
     <Compile Include="Tool\FileTool.cs" />
     <Compile Include="Tool\md5.cs" />
     <Compile Include="Tool\UnZip.cs" />
