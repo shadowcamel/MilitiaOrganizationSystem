@@ -28,6 +28,19 @@ namespace MilitiaOrganizationSystem
             this.dbName = db;
 
             newStore();
+
+            store.DocumentDatabase.OnBackupComplete += DocumentDatabase_OnBackupComplete;
+
+        }
+
+        public void DocumentDatabase_OnBackupComplete(Raven.Database.DocumentDatabase obj)
+        {
+            System.Windows.MessageBox.Show(obj.Name);
+        }
+
+        ~SqlDao()
+        {
+            store.Dispose();
         }
 
         private void newStore()
@@ -37,17 +50,11 @@ namespace MilitiaOrganizationSystem
             {
                 DefaultDatabase = dbName
             };
-            //System.Windows.MessageBox.Show("hello");
             store.Initialize();
-            //System.Windows.MessageBox.Show("why?");
             new Militias_CredentialNumbers().Execute(store);
-            //System.Windows.MessageBox.Show("yes?");
             new Militias_Groups().Execute(store);
-            //System.Windows.MessageBox.Show("new?");
             new Militias_All().Execute(store);
-            //System.Windows.MessageBox.Show("sdfsd?");
-            new Militias_ConflictCredentialNumbers().Execute(store);
-            //System.Windows.MessageBox.Show("yes?");
+            //new Militias_ConflictCredentialNumbers().Execute(store);
             
         }
         
@@ -110,8 +117,8 @@ namespace MilitiaOrganizationSystem
                 }
                 sr.Close();
             }
-            /*int sum;
-            getConflictCredentialNumbers(0, 1, out sum);*/
+           // int sum;
+           // getConflictCredentialNumbers(0, 1, out sum);//导入一个文件就检测一下冲突，估计会快？
 
         }
 
@@ -249,7 +256,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var mList =  session.Query<Militia>()
-                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Statistics(out stats).Where(lambdaContition).Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
 
@@ -268,7 +275,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var militias = session.Query<Militia>()
-                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Statistics(out stats).Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
 
@@ -353,7 +360,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var militias = session.Query<Militias_Groups.Result, Militias_Groups>().Statistics(out stats)
-                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(x => x.Group.StartsWith(Group)).OfType<Militia>() //转换为militias
                     .Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
@@ -452,14 +459,14 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        public List<Militias_ConflictCredentialNumbers.Result> getConflictCredentialNumbers(int skip, int take, out int sum)
+        /**public List<Militias_ConflictCredentialNumbers.Result> getConflictCredentialNumbers(int skip, int take, out int sum)
         {//获取所有冲突的身份证号,主数据库的
             using (var session = store.OpenSession())
             {
                 RavenQueryStatistics stats;
                 var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_ConflictCredentialNumbers>()
                     .Statistics(out stats)
-                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(x => x.Count > 1)
                     .Skip(skip).Take(take)
                     .ToList();
@@ -468,7 +475,7 @@ namespace MilitiaOrganizationSystem
 
                 return credentialNumbers;
             }
-        }
+        }*/
 
     }
 
@@ -494,7 +501,7 @@ namespace MilitiaOrganizationSystem
         }
     }
 
-    public class Militias_ConflictCredentialNumbers : AbstractIndexCreationTask<Militia, Militias_ConflictCredentialNumbers.Result>
+    /*public class Militias_ConflictCredentialNumbers : AbstractIndexCreationTask<Militia, Militias_ConflictCredentialNumbers.Result>
     {//用数据库检测冲突的索引
         public class Result
         {
@@ -518,7 +525,7 @@ namespace MilitiaOrganizationSystem
                                Count = g.Sum(x => x.Count)
                            };
         }
-    }
+    }*/
 
     public class Militias_Groups : AbstractIndexCreationTask<Militia>
     {

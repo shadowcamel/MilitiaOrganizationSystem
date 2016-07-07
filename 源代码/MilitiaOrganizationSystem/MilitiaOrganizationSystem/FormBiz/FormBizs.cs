@@ -89,30 +89,28 @@ namespace MilitiaOrganizationSystem
 
         private static void export(string fileName, string psd)
         {//fileName为导出文件，psd为压缩密码
-            Zip zip = new Zip(fileName, psd, 6);
-            /*if(LoginXmlConfig.ClientType == "基层")
-            {
-                List<string> exportMilitiaFiles = sqlBiz.exportAsXmlFile(exportMilitiaFileName);//为文件
-                foreach (string exportFile in exportMilitiaFiles)
-                {
-                    zip.addFileOrFolder(exportFile);
-                    File.Delete(exportFile);//加入压缩文件后，删去文件
-                }
-            } else
-            {//区县人武部，市军分区，省军分区
-                sqlBiz.exportZip(zip);
-            }*/
             if (!Directory.Exists("export"))
             {
                 Directory.CreateDirectory("export");
             }
-            sqlBiz.exportAsFile("export/militia");
+
+            Zip zip = new Zip(fileName, psd, 6);
+            if(LoginXmlConfig.ClientType == "基层")
+            {
+                sqlBiz.exportAsFile("export/militia");
+            } else
+            {//区县人武部，市军分区，省军分区
+                sqlBiz.backupAllDb("export");
+            }
+            MessageBox.Show("backuping");
+
             zip.addFileOrFolder("export");
-            Directory.Delete("export", true);//删除
             
-            
+   
             zip.addFileOrFolder(GroupXmlConfig.xmlGroupFile);//导出分组文件
             zip.close();
+
+            Directory.Delete("export", true);//删除
         }
 
         /**public static void importOne(string importFolder)
@@ -180,27 +178,15 @@ namespace MilitiaOrganizationSystem
             unzip.close();
             string[] files = Directory.GetFiles("import/export");
             foreach(string file in files)
-            {
+            {//文件
                 sqlBiz.importFormFile(file);
             }
-            groupBiz.addXmlGroupTask("import/" + GroupXmlConfig.xmlGroupFile);
-            Directory.Delete("import", true);
-            /*string[] files = Directory.GetFiles("import");
-            foreach(string file in files)
-            {//导入militiaXml或者GroupXml
-                if(Path.GetFileName(file).StartsWith(Path.GetFileName(exportMilitiaFileName)))
-                {//militiaList
-                    sqlBiz.importFromMilitiaXml(file);
-                } else if(file == exportGroupFileName)
-                {
-                    groupBiz.addXmlGroupTask(file);
-                }
-                //导入之后，删去
-                File.Delete(file);
-            }
+            string[] databases = Directory.GetDirectories("import/export");//数据库
+            sqlBiz.restoreDbs(databases.ToList());
 
-            string[] databases = Directory.GetDirectories("import");
-            sqlBiz.restoreDbs(databases.ToList());*/
+            groupBiz.addXmlGroupTask("import/" + GroupXmlConfig.xmlGroupFile);
+
+            Directory.Delete("import", true);//导入之后，删除
         }
     }
 }

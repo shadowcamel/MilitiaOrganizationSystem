@@ -55,8 +55,8 @@ namespace MilitiaOrganizationSystem
 
         public List<string> getDatabasesByPlace(string Place)
         {//根据Militia.Place指定要查找的数据库集合, 调用此函数时， Place应不为空
-            return getDatabases();
-            /**if(Place == null || Place == "")
+            //return getDatabases();//单数据库
+            if(Place == null || Place == "")
             {//如果为空，则未指定数据库，所以返回所有数据库集合
                 return getDatabases();
             }
@@ -70,7 +70,7 @@ namespace MilitiaOrganizationSystem
                     databases.Add(di.Name);
                 }
             }
-            return databases;*/
+            return databases;
         }
 
         public List<Militia> queryByContition(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, int skip, int take, out int sum, string Place = null)
@@ -440,7 +440,7 @@ namespace MilitiaOrganizationSystem
             return mLList;
         }*/
 
-        public List<List<Militia>> getConflictMilitias(int skip, int take, out int sum)
+        /*public List<List<Militia>> getConflictMilitias(int skip, int take, out int sum)
         {//数据库本身的索引方法,分页
             List<Militias_ConflictCredentialNumbers.Result> rList = sqlDao.getConflictCredentialNumbers(skip, take, out sum);//从小到大排序的身份证号
 
@@ -452,17 +452,17 @@ namespace MilitiaOrganizationSystem
             }
 
             return mLList;
-        }
+        }*/
 
-        public List<List<Militia>> getConflictMilitias()
+        /*public List<List<Militia>> getConflictMilitias()
         {
             int sum;
             return getConflictMilitias(0, 30, out sum);
-        }
+        }*///单数据库
 
 
 
-        /**public List<List<Militia>> getConflictMilitias()
+        public List<List<Militia>> getConflictMilitias()
         {//找出所有数据库之间,以及之内的身份证号冲突
          //字典树方法
             DictTree dt = new DictTree();
@@ -522,9 +522,9 @@ namespace MilitiaOrganizationSystem
                 mlList.Add(mList);
             }
             return mlList;
-        }*/
+        }
 
-        /**public List<List<Militia>> getConflictMilitiasOfMainDatabase()
+        /*public List<List<Militia>> getConflictMilitiasOfMainDatabase()
         {//字典树方法查询
             DictTree dt = new DictTree();
             Dictionary<string, List<Militias_CredentialNumbers.Result>> conflictDict = new Dictionary<string, List<Militias_CredentialNumbers.Result>>();//记录冲突的Result
@@ -576,7 +576,7 @@ namespace MilitiaOrganizationSystem
 
         public Dictionary<string, FacetValue> getEnumStatistics(System.Linq.Expressions.Expression<Func<Militia, bool>> lambdaContition, string propertyName, string Place = null)
         {//根据某个属性，统计各属性值的民兵个数
-            /*List<FacetValue> fList = new List<FacetValue>();
+            List<FacetValue> fList = new List<FacetValue>();
             List<string> databases = getDatabasesByPlace(Place);
             foreach(string database in databases)
             {
@@ -592,7 +592,7 @@ namespace MilitiaOrganizationSystem
                     return fv1;
                 });
             }
-            return fDict;*/
+            return fDict;
             //单数据库的话，仅需toDictionary
             /*FacetValue fv = fList.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
             {
@@ -600,8 +600,8 @@ namespace MilitiaOrganizationSystem
                 return fv1;
             });
             System.Windows.MessageBox.Show("sum = " + fv.Hits);*/
-            Dictionary<string, FacetValue> fdict = sqlDao.getAggregateNums(lambdaContition, propertyName).ToDictionary(x => x.Range);
-            return fdict;
+            /*Dictionary<string, FacetValue> fdict = sqlDao.getAggregateNums(lambdaContition, propertyName).ToDictionary(x => x.Range);
+            return fdict;*/
         }
 
     }

@@ -159,7 +159,7 @@ namespace MilitiaOrganizationSystem
                 }
 
                 MessageBox.Show("执行成功");
-                conflictGroup_ListView.Items.Clear();
+                /*conflictGroup_ListView.Items.Clear();
                 int sum;
                 List<List<Militia>> llm = FormBizs.sqlBiz.getConflictMilitias(count, 30, out sum);
                 if(llm.Count == 0)
@@ -170,7 +170,7 @@ namespace MilitiaOrganizationSystem
                 {
                     closeForm = false;//不关闭
                     loadMilitiaList(llm);
-                }
+                }*///单数据库
             } else
             {
                 closeForm = false;
