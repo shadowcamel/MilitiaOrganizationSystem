@@ -37,6 +37,10 @@ namespace MilitiaOrganizationSystem
             {
                 radio_EndsWith.Checked = true;
                 endswithCombobox.Text = cc.Values[0];
+            } else if(cc.Method == "Equal")
+            {
+                radio_Equal.Checked = true;
+                equalCombobox.Text = cc.Values[0];
             }
             
         }
@@ -65,9 +69,17 @@ namespace MilitiaOrganizationSystem
                 }
                 childCondition.Method = "EndsWith";
                 childCondition.Values.Add(endswithCombobox.Text);
-            } else
+            } else if(radio_Equal.Checked)
             {
-
+                /*if (endswithCombobox.Text == null || endswithCombobox.Text == "")
+                {
+                    MessageBox.Show("请输入数据！");
+                    endswithCombobox.Focus();
+                    closeForm = false;
+                    return;
+                }*/
+                childCondition.Method = "Equal";
+                childCondition.Values.Add(endswithCombobox.Text);
             }
         }
     }

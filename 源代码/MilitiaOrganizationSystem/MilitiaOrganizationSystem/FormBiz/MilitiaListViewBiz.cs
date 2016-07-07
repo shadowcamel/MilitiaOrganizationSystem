@@ -253,9 +253,7 @@ namespace MilitiaOrganizationSystem
             foreach(ListViewItem lvi in militia_ListView.SelectedItems)
             {
                 Militia militia = (Militia)lvi.Tag;
-                FormBizs.removeMilitiaItem(militia);
-                FormBizs.groupBiz.reduceCount(militia);
-                militia_ListView.Items.Remove(lvi);
+                //militia_ListView.Items.Remove(lvi);
                 sqlBiz.deleteMilitia(militia);  
             }
         }

@@ -35,6 +35,8 @@
             this.endswithCombobox = new System.Windows.Forms.ComboBox();
             this.btn_ok = new System.Windows.Forms.Button();
             this.btn_cancel = new System.Windows.Forms.Button();
+            this.radio_Equal = new System.Windows.Forms.RadioButton();
+            this.equalCombobox = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // propertyName
@@ -105,6 +107,25 @@
             this.btn_cancel.Text = "取消";
             this.btn_cancel.UseVisualStyleBackColor = true;
             // 
+            // radio_Equal
+            // 
+            this.radio_Equal.AutoSize = true;
+            this.radio_Equal.Location = new System.Drawing.Point(14, 197);
+            this.radio_Equal.Name = "radio_Equal";
+            this.radio_Equal.Size = new System.Drawing.Size(53, 16);
+            this.radio_Equal.TabIndex = 7;
+            this.radio_Equal.TabStop = true;
+            this.radio_Equal.Text = "Equal";
+            this.radio_Equal.UseVisualStyleBackColor = true;
+            // 
+            // equalCombobox
+            // 
+            this.equalCombobox.FormattingEnabled = true;
+            this.equalCombobox.Location = new System.Drawing.Point(103, 193);
+            this.equalCombobox.Name = "equalCombobox";
+            this.equalCombobox.Size = new System.Drawing.Size(121, 20);
+            this.equalCombobox.TabIndex = 8;
+            // 
             // ChildConditionForm_string
             // 
             this.AcceptButton = this.btn_ok;
@@ -112,6 +133,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_cancel;
             this.ClientSize = new System.Drawing.Size(396, 294);
+            this.Controls.Add(this.equalCombobox);
+            this.Controls.Add(this.radio_Equal);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.btn_ok);
             this.Controls.Add(this.endswithCombobox);
@@ -135,5 +158,7 @@
         private System.Windows.Forms.ComboBox endswithCombobox;
         private System.Windows.Forms.Button btn_ok;
         private System.Windows.Forms.Button btn_cancel;
+        private System.Windows.Forms.RadioButton radio_Equal;
+        private System.Windows.Forms.ComboBox equalCombobox;
     }
 }

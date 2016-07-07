@@ -65,7 +65,7 @@
             // btn_ok
             // 
             this.btn_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btn_ok.Location = new System.Drawing.Point(271, 471);
+            this.btn_ok.Location = new System.Drawing.Point(264, 471);
             this.btn_ok.Name = "btn_ok";
             this.btn_ok.Size = new System.Drawing.Size(75, 44);
             this.btn_ok.TabIndex = 2;
@@ -83,7 +83,7 @@
             this.Controls.Add(this.label_help);
             this.Controls.Add(this.conflictGroup_ListView);
             this.Name = "ConflictMilitiasForm";
-            this.Text = " ";
+            this.Text = " 冲突检测";
             this.ResumeLayout(false);
             this.PerformLayout();
 

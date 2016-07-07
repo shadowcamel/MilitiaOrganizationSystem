@@ -30,9 +30,28 @@ namespace MilitiaOrganizationSystem
                 parasCheckBox.Items.Add(xn.Attributes["name"].Value);
             }
 
-            checkAll.CheckedChanged += CheckAll_CheckedChanged;
+            checkAll.CheckedChanged += CheckAll_CheckedChanged;//全选
+            invertCheckbox.CheckedChanged += InvertCheckbox_CheckedChanged;//反选
             parasCheckBox.ItemCheck += ParasCheckBox_ItemCheck;
             FormClosing += OptionForm_FormClosing;
+        }
+
+        private void InvertCheckbox_CheckedChanged(object sender, EventArgs e)
+        {//反选
+            if (invertCheckbox.Checked == true)
+            {
+                invertCheckbox.Checked = false;
+                for (int i = 0; i < parasCheckBox.Items.Count; i++)
+                {
+                    if (parasCheckBox.GetItemChecked(i))
+                    {
+                        parasCheckBox.SetItemChecked(i, false);
+                    } else
+                    {
+                        parasCheckBox.SetItemChecked(i, true);
+                    }
+                }
+            }
         }
 
         private void OptionForm_FormClosing(object sender, FormClosingEventArgs e)

@@ -12,6 +12,7 @@ using Raven.Abstractions.Data;
 using System.Linq.Expressions;
 using Raven.Client.Document;
 using Raven.Client.Indexes;
+using Raven.Client.Connection;
 
 namespace MilitiaOrganizationSystem
 {
@@ -42,7 +43,7 @@ namespace MilitiaOrganizationSystem
             new Militias_CredentialNumbers().Execute(store);
             new Militias_Groups().Execute(store);
             new Militias_All().Execute(store);
-            //new Militias_ConflictCredentialNumbers().Execute(store);
+            new Militias_ConflictCredentialNumbers().Execute(store);
 
         }
         
@@ -91,6 +92,43 @@ namespace MilitiaOrganizationSystem
             }
         }
 
+        public void importFromFile(string file)
+        {
+            using (var bulkInsert = store.BulkInsert())
+            {
+                StreamReader sr = new StreamReader(file);
+                string line;
+                while ((line = sr.ReadLine()) != null)
+                {
+                    Militia m = MilitiaReflection.stringToMilitia(line);
+                    m.Id = null;//让数据库新建一个文档
+                    bulkInsert.Store(m);
+                    /*int sum;
+                    getConflictCredentialNumbers(0, 1, out sum);*/
+                }
+                sr.Close();
+            }
+            
+        }
+
+        public void exportToFile(string file)
+        {
+            StreamWriter sw = new StreamWriter(file);
+            int count = 0;
+            int sum = 1;
+            while (count < sum)
+            {
+                List<Militia> mList = getMilitias(count, 1000, out sum);
+                count += mList.Count;
+                foreach (Militia m in mList)
+                {
+                    sw.WriteLine(MilitiaReflection.militiaToString(m));
+                }
+                sw.Flush();
+            }
+            sw.Close();
+        }
+
         public void backupOneDB(string dbName, string exportFolder)
         {//dbName数据库名，exportFolder导出文件夹路径，会在路径下创建一个名为dbName的新文件夹
             string dbFolder = exportFolder + "\\" + dbName;
@@ -98,29 +136,20 @@ namespace MilitiaOrganizationSystem
             {
                 Directory.CreateDirectory(dbFolder);
             }
-            store.DatabaseCommands.GlobalAdmin.StartBackup(dbFolder, null, false, dbName);
+            store.DatabaseCommands.GlobalAdmin.StartBackup(dbFolder, new DatabaseDocument(), false, dbName);
         }
 
         public void restoreOneDB(string importFolder)
         {//importFolder是备份数据库的文件夹路径,文件夹名即为数据库名
             DirectoryInfo dirInfo = new DirectoryInfo(importFolder);
-            store.DatabaseCommands.GlobalAdmin.StartRestore(new Raven.Abstractions.Data.DatabaseRestoreRequest
+            Operation operation = store.DatabaseCommands.GlobalAdmin.StartRestore(new Raven.Abstractions.Data.DatabaseRestoreRequest
             {
                 BackupLocation = dirInfo.FullName,
                 DatabaseName = dirInfo.Name,
                 
             });
+            operation.WaitForCompletion();
         }//这个有希望代替直接复制，据说直接复制对数据库会造成损害，但是restore的时候我只能restore一个，连续restore两个就会造成冲突
-
-        public void restoreDbs(List<string> databaseFolders)
-        {
-            foreach(string database in databaseFolders)
-            {
-                restoreOneDB(database);
-                store.Dispose();//释放后再继续恢复
-                newStore();
-            }
-        }
 
         /**public async void exportDocumentDataBase(string exportFolder)
         {
@@ -269,8 +298,8 @@ namespace MilitiaOrganizationSystem
                 List<FacetValue> fList;
                 var gfacetResults = session.Query<Militias_Groups.Result, Militias_Groups>()
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
-                     .ProjectFromIndexFieldsInto<Militias_Groups.Result>()
-                     .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
+                    .ProjectFromIndexFieldsInto<Militias_Groups.Result>()
+                    .AggregateBy(x => x.Group).CountOn(x => x.Group).ToList();
                 
                 fList = gfacetResults.Results["Group"].Values;
 
@@ -296,7 +325,12 @@ namespace MilitiaOrganizationSystem
                     .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Where(lambdaContition)
                     .AggregateBy(propertyExpression).CountOn(x => x.Group).ToList();
-                
+                /*FacetValue fv = gfacetResults.Results[propertyName].Values.Aggregate(delegate (FacetValue fv1, FacetValue fv2)
+                {
+                    fv1.Hits += fv2.Hits;
+                    return fv1;
+                });
+                System.Windows.MessageBox.Show("sum = " + fv.Hits);*/
                 return gfacetResults.Results[propertyName].Values;
             }
         }
@@ -411,33 +445,23 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        /*public List<Militias_ConflictCredentialNumbers.Result> getConflictCredentialNumbers()
+        public List<Militias_ConflictCredentialNumbers.Result> getConflictCredentialNumbers(int skip, int take, out int sum)
         {//获取所有冲突的身份证号,主数据库的
             using (var session = store.OpenSession())
             {
-                int sum = 1;
-                List<Militias_ConflictCredentialNumbers.Result> rList = new List<Militias_ConflictCredentialNumbers.Result>();
+                RavenQueryStatistics stats;
+                var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_ConflictCredentialNumbers>()
+                    .Statistics(out stats)
+                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Where(x => x.Count > 1)
+                    .Skip(skip).Take(take)
+                    .ToList();
 
-                while (rList.Count < sum)
-                {
-                    RavenQueryStatistics stats;
-                    var credentialNumbers = session.Query<Militias_ConflictCredentialNumbers.Result, Militias_ConflictCredentialNumbers>()
-                        .Statistics(out stats)
-                        .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
-                        .Where(x => x.Count > 1)
-                        .Skip(rList.Count).Take(1000)
-                        //.ProjectFromIndexFieldsInto<Militias_ConflictCredentialNumbers.Result>()
-                        .ToList();
+                sum = stats.TotalResults;
 
-                    sum = stats.TotalResults;
-
-                    rList.AddRange(credentialNumbers);
-                }
-
-
-                return rList;
+                return credentialNumbers;
             }
-        }*/
+        }
 
     }
 
@@ -463,7 +487,7 @@ namespace MilitiaOrganizationSystem
         }
     }
 
-    /**public class Militias_ConflictCredentialNumbers : AbstractIndexCreationTask<Militia, Militias_ConflictCredentialNumbers.Result>
+    public class Militias_ConflictCredentialNumbers : AbstractIndexCreationTask<Militia, Militias_ConflictCredentialNumbers.Result>
     {//用数据库检测冲突的索引
         public class Result
         {
@@ -487,7 +511,7 @@ namespace MilitiaOrganizationSystem
                                Count = g.Sum(x => x.Count)
                            };
         }
-    }*/
+    }
 
     public class Militias_Groups : AbstractIndexCreationTask<Militia>
     {

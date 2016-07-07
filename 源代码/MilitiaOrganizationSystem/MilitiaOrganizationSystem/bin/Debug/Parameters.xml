@@ -64,7 +64,7 @@
     <selection name ="否" value="2"/>
   </parameter>
   <parameter name="地方专业" property="EquipmentInfo_MilitaryProfessionTypeName" type="enum" search="false">
-    <selection value="" name="未指定"/>
+    <selection value="00" name="未指定"/>
     <selection value="01" name="电源专业"/>
     <selection value="02" name="特种车辆驾驶专业"/>
     <selection value="03" name="油料专业"/>
@@ -166,7 +166,7 @@
     <selection name="已回复" value="3"/>
   </parameter>
   <parameter name="地方专业" property="MilitaryProfessionTypeName" type="enum" search="false">
-    <selection value="" name="未指定"/>
+    <selection value="00" name="未指定"/>
     <selection value="01" name="电源专业"/>
     <selection value="02" name="特种车辆驾驶专业"/>
     <selection value="03" name="油料专业"/>
@@ -186,7 +186,7 @@
     <selection value="17" name="战略导弹专业"/>
   </parameter>
   <parameter name="服役专业" property="RetirementProfessionType" type="enum" search="false">
-    <selection value="" name="未指定"/>
+    <selection value="00" name="未指定"/>
     <selection value="01" name="通用专业"/>
     <selection value="02" name="气象专业"/>
     <selection value="03" name="测绘专业"/>
@@ -297,12 +297,10 @@
     <selection value="0817" name="卫星地球站机务员"/>
     <selection value="0818" name="计算机操作员"/>
     <selection value="0819" name="计算机硬件技术人员"/>
-    <selection value="0819" name="计算机硬件技术人员"/>
     <selection value="0820" name="计算机软件技术人员"/>
     <selection value="0821" name="计算机网络技术人员"/>
     <selection value="0822" name="塔台集中控制机务员"/>
     <selection value="0823" name="航空通信雷达导航员"/>
-    <selection value="0824" name="着陆雷达机务员"/>
     <selection value="0824" name="着陆雷达机务员"/>
     <selection value="0901" name="装甲车辆驾驶试验工"/>
     <selection value="1001" name="钻探工"/>
@@ -962,7 +960,6 @@
     <selection value="0401005" name="动力翼伞飞行员" />
     <selection value="0401006" name="操舟手" />
     <selection value="0401007" name="爆破手" />
-    <selection value="0402001" name="防暴队员" />
     <selection value="0402001" name="防暴队员" />
     <selection value="0403001" name="雷达操纵员" />
     <selection value="0403002" name="雷达标图员" />

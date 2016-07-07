@@ -13,6 +13,7 @@ namespace MilitiaOrganizationSystem
 {
     public partial class ConflictMilitiasForm : Form
     {
+        private int count;
         private List<List<Militia>> mlList;
         private XmlNodeList parameters = MilitiaXmlConfig.parameters;
         private List<int> displayedParameterIndexs = MilitiaXmlConfig.getAllDisplayedParameterIndexs();
@@ -33,20 +34,16 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        public ConflictMilitiasForm(List<List<Militia>> llm)
-        {//冲突检测界面
-            InitializeComponent();
-
-            closeForm = true;
-
+        private void loadMilitiaList(List<List<Militia>> llm)
+        {
             mlList = llm;
 
-            addColumnHeader();
+            count += mlList.Count;//count记录总数
 
-            foreach(List<Militia> mList in mlList)
+            foreach (List<Militia> mList in mlList)
             {
                 ListViewGroup lvg = conflictGroup_ListView.Groups.Add(mList[0].CredentialNumber, mList[0].CredentialNumber);
-                foreach(Militia m in mList)
+                foreach (Militia m in mList)
                 {
                     ListViewItem lvi = new ListViewItem(lvg);
                     lvi.Tag = m;
@@ -55,6 +52,19 @@ namespace MilitiaOrganizationSystem
                     conflictGroup_ListView.Items.Add(lvi);
                 }
             }
+        }
+
+        public ConflictMilitiasForm(List<List<Militia>> llm)
+        {//冲突检测界面
+            InitializeComponent();
+
+            closeForm = true;
+
+            count = 0;//最开始时是0
+
+            addColumnHeader();
+
+            loadMilitiaList(llm);//加载
 
             FormClosing += ConflictMilitiasForm_FormClosing;//关闭窗口
             conflictGroup_ListView.ItemCheck += ConflictGroup_ListView_ItemCheck;//选择
@@ -139,18 +149,28 @@ namespace MilitiaOrganizationSystem
             if(MessageBox.Show("共有" + mlList.Count + "个冲突, 您处理了" + conflictGroup_ListView.CheckedIndices.Count + "项.\n"
                 + "将删除未选中的民兵，确认？", "警告", MessageBoxButtons.OKCancel) == DialogResult.OK)
             {
-                closeForm = true;
-
                 foreach (ListViewItem lvi in conflictGroup_ListView.Items)
                 {
                     if (!lvi.Checked)
                     {
-                        FormBizs.removeMilitiaItem((Militia)lvi.Tag);
+                        //FormBizs.removeMilitiaItem((Militia)lvi.Tag);
                         FormBizs.sqlBiz.deleteMilitia((Militia)lvi.Tag);
                     }
                 }
 
                 MessageBox.Show("执行成功");
+                conflictGroup_ListView.Items.Clear();
+                int sum;
+                List<List<Militia>> llm = FormBizs.sqlBiz.getConflictMilitias(count, 30, out sum);
+                if(llm.Count == 0)
+                {
+                    MessageBox.Show("已处理完所有冲突");
+                    closeForm = true;
+                } else
+                {
+                    closeForm = false;//不关闭
+                    loadMilitiaList(llm);
+                }
             } else
             {
                 closeForm = false;

@@ -10,10 +10,34 @@ namespace MilitiaOrganizationSystem
     class MilitiaReflection
     {
         private static Type mt = typeof(Militia);
-        private static Dictionary<string, PropertyInfo> piDict = mt.GetProperties().ToDictionary(x => x.Name);//属性控制字典
+        public static PropertyInfo[] properties = mt.GetProperties();
+        private static Dictionary<string, PropertyInfo> piDict = properties.ToDictionary(x => x.Name);//属性控制字典
         public static Dictionary<string, PropertyInfo>.KeyCollection keys = piDict.Keys;//所有的属性名称
 
         private Militia militia;
+
+        public static Militia stringToMilitia(string info)
+        {//根据values返回一个民兵对象
+            string[] values = info.Split(new char[] { ',' });
+            Militia m = new Militia();
+            int i = 0;
+            foreach(PropertyInfo pi in properties)
+            {
+                pi.SetValue(m, values[i]);
+                i++;
+            }
+            return m;
+        }
+
+        public static string militiaToString(Militia m)
+        {
+            string info = "";
+            foreach(PropertyInfo pi in properties)
+            {
+                info += pi.GetValue(m).ToString() + ",";
+            }
+            return info;
+        }
 
         public MilitiaReflection(Militia m)
         {

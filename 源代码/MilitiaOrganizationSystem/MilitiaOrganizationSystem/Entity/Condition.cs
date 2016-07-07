@@ -130,12 +130,12 @@ namespace MilitiaOrganizationSystem
         public void generateLambdaCondition()
         {
             var parameter = Expression.Parameter(typeof(Militia), "x");
-            /*Expression expression = Expression.Call(
+            Expression expression = Expression.Call(
                 Expression.Property(parameter, "Place"),
                 typeof(string).GetMethod("StartsWith", new Type[] { typeof(string) }),
                 Expression.Constant(place)
-                );*/
-            Expression expression = Expression.NotEqual(Expression.Property(parameter, "Group"), Expression.Constant(null));
+                );
+            //Expression expression = Expression.NotEqual(Expression.Property(parameter, "Group"), Expression.Constant(null));
             foreach(ChildCondition cc in ccList)
             {
                 expression = Expression.AndAlso(expression, generateExpresionByChildCondition(parameter, cc));

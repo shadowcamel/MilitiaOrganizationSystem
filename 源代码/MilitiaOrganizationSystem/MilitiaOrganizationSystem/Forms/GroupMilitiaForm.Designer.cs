@@ -221,6 +221,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.menuStrip);
             this.Name = "GroupMilitiaForm";
+            this.Text = "民兵列表";
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).EndInit();
             this.menuStrip.ResumeLayout(false);
             this.menuStrip.PerformLayout();

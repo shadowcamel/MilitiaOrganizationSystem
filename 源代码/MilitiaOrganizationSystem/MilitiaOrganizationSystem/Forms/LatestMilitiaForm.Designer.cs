@@ -59,7 +59,7 @@
             this.ClientSize = new System.Drawing.Size(622, 523);
             this.Controls.Add(this.latestMilitias_listview);
             this.Name = "LatestMilitiaForm";
-            this.Text = "LatestMilitiaForm";
+            this.Text = "最近编辑的民兵";
             this.ResumeLayout(false);
 
         }

@@ -221,7 +221,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Name = "InfoStatisticsForm";
-            this.Text = "InfoStatisticsForm";
+            this.Text = "统计";
             this.ResumeLayout(false);
             this.PerformLayout();
 

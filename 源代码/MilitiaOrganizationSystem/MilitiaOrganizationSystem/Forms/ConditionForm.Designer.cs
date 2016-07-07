@@ -107,7 +107,6 @@
             this.pCombobox.Name = "pCombobox";
             this.pCombobox.Size = new System.Drawing.Size(121, 20);
             this.pCombobox.TabIndex = 4;
-            this.pCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label3
             // 
@@ -129,12 +128,12 @@
             // 
             // cCombobox
             // 
+            this.cCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cCombobox.FormattingEnabled = true;
             this.cCombobox.Location = new System.Drawing.Point(217, 9);
             this.cCombobox.Name = "cCombobox";
             this.cCombobox.Size = new System.Drawing.Size(121, 20);
             this.cCombobox.TabIndex = 7;
-            this.cCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label5
             // 
@@ -147,12 +146,12 @@
             // 
             // dCombobox
             // 
+            this.dCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.dCombobox.FormattingEnabled = true;
             this.dCombobox.Location = new System.Drawing.Point(368, 8);
             this.dCombobox.Name = "dCombobox";
             this.dCombobox.Size = new System.Drawing.Size(121, 20);
             this.dCombobox.TabIndex = 9;
-            this.dCombobox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             // 
             // label6
             // 
@@ -205,7 +204,7 @@
             this.Controls.Add(this.conditionListBox);
             this.Controls.Add(this.parasCheckBox);
             this.Name = "ConditionForm";
-            this.Text = "ConditionForm";
+            this.Text = "筛选条件";
             this.rMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();

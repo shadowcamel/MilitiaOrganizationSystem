@@ -84,12 +84,13 @@ namespace MilitiaOrganizationSystem
                 string folder = fbdlg.SelectedPath;
                 export(folder + "\\" + LoginXmlConfig.Place + ".zip", "hello");
             }
+            MessageBox.Show("导出成功");
         }
 
         private static void export(string fileName, string psd)
         {//fileName为导出文件，psd为压缩密码
             Zip zip = new Zip(fileName, psd, 6);
-            if(LoginXmlConfig.ClientType == "基层")
+            /*if(LoginXmlConfig.ClientType == "基层")
             {
                 List<string> exportMilitiaFiles = sqlBiz.exportAsXmlFile(exportMilitiaFileName);//为文件
                 foreach (string exportFile in exportMilitiaFiles)
@@ -100,7 +101,14 @@ namespace MilitiaOrganizationSystem
             } else
             {//区县人武部，市军分区，省军分区
                 sqlBiz.exportZip(zip);
+            }*/
+            if (!Directory.Exists("export"))
+            {
+                Directory.CreateDirectory("export");
             }
+            sqlBiz.exportAsFile("export/militia.dump");
+            zip.addFileOrFolder("export/militia.dump");
+            File.Delete("export/militia.dump");
             
             
             zip.addFileOrFolder(GroupXmlConfig.xmlGroupFile);//导出分组文件
@@ -171,7 +179,9 @@ namespace MilitiaOrganizationSystem
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);//开始解压
             unzip.close();
 
-            string[] files = Directory.GetFiles("import");
+            sqlBiz.importFormFile("import/militia.dump");
+            groupBiz.addXmlGroupTask("import/" + GroupXmlConfig.xmlGroupFile);
+            /*string[] files = Directory.GetFiles("import");
             foreach(string file in files)
             {//导入militiaXml或者GroupXml
                 if(Path.GetFileName(file).StartsWith(Path.GetFileName(exportMilitiaFileName)))
@@ -186,7 +196,7 @@ namespace MilitiaOrganizationSystem
             }
 
             string[] databases = Directory.GetDirectories("import");
-            sqlBiz.restoreDbs(databases.ToList());
+            sqlBiz.restoreDbs(databases.ToList());*/
         }
     }
 }

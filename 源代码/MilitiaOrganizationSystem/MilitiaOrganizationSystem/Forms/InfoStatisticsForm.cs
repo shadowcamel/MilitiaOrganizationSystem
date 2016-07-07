@@ -73,7 +73,13 @@ namespace MilitiaOrganizationSystem
                             statisticsParameter.Attributes["property"].Value, 
                             condition.place);
                     int sum = 0;
-                    foreach(XmlNode xn in statisticsParameter.ChildNodes)
+                    /*foreach(KeyValuePair<string, Raven.Abstractions.Data.FacetValue> kvp in fdict)
+                    {
+                        int num = kvp.Value.Hits;
+                        statisticsListBox.Items.Add(kvp.Key + ": " + num + "人");
+                        sum += 1;
+                    }*/
+                    foreach (XmlNode xn in statisticsParameter.ChildNodes)
                     {
                         int num = 0;
                         Raven.Abstractions.Data.FacetValue fv = null;

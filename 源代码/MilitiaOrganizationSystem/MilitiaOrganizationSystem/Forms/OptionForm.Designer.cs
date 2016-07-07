@@ -37,6 +37,7 @@
             this.btn_ok = new System.Windows.Forms.Button();
             this.btn_cancel = new System.Windows.Forms.Button();
             this.checkAll = new System.Windows.Forms.CheckBox();
+            this.invertCheckbox = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.pageSize)).BeginInit();
             this.SuspendLayout();
             // 
@@ -143,6 +144,16 @@
             this.checkAll.Text = "全选";
             this.checkAll.UseVisualStyleBackColor = true;
             // 
+            // invertCheckbox
+            // 
+            this.invertCheckbox.AutoSize = true;
+            this.invertCheckbox.Location = new System.Drawing.Point(218, 78);
+            this.invertCheckbox.Name = "invertCheckbox";
+            this.invertCheckbox.Size = new System.Drawing.Size(48, 16);
+            this.invertCheckbox.TabIndex = 9;
+            this.invertCheckbox.Text = "反选";
+            this.invertCheckbox.UseVisualStyleBackColor = true;
+            // 
             // OptionForm
             // 
             this.AcceptButton = this.btn_ok;
@@ -150,6 +161,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btn_cancel;
             this.ClientSize = new System.Drawing.Size(455, 439);
+            this.Controls.Add(this.invertCheckbox);
             this.Controls.Add(this.checkAll);
             this.Controls.Add(this.btn_cancel);
             this.Controls.Add(this.btn_ok);
@@ -161,7 +173,7 @@
             this.Controls.Add(this.pagesizeLabel);
             this.KeyPreview = true;
             this.Name = "OptionForm";
-            this.Text = "OptionForm";
+            this.Text = "设置";
             ((System.ComponentModel.ISupportInitialize)(this.pageSize)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -179,5 +191,6 @@
         private System.Windows.Forms.Button btn_ok;
         private System.Windows.Forms.Button btn_cancel;
         private System.Windows.Forms.CheckBox checkAll;
+        private System.Windows.Forms.CheckBox invertCheckbox;
     }
 }
