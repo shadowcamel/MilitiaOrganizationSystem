@@ -37,14 +37,18 @@ namespace MilitiaOrganizationSystem
             {
                 DefaultDatabase = dbName
             };
-            
+            //System.Windows.MessageBox.Show("hello");
             store.Initialize();
-
+            //System.Windows.MessageBox.Show("why?");
             new Militias_CredentialNumbers().Execute(store);
+            //System.Windows.MessageBox.Show("yes?");
             new Militias_Groups().Execute(store);
+            //System.Windows.MessageBox.Show("new?");
             new Militias_All().Execute(store);
+            //System.Windows.MessageBox.Show("sdfsd?");
             new Militias_ConflictCredentialNumbers().Execute(store);
-
+            //System.Windows.MessageBox.Show("yes?");
+            
         }
         
 
@@ -103,30 +107,33 @@ namespace MilitiaOrganizationSystem
                     Militia m = MilitiaReflection.stringToMilitia(line);
                     m.Id = null;//让数据库新建一个文档
                     bulkInsert.Store(m);
-                    /*int sum;
-                    getConflictCredentialNumbers(0, 1, out sum);*/
                 }
                 sr.Close();
             }
-            
+            /*int sum;
+            getConflictCredentialNumbers(0, 1, out sum);*/
+
         }
 
         public void exportToFile(string file)
         {
-            StreamWriter sw = new StreamWriter(file);
+            
             int count = 0;
             int sum = 1;
             while (count < sum)
             {
-                List<Militia> mList = getMilitias(count, 1000, out sum);
+                StreamWriter sw = new StreamWriter(file + count);
+                List<Militia> mList = getMilitias(count, 5000, out sum);
                 count += mList.Count;
                 foreach (Militia m in mList)
                 {
                     sw.WriteLine(MilitiaReflection.militiaToString(m));
                 }
-                sw.Flush();
+                sw.Close();
+                store.Dispose();//关闭再打开一次，看内存
+                newStore();
             }
-            sw.Close();
+            
         }
 
         public void backupOneDB(string dbName, string exportFolder)

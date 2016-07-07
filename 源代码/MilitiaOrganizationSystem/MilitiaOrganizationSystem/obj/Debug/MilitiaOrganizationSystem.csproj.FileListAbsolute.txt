@@ -89,3 +89,4 @@ F:\GitHubProject\csharpProject\源代码\MilitiaOrganizationSystem\MilitiaOrgani
 F:\GitHubProject\csharpProject\源代码\MilitiaOrganizationSystem\MilitiaOrganizationSystem\obj\Debug\MilitiaOrganizationSystem.SetForm.resources
 F:\GitHubProject\csharpProject\源代码\MilitiaOrganizationSystem\MilitiaOrganizationSystem\obj\Debug\MilitiaOrganizationSystem.csproj.GenerateResource.Cache
 F:\GitHubProject\csharpProject\源代码\MilitiaOrganizationSystem\MilitiaOrganizationSystem\obj\Debug\MilitiaOrganizationSystem.ModifyPsdForm.resources
+D:\GithubProject\MilitiaOrganizationSystem\源代码\MilitiaOrganizationSystem\MilitiaOrganizationSystem\obj\Debug\MilitiaOrganizationSystem.ModifyPsdForm.resources

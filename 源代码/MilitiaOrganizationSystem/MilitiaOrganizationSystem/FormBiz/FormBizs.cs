@@ -106,9 +106,9 @@ namespace MilitiaOrganizationSystem
             {
                 Directory.CreateDirectory("export");
             }
-            sqlBiz.exportAsFile("export/militia.dump");
-            zip.addFileOrFolder("export/militia.dump");
-            File.Delete("export/militia.dump");
+            sqlBiz.exportAsFile("export/militia");
+            zip.addFileOrFolder("export");
+            Directory.Delete("export", true);//删除
             
             
             zip.addFileOrFolder(GroupXmlConfig.xmlGroupFile);//导出分组文件
@@ -178,9 +178,13 @@ namespace MilitiaOrganizationSystem
             UnZip unzip = new UnZip(importFile, "import", psd);//解压到数据库中
             List<string> importedDatabases = sqlBiz.importUnzip(unzip);//开始解压
             unzip.close();
-
-            sqlBiz.importFormFile("import/militia.dump");
+            string[] files = Directory.GetFiles("import/export");
+            foreach(string file in files)
+            {
+                sqlBiz.importFormFile(file);
+            }
             groupBiz.addXmlGroupTask("import/" + GroupXmlConfig.xmlGroupFile);
+            Directory.Delete("import", true);
             /*string[] files = Directory.GetFiles("import");
             foreach(string file in files)
             {//导入militiaXml或者GroupXml
