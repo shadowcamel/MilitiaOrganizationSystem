@@ -11,7 +11,7 @@ namespace MilitiaOrganizationSystem
     static class FormBizs
     {//全局管理Form的类
         public const string exportGroupFileName = "groupTask.xml";
-        public const string exportMilitiaFileName = "export/militiaList";
+        public const string exportMilitiaFileName = "militiaList";
         
 
 
@@ -39,55 +39,38 @@ namespace MilitiaOrganizationSystem
             }
         }
 
-        /**public static void export(string folder, string name)
-        {//在folder下生成一个文件夹作为导出，文件夹的名称为name
-            string exportFolder = folder + "\\" + name;
-            if (!Directory.Exists(exportFolder))
+        private static void exportToFolder(string folder)
+        {
+            if(!Directory.Exists(folder))
             {
-                Directory.CreateDirectory(exportFolder);
+                return;
             }
-            groupBiz.exportXmlGroupTask(exportFolder + "\\" + exportGroupFileName);//导出分组任务
-
-            string x = "";//客户端类别
-            if(x == "基层")
+            string exportFolder = folder + "\\" + LoginXmlConfig.Place;//导出的文件夹
+            Directory.CreateDirectory(exportFolder);
+            if(LoginXmlConfig.ClientType == "基层")
             {
-                sqlBiz.exportAsXmlFile(exportFolder + "\\" + exportMilitiaFileName);//导出数据库民兵信息
+                sqlBiz.exportAsFile(exportFolder + "\\" + exportMilitiaFileName);
             } else
             {
-                sqlBiz.exportAsSource(exportFolder);//直接将数据库复制到文件夹下
+                sqlBiz.backupAllDb(exportFolder);
             }
-            
-        }*/
+            groupBiz.exportXmlGroupTask(exportFolder + "\\" + exportGroupFileName);
+        }
 
         public static void export()
-        {//导出之前，先检查冲突
-            /*List<List<Militia>> mlList = sqlBiz.getConflictMilitias();//主数据库
-            if (mlList.Count > 0)
-            {//检测到冲突
-                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
-                if (cmf.ShowDialog() != DialogResult.OK)
-                {
-                    MessageBox.Show("没有处理完冲突，请处理完冲突再导出！");
-                    return;
-                }
-            } else
-            {
-                MessageBox.Show("没有检查到冲突,可以导出");
-            }*/
-
-
+        {
 
             FolderBrowserDialog fbdlg = new FolderBrowserDialog();
             fbdlg.Description = "请选择要导出的文件路径";
             if (fbdlg.ShowDialog() == DialogResult.OK)
             {
                 string folder = fbdlg.SelectedPath;
-                export(folder + "\\" + LoginXmlConfig.Place + ".zip", "hello");
+                exportToFolder(folder);
             }
-            MessageBox.Show("导出成功");
+            MessageBox.Show("导出成功");//backup可能还在异步进行
         }
 
-        private static void export(string fileName, string psd)
+        /*private static void export(string fileName, string psd)
         {//fileName为导出文件，psd为压缩密码
             if (!Directory.Exists("export"))
             {
@@ -111,32 +94,54 @@ namespace MilitiaOrganizationSystem
             zip.close();
 
             Directory.Delete("export", true);//删除
-        }
+        }*/
 
-        /**public static void importOne(string importFolder)
+        private static void importFormFolder(string folder)
         {
-
-            List<string> importedDatabases = null;
-            
-            string x = "";//客户端类别
-            if(x == "基层")
+            if (!Directory.Exists(folder))
             {
                 return;
             }
-            if (x == "区县")
-            {
-                sqlBiz.importFromMilitiaXml(importFolder + "\\" + exportMilitiaFileName);
-            }
-            else
-            {//复制数据库文件夹到DataBases
-                importedDatabases = sqlBiz.importFromSource(importFolder);//导入成功的所有数据库名
+            if (LoginXmlConfig.ClientType == "区县人武部")
+            {//区县人武部导入文件
+                sqlBiz.importFormFile(folder + "\\" + exportMilitiaFileName);
+            } else
+            {//其他导入数据库
+                sqlBiz.restoreDbs(folder);
             }
 
-            groupBiz.addXmlGroupTask(importFolder + "\\" + exportGroupFileName, importedDatabases);//导入分组任务
+            groupBiz.addXmlGroupTask(folder + "\\" + exportGroupFileName);//导入分组任务
 
-        }*/
+        }
 
         public static void import()
+        {
+            MessageBox.Show("开始导入， time = " + DateTime.Now);
+            FolderBrowserDialog fbd = new FolderBrowserDialog();
+            if(fbd.ShowDialog() == DialogResult.OK)
+            {
+                string folder = fbd.SelectedPath;
+                importFormFolder(folder);
+            }
+            detectConflicts();//检测冲突
+            groupBiz.refresh();//刷新分组显示
+        }
+
+        public static void detectConflicts()
+        {
+            List<List<Militia>> mlList = sqlBiz.getConflictMilitias();
+            if(mlList.Count == 0)
+            {
+                MessageBox.Show("没有检测到冲突");
+            } else
+            {
+                MessageBox.Show("检测到" + mlList.Count + "个冲突");
+                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
+                cmf.ShowDialog();
+            }
+        }
+
+        /*public static void import()
         {
             MessageBox.Show("开始导入， time = " + DateTime.Now);
             OpenFileDialog ofdlg = new OpenFileDialog();
@@ -187,6 +192,6 @@ namespace MilitiaOrganizationSystem
             groupBiz.addXmlGroupTask("import/" + GroupXmlConfig.xmlGroupFile);
 
             Directory.Delete("import", true);//导入之后，删除
-        }
+        }*/
     }
 }

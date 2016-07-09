@@ -195,12 +195,6 @@ namespace MilitiaOrganizationSystem
 
         }
 
-        public void loadAllMilitiaInDB()
-        {//加载数据库中所有民兵到ListView
-            
-            loadMilitiaList(sqlBiz.getAllMilitias());
-        }
-
         public void addOneMilitia(Militia militia)
         {//添加一个item
             ListViewItem lvi = new ListViewItem();
