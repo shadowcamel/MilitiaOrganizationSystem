@@ -17,6 +17,8 @@ namespace MilitiaOrganizationSystem
         public static string Psd { get; set; }//加密后的密码
         public static string ClientType { get; set; }//基层，区县人武部，市军分区，省军分区
 
+        public static string Id { get; set; }//随机生成的id号
+
         private static XmlDocument xmlDoc;
 
         private static void save()
@@ -57,11 +59,18 @@ namespace MilitiaOrganizationSystem
                 psdNode.Attributes.Append(psdAttribute);
                 rootNode.AppendChild(psdNode);
 
+                XmlElement idNode = xmlDoc.CreateElement("Id");
+                XmlAttribute idAttribute = xmlDoc.CreateAttribute("value");
+                idAttribute.Value = new Random().Next().ToString();
+                idNode.Attributes.Append(idAttribute);
+                rootNode.AppendChild(idNode);
+
                 save();
             }
             Place = rootNode.SelectSingleNode("Place").Attributes["value"].Value;
             Psd = rootNode.SelectSingleNode("Psd").Attributes["value"].Value;
             ClientType = rootNode.SelectSingleNode("ClientType").Attributes["value"].Value;
+            Id = rootNode.SelectSingleNode("Id").Attributes["value"].Value;
         }
 
         public static void setPsd(string clientType, string place, string psd)

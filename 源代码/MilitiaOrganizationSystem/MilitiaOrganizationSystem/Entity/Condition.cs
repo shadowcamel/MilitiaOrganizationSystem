@@ -80,6 +80,10 @@ namespace MilitiaOrganizationSystem
                         info += ": ";
                         info += Values[0];
                         break;
+                    case "place":
+                        info += ": ";
+                        info += PlaceXmlConfig.getPlaceName(Values[0]);
+                        break;
                 }
                 return info;
             }

@@ -34,7 +34,14 @@ namespace MilitiaOrganizationSystem
             string info = "";
             foreach(PropertyInfo pi in properties)
             {
-                info += pi.GetValue(m).ToString() + ",";
+                try
+                {
+                    info += pi.GetValue(m).ToString() + ",";
+                } catch
+                {
+                    info += ",";
+                }
+                
             }
             return info;
         }

@@ -161,6 +161,21 @@ namespace MilitiaOrganizationSystem
             }
         }
 
+        /*public void exportAsFile(string file)
+        {//导出为文件，仅基层调用这个
+            int sum;
+            List<Militia> mList = sqlDao.getMilitias(0, 10000, out sum);
+            FileTool.MilitiaListToXml(mList, file);//xml文件
+        }
+        public void importFormFile(string file)
+        {//从文件中导入，仅区县人武部调用
+            List<Militia> mList = FileTool.XmlToMilitiaList(file);
+            foreach (Militia m in mList)
+            {
+                sqlDao.saveMilitia(m);
+            }
+        }*/
+
         public void exportAsFile(string file)
         {//导出为文件，仅基层调用这个
             StreamWriter sw = new StreamWriter(file);
@@ -200,7 +215,12 @@ namespace MilitiaOrganizationSystem
             return databases;
         }
 
-        public List<List<Militia>> getConflictMilitias()
+        public List<Militia> getMilitiasByCredentialNumber(string creditNumber, string database)
+        {//根据身份证号查民兵
+            return sqlDao.getMilitiasByCredentialNumber(creditNumber, database);
+        }
+
+        public Dictionary<string, List<string>> getConflicts()
         {//找出所有数据库之间,以及之内的身份证号冲突
          //字典树方法
             ConflictDetector cd = new ConflictDetector();
@@ -217,7 +237,9 @@ namespace MilitiaOrganizationSystem
             }
             //冲突检测完毕
 
-            Dictionary<string, List<string>> conflictDict = cd.conflictDict;
+            return cd.conflictDict;
+
+            /*Dictionary<string, List<string>> conflictDict = cd.conflictDict;
 
             List<List<Militia>> mlList = new List<List<Militia>>();
             foreach(KeyValuePair<string, List<string>> kvp in conflictDict)
@@ -229,7 +251,7 @@ namespace MilitiaOrganizationSystem
                 }
                 mlList.Add(mList);
             }
-            return mlList;
+            return mlList;*/
         }
 
         public Dictionary<string, FacetValue> getGroupNums()

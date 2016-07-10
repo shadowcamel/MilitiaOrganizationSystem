@@ -140,7 +140,7 @@ namespace MilitiaOrganizationSystem
                     return DialogResult.Cancel;
                     break;
                 case "place":
-                    return DialogResult.Cancel;
+                    ccForm = new ChildConditionForm_place(cc);
                     break;
                 default:
 

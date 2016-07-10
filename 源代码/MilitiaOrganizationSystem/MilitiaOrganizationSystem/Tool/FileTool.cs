@@ -55,7 +55,14 @@ namespace MilitiaOrganizationSystem
                         continue;
                     }
                     XmlAttribute attr = militiaDoc.CreateAttribute(key);
-                    attr.Value = mr.getProperty(key).ToString();
+                    try
+                    {
+                        attr.Value = mr.getProperty(key).ToString();
+                    } catch
+                    {
+                        attr.Value = "";
+                    }
+                    
                     militiaNode.Attributes.Append(attr);
                 }
 

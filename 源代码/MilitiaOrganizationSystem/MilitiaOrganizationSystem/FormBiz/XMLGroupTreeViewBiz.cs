@@ -22,6 +22,11 @@ namespace MilitiaOrganizationSystem
             FormBizs.groupBiz = this;//唯一的分组任务界面
         }
 
+        public void focus()
+        {//获得焦点
+            groups_treeView.Focus();
+        }
+
         public void addUnderSelectedNode()
         {//在选中节点的下面添加组
             

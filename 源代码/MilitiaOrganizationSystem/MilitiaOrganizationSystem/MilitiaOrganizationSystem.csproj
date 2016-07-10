@@ -97,6 +97,18 @@
     <Compile Include="Forms\ClientForms\DistrictForm.Designer.cs">
       <DependentUpon>DistrictForm.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\ChildConditionForms\ChildConditionForm_place.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\ChildConditionForms\ChildConditionForm_place.Designer.cs">
+      <DependentUpon>ChildConditionForm_place.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\PlaceChooseForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\PlaceChooseForm.Designer.cs">
+      <DependentUpon>PlaceChooseForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\ConflictMilitiasForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -223,6 +235,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ClientForms\DistrictForm.resx">
       <DependentUpon>DistrictForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\ChildConditionForms\ChildConditionForm_place.resx">
+      <DependentUpon>ChildConditionForm_place.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PlaceChooseForm.resx">
+      <DependentUpon>PlaceChooseForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\ConflictMilitiasForm.resx">
       <DependentUpon>ConflictMilitiasForm.cs</DependentUpon>

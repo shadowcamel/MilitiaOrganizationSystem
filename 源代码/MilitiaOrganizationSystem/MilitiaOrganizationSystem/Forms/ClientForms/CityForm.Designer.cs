@@ -60,6 +60,8 @@
             this.finalPage = new System.Windows.Forms.Button();
             this.conditionLabel = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.importDirectory = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportDirectory = new System.Windows.Forms.ToolStripMenuItem();
             this.rMenuStrip.SuspendLayout();
             this.menu_basicLevel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pageUpDown)).BeginInit();
@@ -124,12 +126,14 @@
             this.menu_basicLevel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btn_militaInfomation,
             this.btn_importXMLGroupTask,
-            this.export,
-            this.import,
             this.options,
             this.doConflict,
             this.latestMilitias,
-            this.stastistics});
+            this.stastistics,
+            this.import,
+            this.importDirectory,
+            this.export,
+            this.exportDirectory});
             this.menu_basicLevel.Location = new System.Drawing.Point(0, 0);
             this.menu_basicLevel.Name = "menu_basicLevel";
             this.menu_basicLevel.Size = new System.Drawing.Size(850, 25);
@@ -185,15 +189,15 @@
             // export
             // 
             this.export.Name = "export";
-            this.export.Size = new System.Drawing.Size(44, 21);
-            this.export.Text = "导出";
+            this.export.Size = new System.Drawing.Size(68, 21);
+            this.export.Text = "导出文件";
             this.export.Click += new System.EventHandler(this.export_Click);
             // 
             // import
             // 
             this.import.Name = "import";
-            this.import.Size = new System.Drawing.Size(44, 21);
-            this.import.Text = "导入";
+            this.import.Size = new System.Drawing.Size(68, 21);
+            this.import.Text = "导入文件";
             this.import.Click += new System.EventHandler(this.import_Click);
             // 
             // options
@@ -350,6 +354,20 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // importDirectory
+            // 
+            this.importDirectory.Name = "importDirectory";
+            this.importDirectory.Size = new System.Drawing.Size(80, 21);
+            this.importDirectory.Text = "导入文件夹";
+            this.importDirectory.Click += new System.EventHandler(this.importDirectory_Click);
+            // 
+            // exportDirectory
+            // 
+            this.exportDirectory.Name = "exportDirectory";
+            this.exportDirectory.Size = new System.Drawing.Size(80, 21);
+            this.exportDirectory.Text = "导出文件夹";
+            this.exportDirectory.Click += new System.EventHandler(this.exportDirectory_Click);
+            // 
             // CityForm
             // 
             this.AllowDrop = true;
@@ -413,6 +431,8 @@
         private System.Windows.Forms.ToolStripMenuItem latestMilitias;
         private System.Windows.Forms.ToolStripMenuItem stastistics;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripMenuItem importDirectory;
+        private System.Windows.Forms.ToolStripMenuItem exportDirectory;
     }
 }
 

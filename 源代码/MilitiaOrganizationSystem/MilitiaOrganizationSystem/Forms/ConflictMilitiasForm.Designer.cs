@@ -38,6 +38,9 @@
             // 
             // conflictGroup_ListView
             // 
+            this.conflictGroup_ListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.conflictGroup_ListView.CheckBoxes = true;
             this.conflictGroup_ListView.Location = new System.Drawing.Point(12, 47);
             this.conflictGroup_ListView.Name = "conflictGroup_ListView";
@@ -64,6 +67,7 @@
             // 
             // btn_ok
             // 
+            this.btn_ok.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
             this.btn_ok.DialogResult = System.Windows.Forms.DialogResult.OK;
             this.btn_ok.Location = new System.Drawing.Point(264, 471);
             this.btn_ok.Name = "btn_ok";

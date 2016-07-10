@@ -61,49 +61,6 @@ namespace MilitiaOrganizationSystem
             return node.Attributes["type"].Value;
         }
 
-        
-
-        /*public static void generateMilitiaToXml(int n, string xmlFile)
-        {//生成n个民兵信息到xmlFile
-            Random rand = new Random();
-            XmlNodeList xList = parameters();
-
-            XmlDocument militiaDoc = new XmlDocument();
-            XmlDeclaration dec = militiaDoc.CreateXmlDeclaration("1.0", "UTF-8", null);
-            militiaDoc.AppendChild(dec);
-            XmlElement militiaRoot = militiaDoc.CreateElement("root");
-            militiaDoc.AppendChild(militiaRoot);
-
-            for (int i = 0; i < n; i++)
-            {
-                XmlElement militia = militiaDoc.CreateElement("militia");
-                foreach (XmlNode node in xList)
-                {
-                    XmlAttribute attr = militiaDoc.CreateAttribute(node.Attributes["property"].Value);
-                    if (node.Attributes["type"].Value == "string")
-                    {
-                        byte[] buffer = new byte[8];
-                        rand.NextBytes(buffer);
-                        attr.Value = System.Text.Encoding.Unicode.GetString(buffer);
-                    }
-                    else if (node.Attributes["type"].Value == "enum")
-                    {
-                        attr.Value = node.ChildNodes[rand.Next(node.ChildNodes.Count)].Attributes["value"].Value;
-                    }
-                    militia.Attributes.Append(attr);
-
-                }
-                XmlAttribute attr2 = militiaDoc.CreateAttribute("Group");
-                string[] a = { "1", "2", "3" };//分组id
-                attr2.Value = a[rand.Next(a.Length)];
-                militia.Attributes.Append(attr2);
-
-                militiaRoot.AppendChild(militia);
-            }
-
-            militiaDoc.Save(xmlFile);
-        }*/
-
         public static List<Militia> generateMilitias(int n)
         {
             Random rand = new Random();
@@ -131,6 +88,7 @@ namespace MilitiaOrganizationSystem
                             break;
                         case "place":
                             //不赋值
+                            
                             break;
                         default://当做string处理
                             char[] arr = new char[] { '1', '2', '3', '4', '7', '8', '9', '5', '0', '6', 'X'};//身份证号就这几个字符

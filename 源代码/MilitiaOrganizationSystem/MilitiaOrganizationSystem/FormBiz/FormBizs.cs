@@ -78,16 +78,48 @@ namespace MilitiaOrganizationSystem
                     return;
                 }
             }
-            Zip zip = new Zip(zipFile, "hello", 6);
+            DateTime startExportTime = DateTime.Now;
+
+            Zip zip = new Zip(zipFile, "hello", 1);
+
+            if(Directory.Exists("export"))
+            {//删除export文件夹再导出
+                Directory.Delete("export", true);
+            }
+
             exportAsFolder("export");
+
+            MessageBox.Show("备份时间为：" + (DateTime.Now - startExportTime));
+
             zip.addFileOrFolder("export");
             zip.close();
 
-            //导出完毕后，删除export文件夹
-            Directory.Delete("export", true);
+            MessageBox.Show("总时间为: " + (DateTime.Now - startExportTime));
         }
 
-        public static void export()
+        public static void exportToFolder()
+        {
+            FolderBrowserDialog fbdlg = new FolderBrowserDialog();
+            fbdlg.Description = "请选择要导出的文件路径";
+            if (fbdlg.ShowDialog() == DialogResult.OK)
+            {
+                string folder = fbdlg.SelectedPath;
+
+                //下面是导出为文件夹
+                string exportFolder = folder + "\\" + PlaceXmlConfig.getPlaceName(LoginXmlConfig.Place).Replace('/', '-') + "（" + LoginXmlConfig.ClientType;//导出的文件夹
+                if(LoginXmlConfig.ClientType == "基层")
+                {//如果是基层，加一个随机数
+                    exportFolder += LoginXmlConfig.Id;
+                }
+                exportFolder += "）";
+
+                exportAsFolder(exportFolder);
+
+                MessageBox.Show("导出完成");
+            }
+        }
+
+        public static void exportToFile()
         {
 
             FolderBrowserDialog fbdlg = new FolderBrowserDialog();
@@ -96,13 +128,14 @@ namespace MilitiaOrganizationSystem
             {
                 string folder = fbdlg.SelectedPath;
 
-                //下面是导出为文件夹
-                /*string exportFolder = folder + "\\" + PlaceXmlConfig.getPlaceName(LoginXmlConfig.Place).Replace('/', '-') + "（" + LoginXmlConfig.ClientType + "）";//导出的文件夹
-                exportAsFolder(exportFolder);*/
-
-
                 //下面是导出为zip
-                string zipFile = folder + "\\" + PlaceXmlConfig.getPlaceName(LoginXmlConfig.Place).Replace('/', '-') + "（" + LoginXmlConfig.ClientType + "）.zip";
+                string zipFile = folder + "\\" + PlaceXmlConfig.getPlaceName(LoginXmlConfig.Place).Replace('/', '-') + "（" + LoginXmlConfig.ClientType;
+                if(LoginXmlConfig.ClientType == "基层")
+                {
+                    zipFile += LoginXmlConfig.Id;
+                }
+                zipFile += "）.zip";
+
                 exportAsZipFile(zipFile);
 
                 MessageBox.Show("导出完成");
@@ -111,7 +144,7 @@ namespace MilitiaOrganizationSystem
         }
 
         private static void importFormFolder(string folder)
-        {
+        {//从文件夹中导入
             if (!Directory.Exists(folder))
             {
                 return;
@@ -128,61 +161,70 @@ namespace MilitiaOrganizationSystem
 
         }
 
-        /*public static void import()
+        public static void importFromFolder()
         {//从文件夹导入
-            MessageBox.Show("开始导入， time = " + DateTime.Now);
             FolderBrowserDialog fbd = new FolderBrowserDialog();
             if(fbd.ShowDialog() == DialogResult.OK)
             {
-                string folder = fbd.SelectedPath;
-                importFormFolder(folder);
-            }
-            detectConflicts();//检测冲突
-            groupBiz.refresh();//刷新分组显示
-        }*/
+                try
+                {
+                    string folder = fbd.SelectedPath;
+                    DateTime startImportTime = DateTime.Now;
+                    importFormFolder(folder);
 
-        public static void detectConflicts()
-        {
-            DateTime startDetectTime = DateTime.Now;
-            List<List<Militia>> mlList = sqlBiz.getConflictMilitias();
-            detectTime = DateTime.Now - startDetectTime;
+                    //detectConflicts();//检测冲突
+                    //从文件夹导入还是不自动检查冲突了吧
 
-            if(mlList.Count == 0)
-            {
-                MessageBox.Show("没有检测到冲突");
-            } else
-            {
-                MessageBox.Show("检测到" + mlList.Count + "个冲突");
-                ConflictMilitiasForm cmf = new ConflictMilitiasForm(mlList);
-                cmf.ShowDialog();
+                    groupBiz.refresh();//刷新分组显示
+
+                    MessageBox.Show("totalTime = " + (DateTime.Now - startImportTime));
+                    MessageBox.Show("导入成功");
+                } catch
+                {
+                    MessageBox.Show("导入出现异常");
+                }
+                
             }
+            
         }
 
-        public static void import()
-        {//从zip文件导入
+        public static void importFormFiles()
+        {//选择多个文件并导入
             OpenFileDialog ofdlg = new OpenFileDialog();
             ofdlg.Multiselect = true;//支持多选
             ofdlg.Filter = "民兵编组系统导出文件(*.dump)|*.*";
             if (ofdlg.ShowDialog() == DialogResult.OK)
             {
                 string[] files = ofdlg.FileNames;
-                DateTime startImportTime = DateTime.Now;
-                foreach (string file in files)
+                try
                 {
-                    importOne(file, "hello");
-                }
+                    DateTime startImportTime = DateTime.Now;
+                    foreach (string file in files)
+                    {
+                        importFromFile(file, "hello");
+                    }
 
-                importTime = DateTime.Now - startImportTime;
+                    importTime = DateTime.Now - startImportTime;
+
+                    detectConflicts();//冲突检测
+
+                    groupBiz.refresh();//刷新分组界面显示
+
+                    MessageBox.Show("importTime = " + importTime + ", totalUnzipTime = " + unzipTime + ", detectTime = " + detectTime
+                        + "\n" + "totalTime = " + (DateTime.Now - startImportTime));
+                } catch
+                {
+                    MessageBox.Show("导入出现异常");
+                }
+                
             }
 
-            detectConflicts();//冲突检测
-
-            groupBiz.refresh();//刷新分组界面显示
+            
         }
 
-        private static void importOne(string importFile, string psd)
-        {//导入一个
-            if(Directory.Exists("import"))
+        private static void importFromFile(string importFile, string psd)
+        {//从一个文件导入
+            if (Directory.Exists("import"))
             {
                 Directory.Delete("import", true);
             }
@@ -192,11 +234,30 @@ namespace MilitiaOrganizationSystem
             unzip.unzipAll();//解压所有
             unzip.close();
             unzipTime += DateTime.Now - startUnzipTime;
-            
+
             //解压完毕后
             importFormFolder("import/export");
 
             Directory.Delete("import", true);//导入之后，删除
         }
+
+        public static void detectConflicts()
+        {//检测冲突
+            DateTime startDetectTime = DateTime.Now;
+            Dictionary<string, List<string>> conflictDict = sqlBiz.getConflicts();
+            detectTime = DateTime.Now - startDetectTime;
+
+            if(conflictDict.Count == 0)
+            {
+                MessageBox.Show("没有检测到冲突");
+            } else
+            {
+                MessageBox.Show("检测到" + conflictDict.Count + "个冲突");
+                ConflictMilitiasForm cmf = new ConflictMilitiasForm(conflictDict);
+                cmf.ShowDialog();
+            }
+        }
+
+
     }
 }

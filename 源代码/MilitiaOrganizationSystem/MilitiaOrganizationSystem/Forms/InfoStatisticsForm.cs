@@ -50,7 +50,7 @@ namespace MilitiaOrganizationSystem
                     categoryNum.Text = statisticsParameter.ChildNodes.Count + "个";
                     break;
                 default:
-                    catagoriesListBox.Items.Clear();
+                    catagoriesListBox.Items.Add("无分类");
                     break;
             }
         }
@@ -64,15 +64,30 @@ namespace MilitiaOrganizationSystem
             }
 
             statisticsListBox.Items.Clear();
-            switch(statisticsParameter.Attributes["type"].Value)
+            int sum = 0;//总数
+            Dictionary<string, Raven.Abstractions.Data.FacetValue> fdict;//分组
+            switch (statisticsParameter.Attributes["type"].Value)
             {
+                case "place":
+                    fdict
+                        = FormBizs.sqlBiz.getEnumStatistics(
+                            condition.lambdaCondition,
+                            statisticsParameter.Attributes["property"].Value,
+                            condition.place);
+                    foreach (KeyValuePair<string, Raven.Abstractions.Data.FacetValue> kvp in fdict)
+                    {
+                        int num = kvp.Value.Hits;
+                        statisticsListBox.Items.Add(PlaceXmlConfig.getPlaceName(kvp.Key) + ": " + num + "人");
+                        sum += num;
+                    }
+                    sumLabel.Text = sum + "人";
+                    break;
                 case "enum":
-                    Dictionary<string, Raven.Abstractions.Data.FacetValue> fdict
+                    fdict
                         = FormBizs.sqlBiz.getEnumStatistics(
                             condition.lambdaCondition, 
                             statisticsParameter.Attributes["property"].Value, 
                             condition.place);
-                    int sum = 0;
                     /*foreach(KeyValuePair<string, Raven.Abstractions.Data.FacetValue> kvp in fdict)
                     {
                         int num = kvp.Value.Hits;
@@ -92,7 +107,12 @@ namespace MilitiaOrganizationSystem
                     }
                     sumLabel.Text = sum + "人";
                     break;
+                case "group":
+                    FormBizs.groupBiz.focus();
+                    break;
                 default:
+                    FormBizs.sqlBiz.queryByContition(condition.lambdaCondition, 0, 1, out sum);
+                    sumLabel.Text = sum + "人";
                     break;
             }
         }

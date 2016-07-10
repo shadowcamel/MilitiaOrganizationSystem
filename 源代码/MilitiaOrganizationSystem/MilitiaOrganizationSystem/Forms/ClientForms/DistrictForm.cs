@@ -89,18 +89,18 @@ namespace MilitiaOrganizationSystem
 
         private void importFromXml_Click(object sender, EventArgs e)
         {//测试所用，实际上是加载主数据库所有的民兵
-            sqlBiz.addMilitias(MilitiaXmlConfig.generateMilitias(1000));
-            MessageBox.Show("生成1000个民兵成功");
+            sqlBiz.addMilitias(MilitiaXmlConfig.generateMilitias(5000));
+            MessageBox.Show("生成5000个民兵成功");
         }
 
         private void export_Click(object sender, EventArgs e)
         {//导出
-            FormBizs.export();
+            FormBizs.exportToFile();
         }
 
         private void import_Click(object sender, EventArgs e)
         {//导入
-            FormBizs.import();
+            FormBizs.importFormFiles();
         }
 
         private void updatePageUpDown()
@@ -171,6 +171,16 @@ namespace MilitiaOrganizationSystem
         {
             listViewBiz.firstPage();
             updatePageUpDown();
+        }
+
+        private void importDirectory_Click(object sender, EventArgs e)
+        {
+            FormBizs.importFromFolder();
+        }
+
+        private void exportDirectory_Click(object sender, EventArgs e)
+        {
+            FormBizs.exportToFolder();
         }
     }
 }

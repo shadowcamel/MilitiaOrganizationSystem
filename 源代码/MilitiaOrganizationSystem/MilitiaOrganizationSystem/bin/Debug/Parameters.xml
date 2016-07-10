@@ -11,7 +11,7 @@
     <selection name="读卡" value="0"/>
   </parameter>
   <parameter name ="民族" property="Ethnic" type="string"/>
-  <parameter name ="户籍地" property="Resvalueence" type="string"/>
+  <parameter name ="户籍地" property="Resvalueence" type="place"/>
   <parameter name ="政治面貌" property="PoliticalStatus" type="enum">
     <selection name ="未指定" value="0"/>
     <selection name ="群众" value="1"/>

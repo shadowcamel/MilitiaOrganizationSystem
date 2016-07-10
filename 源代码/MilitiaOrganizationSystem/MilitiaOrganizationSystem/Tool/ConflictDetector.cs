@@ -41,7 +41,7 @@ namespace MilitiaOrganizationSystem
         private char parse(char ch)
         {
             //身份证号由0~9和X组成，0~9返回ch - '0'，X返回10
-            return ch > '9' ? (char)10 : (char)(ch - '0');
+            return ch > '9' || ch < '0' ? (char)10 : (char)(ch - '0');
         }
         public void insertAndDetectConflicts(string credentialNumber, string database)
         {

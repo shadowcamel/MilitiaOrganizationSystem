@@ -52,6 +52,40 @@ namespace MilitiaOrganizationSystem
             return districXmlDoc.DocumentElement.SelectNodes("District[@CID='" + CID + "']");
         }
 
+        public static string getPCD_ID(string placeName)
+        {//根据地区名获取PCDID
+            string PCD_ID = "";
+            string[] placeNames = placeName.Split(new char[] { '/' });
+            XmlNode pNode = provinceXmlDoc.DocumentElement.SelectSingleNode("Province[@ProvinceName='" + placeNames[0] + "']");
+            if(pNode == null)
+            {
+                return placeName;
+            }
+            PCD_ID += pNode.Attributes["ID"].Value;
+            if(placeNames.Length >= 2)
+            {
+                XmlNode cNode = cityXmlDoc.DocumentElement.SelectSingleNode("City[@CityName='" + placeNames[1] + "']");
+                if(cNode == null)
+                {
+                    return placeName;
+                }
+                PCD_ID += "-" + cNode.Attributes["ID"].Value;
+                if(placeNames.Length == 3)
+                {
+                    XmlNode dNode = districXmlDoc.DocumentElement.SelectSingleNode("District[@DistrictName='" + placeNames[2] + "']");
+                    if(dNode == null)
+                    {
+                        return placeName;
+                    }
+                    PCD_ID += "-" + dNode.Attributes["ID"].Value;
+                } else
+                {
+                    return placeName;
+                }
+            }
+            return PCD_ID;
+        }
+
         public static string getPlaceName(string PCD_ID)
         {//根据联合的PID-CID-DID，返回地点中文名，如北京市/北京市/东城区
             string[] IDS = PCD_ID.Split(new char[] { '-' });

@@ -43,11 +43,12 @@
             this.dele = new System.Windows.Forms.ToolStripMenuItem();
             this.importFromXml = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_importXMLGroupTask = new System.Windows.Forms.ToolStripMenuItem();
-            this.export = new System.Windows.Forms.ToolStripMenuItem();
             this.options = new System.Windows.Forms.ToolStripMenuItem();
             this.latestMilitias = new System.Windows.Forms.ToolStripMenuItem();
             this.stastistics = new System.Windows.Forms.ToolStripMenuItem();
             this.doConflict = new System.Windows.Forms.ToolStripMenuItem();
+            this.export = new System.Windows.Forms.ToolStripMenuItem();
+            this.exportToDirectory = new System.Windows.Forms.ToolStripMenuItem();
             this.labelCondition = new System.Windows.Forms.Label();
             this.nextPage = new System.Windows.Forms.Button();
             this.currentPage = new System.Windows.Forms.Button();
@@ -123,11 +124,12 @@
             this.menu_basicLevel.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.btn_militaInfomation,
             this.btn_importXMLGroupTask,
-            this.export,
             this.options,
             this.latestMilitias,
             this.stastistics,
-            this.doConflict});
+            this.doConflict,
+            this.export,
+            this.exportToDirectory});
             this.menu_basicLevel.Location = new System.Drawing.Point(0, 0);
             this.menu_basicLevel.Name = "menu_basicLevel";
             this.menu_basicLevel.Size = new System.Drawing.Size(850, 25);
@@ -180,13 +182,6 @@
             this.btn_importXMLGroupTask.Text = "导入xml分组任务";
             this.btn_importXMLGroupTask.Click += new System.EventHandler(this.importXMLGroupTask_Click);
             // 
-            // export
-            // 
-            this.export.Name = "export";
-            this.export.Size = new System.Drawing.Size(44, 21);
-            this.export.Text = "导出";
-            this.export.Click += new System.EventHandler(this.export_Click);
-            // 
             // options
             // 
             this.options.Name = "options";
@@ -214,6 +209,20 @@
             this.doConflict.Size = new System.Drawing.Size(68, 21);
             this.doConflict.Text = "检测冲突";
             this.doConflict.Click += new System.EventHandler(this.doConflict_Click);
+            // 
+            // export
+            // 
+            this.export.Name = "export";
+            this.export.Size = new System.Drawing.Size(80, 21);
+            this.export.Text = "导出为文件";
+            this.export.Click += new System.EventHandler(this.export_Click);
+            // 
+            // exportToDirectory
+            // 
+            this.exportToDirectory.Name = "exportToDirectory";
+            this.exportToDirectory.Size = new System.Drawing.Size(92, 21);
+            this.exportToDirectory.Text = "导出为文件夹";
+            this.exportToDirectory.Click += new System.EventHandler(this.exportToDirectory_Click);
             // 
             // labelCondition
             // 
@@ -403,6 +412,7 @@
         private System.Windows.Forms.ToolStripMenuItem latestMilitias;
         private System.Windows.Forms.ToolStripMenuItem stastistics;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.ToolStripMenuItem exportToDirectory;
     }
 }
 

@@ -44,22 +44,28 @@ namespace MilitiaOrganizationSystem
                 comboBox.Dock = DockStyle.Fill;
                 comboBox.Tag = xmlNode;
                 string type = xmlNode.Attributes["type"].Value;
-                if (type == "string")
+                switch(type)
                 {
-                    comboBox.Text = "";
-                }
-                else if(type == "enum")
-                {
+                    case "enum":
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
 
-                    comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                        for (int i = 0; i < xmlNode.ChildNodes.Count; i++)
+                        {
+                            XmlNode selectNode = xmlNode.ChildNodes[i];
+                            comboBox.Items.Add(selectNode.Attributes["name"].Value);
+                        }
 
-                    for (int i = 0; i < xmlNode.ChildNodes.Count; i++)
-                    {
-                        XmlNode selectNode = xmlNode.ChildNodes[i];
-                        comboBox.Items.Add(selectNode.Attributes["name"].Value);
-                    }
-
-                    comboBox.SelectedIndex = 0;
+                        comboBox.SelectedIndex = 0;
+                        break;
+                    case "place":
+                        comboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+                        comboBox.Items.Add("点击编辑");
+                        comboBox.SelectedIndex = 0;
+                        comboBox.MouseClick += ComboBox_MouseClick;
+                        break;
+                    default:
+                        comboBox.Text = "";
+                        break;
                 }
 
                 
@@ -77,6 +83,16 @@ namespace MilitiaOrganizationSystem
             }
 
             
+        }
+
+        private void ComboBox_MouseClick(object sender, MouseEventArgs e)
+        {//编辑地区属性
+            ComboBox cb = (ComboBox)sender;
+            PlaceChooseForm pcf = new PlaceChooseForm(((XmlNode)cb.Tag).Attributes["name"].Value, cb.Text);
+            if(pcf.ShowDialog() == DialogResult.OK)
+            {
+                cb.Items[0] = PlaceXmlConfig.getPlaceName(pcf.PCD_ID);
+            }
         }
 
         public DialogResult showEditDlg(Militia oneMilitia, int focusIndex = 0)
@@ -100,23 +116,28 @@ namespace MilitiaOrganizationSystem
 
                 }
 
-                if (xmlNode.Attributes["type"].Value == "string")
+                switch(xmlNode.Attributes["type"].Value)
                 {
-                    comboBox.Text = strValue;
-                } else if(xmlNode.Attributes["type"].Value == "enum")
-                {
-                    comboBox.SelectedIndex = 0;
+                    case "enum":
+                        comboBox.SelectedIndex = 0;
 
-                    XmlNode selectChildNode = xmlNode.SelectSingleNode("selection[@value='" + strValue + "']");
+                        XmlNode selectChildNode = xmlNode.SelectSingleNode("selection[@value='" + strValue + "']");
 
-                    for (int i = 0; i < xmlNode.ChildNodes.Count; i++)
-                    {
-                        if(selectChildNode == xmlNode.ChildNodes[i])
+                        for (int i = 0; i < xmlNode.ChildNodes.Count; i++)
                         {
-                            comboBox.SelectedIndex = i;
-                            break;
+                            if (selectChildNode == xmlNode.ChildNodes[i])
+                            {
+                                comboBox.SelectedIndex = i;
+                                break;
+                            }
                         }
-                    }
+                        break;
+                    case "place":
+                        comboBox.Items[0] = PlaceXmlConfig.getPlaceName(strValue);
+                        break;
+                    default:
+                        comboBox.Text = strValue;
+                        break;
                 }
 
 
@@ -145,12 +166,17 @@ namespace MilitiaOrganizationSystem
             {
                 XmlNode xmlNode = (XmlNode)cbb.Tag;
                 string value = "";
-                if(xmlNode.Attributes["type"].Value == "string")
+                switch(xmlNode.Attributes["type"].Value)
                 {
-                    value = cbb.Text;
-                } else if(xmlNode.Attributes["type"].Value == "enum")
-                {
-                    value = xmlNode.ChildNodes[cbb.SelectedIndex].Attributes["value"].Value;
+                    case "enum":
+                        value = xmlNode.ChildNodes[cbb.SelectedIndex].Attributes["value"].Value;
+                        break;
+                    case "place":
+                        value = PlaceXmlConfig.getPCD_ID(cbb.Items[0].ToString());
+                        break;
+                    default:
+                        value = cbb.Text;
+                        break;
                 }
                 mr.setProperty(xmlNode.Attributes["property"].Value, value);
             }

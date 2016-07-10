@@ -29,10 +29,6 @@ namespace MilitiaOrganizationSystem
             this.dbName = db;
 
             newStore();
-            
-            
-            
-            
 
         }
 
@@ -84,7 +80,7 @@ namespace MilitiaOrganizationSystem
         }
 
         public bool isBackupRunning(string database)
-        {
+        {//判断某个数据库是否正在备份
             BackupStatus status;
             var re = store.DatabaseCommands.ForDatabase(database).Get(BackupStatus.RavenBackupStatusDocumentKey);
             status = re.DataAsJson.JsonDeserialization<BackupStatus>();
@@ -158,7 +154,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var mList = session.Query<Militia>()
-                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Statistics(out stats).Where(lambdaContition).Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
 
@@ -177,7 +173,7 @@ namespace MilitiaOrganizationSystem
             {
                 RavenQueryStatistics stats;
                 var militias = session.Query<Militia>()
-                    //.Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
+                    .Customize(x => x.WaitForNonStaleResultsAsOfNow(TimeSpan.FromSeconds(timeoutseconds)))
                     .Statistics(out stats).Skip(skip).Take(take).ToList();
                 sum = stats.TotalResults;
 
