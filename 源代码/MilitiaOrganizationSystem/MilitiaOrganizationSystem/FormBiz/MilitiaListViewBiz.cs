@@ -320,6 +320,17 @@ namespace MilitiaOrganizationSystem
             }
         }
 
+        public void changeCondition(Label conditionLabel)
+        {//改变筛选条件，其中conditionLabel是用来显示条件的标签
+            ConditionForm cf = new ConditionForm(condition);
+            if (cf.ShowDialog() == DialogResult.OK)
+            {
+                conditionLabel.Text = condition.ToString();
+                page = 1;//改变条件后，回到首页
+                refreshCurrentPage();
+            }
+        }
+
         public void refreshCurrentPage()
         {//刷新本页
             int sum;

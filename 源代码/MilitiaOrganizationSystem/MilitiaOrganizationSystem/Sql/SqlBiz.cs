@@ -125,6 +125,18 @@ namespace MilitiaOrganizationSystem
             {
                 sqlDao.backupOneDB(database, folder);
             }
+            while (!isAllDbBackupCompleted()) ;//等待全部完成
+        }
+
+        public bool isAllDbBackupCompleted()
+        {
+            bool isRunning = false;
+            List<string> databases = getDatabases();
+            foreach(string database in databases)
+            {//只要有一个数据库正在备份，那么ISRunning就为true
+                isRunning = isRunning || sqlDao.isBackupRunning(database);
+            }
+            return !isRunning;//如果都为false，说明backup完成
         }
 
         public void restoreDbs(string folder)

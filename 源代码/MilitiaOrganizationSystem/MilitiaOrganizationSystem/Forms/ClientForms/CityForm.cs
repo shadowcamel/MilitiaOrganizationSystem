@@ -148,12 +148,8 @@ namespace MilitiaOrganizationSystem
 
         private void conditionLabel_Click(object sender, EventArgs e)
         {//打开筛选条件界面
-            ConditionForm cf = new ConditionForm(condition);
-            if(cf.ShowDialog() == DialogResult.OK)
-            {
-                conditionLabel.Text = condition.ToString();
-                listViewBiz.refreshCurrentPage();
-            }
+            listViewBiz.changeCondition(conditionLabel);
+            updatePageUpDown();
         }
 
         private void doConflict_Click(object sender, EventArgs e)

@@ -13,6 +13,7 @@ using System.Linq.Expressions;
 using Raven.Client.Document;
 using Raven.Client.Indexes;
 using Raven.Client.Connection;
+using Raven.Abstractions.Extensions;
 
 namespace MilitiaOrganizationSystem
 {
@@ -28,14 +29,11 @@ namespace MilitiaOrganizationSystem
             this.dbName = db;
 
             newStore();
+            
+            
+            
+            
 
-            store.DocumentDatabase.OnBackupComplete += DocumentDatabase_OnBackupComplete;
-
-        }
-
-        public void DocumentDatabase_OnBackupComplete(Raven.Database.DocumentDatabase obj)
-        {
-            System.Windows.MessageBox.Show(obj.Name);
         }
 
         ~SqlDao()
@@ -85,6 +83,14 @@ namespace MilitiaOrganizationSystem
             }
         }
 
+        public bool isBackupRunning(string database)
+        {
+            BackupStatus status;
+            var re = store.DatabaseCommands.ForDatabase(database).Get(BackupStatus.RavenBackupStatusDocumentKey);
+            status = re.DataAsJson.JsonDeserialization<BackupStatus>();
+            return status.IsRunning;
+        }
+
 
         public void backupOneDB(string dbName, string exportFolder)
         {//dbName数据库名，exportFolder导出文件夹路径，会在路径下创建一个名为dbName的新文件夹
@@ -100,7 +106,7 @@ namespace MilitiaOrganizationSystem
                 Settings =
                         {
 						    // ...
-						    /*{ "Raven/ActiveBundles", "Encryption" }*/
+						    { "Raven/ActiveBundles", "Encryption" }
                         },
                 SecuredSettings =
                     {
@@ -119,37 +125,23 @@ namespace MilitiaOrganizationSystem
         public void restoreOneDB(string importFolder)
         {//importFolder是备份数据库的文件夹路径,文件夹名即为数据库名
             DirectoryInfo dirInfo = new DirectoryInfo(importFolder);
-            /*store
-                .DatabaseCommands
-                .GlobalAdmin
-                .CreateDatabase(
-                    new DatabaseDocument
-                    {
-                        Id = dirInfo.Name,//数据库名
-                        // Other configuration options omitted for simplicity
-                        Settings =
-                        {
-                            // ...
-                            {"Raven/DataDir", "~/Databases/" + dirInfo.Name },
-						    { "Raven/ActiveBundles", "Encryption" }
-                            
-                        },
-                        SecuredSettings =
-                        {
-						    // ...
-						    {
-                                "Raven/Encryption/Algorithm",
-                                "System.Security.Cryptography.DESCryptoServiceProvider, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089"
-                            },
-                            { "Raven/Encryption/Key", "helloworld" }
-                        }
-                    }
-                );*/
+            if(Directory.Exists(SqlBiz.DataDir + "\\" + dirInfo.Name))
+            {//数据库已经存在
+                System.Windows.Forms.DialogResult re = System.Windows.Forms.MessageBox.Show("数据库" + dirInfo.Name + "已经存在,继续导入将覆盖此数据库，确认？", "警告", System.Windows.Forms.MessageBoxButtons.OKCancel);
+                if(re == System.Windows.Forms.DialogResult.OK)
+                {
+                    store.DatabaseCommands.GlobalAdmin.DeleteDatabase(dirInfo.Name, true);
+                } else
+                {
+                    return;
+                }
+
+            }
             Operation operation = store.DatabaseCommands.GlobalAdmin.StartRestore(
                 new Raven.Abstractions.Data.DatabaseRestoreRequest
                 {
                     BackupLocation = dirInfo.FullName,
-                    DatabaseName = dirInfo.Name,
+                    DatabaseName = dirInfo.Name
                 }
             );
             operation.WaitForCompletion();
