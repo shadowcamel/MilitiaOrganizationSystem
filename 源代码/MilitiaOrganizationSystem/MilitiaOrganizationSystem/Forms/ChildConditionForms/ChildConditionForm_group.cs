@@ -29,7 +29,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void btn_ok_Click(object sender, EventArgs e)
-        {//ok，给条件赋值
+        {
+            //条件赋值
             childCondition.Values.Clear();
             TreeNode selectNode = groupTreeView.SelectedNode;
             if(selectNode.Name == "未分组")
