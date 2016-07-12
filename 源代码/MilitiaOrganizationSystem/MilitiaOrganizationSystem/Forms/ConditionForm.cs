@@ -28,7 +28,8 @@ namespace MilitiaOrganizationSystem
 
             //初始化属性显示
             for(int i = 0; i < parameters.Count; i++)
-            {//添加属性名
+            {
+                //添加属性名
                 System.Xml.XmlNode xn = parameters[i];
                 parasCheckBox.Items.Add(xn.Attributes["name"].Value);
                 foreach(Condition.ChildCondition cc in currentCondition.ccList)
@@ -92,7 +93,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void CCombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {//选择市变化时,更新区县下拉项
+        {
+            //选择市变化时,更新区县下拉项
             dCombobox.Items.Clear();
             dCombobox.Items.Add("不限");
             if(cCombobox.SelectedIndex == 0)
@@ -110,7 +112,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void PCombobox_SelectedIndexChanged(object sender, EventArgs e)
-        {//选择省变化时,更新市下拉项
+        {
+            //选择省变化时,更新市下拉项
             cCombobox.Items.Clear();
             cCombobox.Items.Add("不限");
             cities = PlaceXmlConfig.cities(provinces[pCombobox.SelectedIndex].Attributes["ID"].Value);//城市
@@ -123,6 +126,7 @@ namespace MilitiaOrganizationSystem
 
         private DialogResult showChildConditionDialog(Condition.ChildCondition cc)
         {
+            //打开对应的条件选择窗口
             System.Xml.XmlNode paraNode = cc.parameterNode;
             Form ccForm = null;
             switch(paraNode.Attributes["type"].Value)
@@ -137,10 +141,10 @@ namespace MilitiaOrganizationSystem
                     ccForm = new ChildConditionForm_group(cc);
                     break;
                 case "int":
-                    return DialogResult.Cancel;
+                    return DialogResult.Cancel;//计划取消
                     break;
                 case "place":
-                    return DialogResult.Cancel;
+                    return DialogResult.Cancel;//计划取消
                     break;
                 default:
 
@@ -150,20 +154,22 @@ namespace MilitiaOrganizationSystem
         }
 
         private void ConditionListBox_MouseDoubleClick(object sender, MouseEventArgs e)
-        {//弹出条件编辑
+        {
+            //弹出条件编辑
             Condition.ChildCondition cc = (Condition.ChildCondition)conditionListBox.SelectedItem;
             if(cc == null)
-            {//为空则什么都不做
+            {
                 return;
             }
             if(showChildConditionDialog(cc) == DialogResult.OK)
             {
-                conditionListBox.Items[conditionListBox.SelectedIndex] = cc;//刷新了显示数据
+                conditionListBox.Items[conditionListBox.SelectedIndex] = cc;//刷新显示数据
             }
         }
 
         private void ParasCheckBox_MouseDoubleClick(object sender, MouseEventArgs e)
-        {//双击选中，并打开一个ChildCondition对话框
+        {
+            //双击选中，并打开一个ChildCondition对话框
             string name = (string)parasCheckBox.SelectedItem;
             Condition.ChildCondition cc = new Condition.ChildCondition(MilitiaXmlConfig.getNodeByName(name));
             if (showChildConditionDialog(cc) == DialogResult.OK)
@@ -186,7 +192,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void ParasCheckBox_MouseClick(object sender, MouseEventArgs e)
-        {//阻止默认的单击选中
+        {
+            //阻止默认的单击选中
             if(parasCheckBox.GetItemChecked(parasCheckBox.SelectedIndex))
             {
                 parasCheckBox.SetItemChecked(parasCheckBox.SelectedIndex, false);
@@ -198,7 +205,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void btn_ok_Click(object sender, EventArgs e)
-        {//ok了，生成条件
+        {
+            //ok了，生成条件
             condition.ccList = conditionListBox.Items.Cast<Condition.ChildCondition>().ToList();
             condition.place = provinces[pCombobox.SelectedIndex].Attributes["ID"].Value;
             if(cCombobox.SelectedIndex > 0)
@@ -213,7 +221,8 @@ namespace MilitiaOrganizationSystem
         }
 
         private void deleteCondition_Click(object sender, EventArgs e)
-        {//删除listBox里的条件
+        {
+            //删除listBox里的条件
             conditionListBox.Items.Remove(conditionListBox.SelectedItem);
         }
     }
