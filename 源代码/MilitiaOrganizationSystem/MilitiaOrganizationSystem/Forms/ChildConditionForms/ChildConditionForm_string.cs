@@ -29,6 +29,7 @@ namespace MilitiaOrganizationSystem
 
             propertyName.Text = paraNode.Attributes["name"].Value;
 
+            //选择方法
             if(cc.Method == "StartsWith")
             {
                 radio_StartsWith.Checked = true;
@@ -43,6 +44,7 @@ namespace MilitiaOrganizationSystem
 
         private void btn_ok_Click(object sender, EventArgs e)
         {
+            //检查条件，空则弹出提示，否则条件赋值
             if(radio_StartsWith.Checked)
             {
                 if(startwithCombobox.Text == null || startwithCombobox.Text == "")
